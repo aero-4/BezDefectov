@@ -1,0 +1,74 @@
+from abc import ABC
+
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.domain.exceptions import AlreadyExists, NotFound
+from src.users.domain.entities import User, UserCreate
+from src.users.domain.interfaces.user_repo import IUserRepository
+from src.users.infrastructure.db.orm import UsersOrm
+
+
+class PGUserRepository(IUserRepository):
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__()
+        self.session = session
+
+    async def add(self, user: UserCreate) -> User:
+        obj = UsersOrm(**user.model_dump(mode='python'))
+        self.session.add(obj)
+
+        try:
+            await self.session.flush()
+        except IntegrityError as e:
+            raise AlreadyExists()
+
+        return self._to_domain(obj)
+
+    async def get_by_email(self, email: str) -> User:
+        stmt = select(UsersOrm).where(UsersOrm.email == email)
+        result = await self.session.execute(stmt)
+        obj: UsersOrm = result.scalar_one_or_none()
+
+        if not obj:
+            raise NotFound(detail=f"User with email {email} not found")
+
+        return self._to_domain(obj)
+
+    async def get_by_id(self, id: int) -> User:
+        obj: UsersOrm | None = await self.session.get(UsersOrm, id)
+        if not obj:
+            raise NotFound(detail=f"User not found")
+
+        return self._to_domain(obj)
+
+    async def get_all(self):
+        stmt = select(UsersOrm)
+
+        result = await self.session.execute(stmt)
+        objs = [self._to_domain(i) for i in result.scalars().all()]
+
+        return objs
+
+    async def delete(self, id: int):
+        stmt = select(UsersOrm).where(UsersOrm.id == id)
+        result = await self.session.execute(stmt)
+        obj: UsersOrm = result.scalar_one_or_none()
+
+        if not obj:
+            raise NotFound(detail=f"User with id {id} not found")
+
+        await self.session.delete(obj)
+        await self.session.flush()
+
+
+    @staticmethod
+    def _to_domain(obj: UsersOrm) -> User:
+        return User(
+            id=obj.id,
+            created_at=obj.created_at,
+            email=obj.email,
+            hashed_password=obj.hashed_password,
+            user_name=obj.user_name,
+        )

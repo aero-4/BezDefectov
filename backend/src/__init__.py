@@ -6,7 +6,11 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
+from src.auth.presentation.middlewares.authentication import AuthenticationMiddleware
+from src.auth.presentation.middlewares.jwtrefresh import JWTRefreshMiddleware
+from src.auth.presentation.middlewares.security import SecurityMiddleware
 from src.core.config import settings
+from src.core.domain.exceptions import AppException
 from src.core.infrastructure.redis_setup import check_redis_connection
 
 
@@ -37,7 +41,7 @@ async def app_exception_handler(request: Request, exc: AppException):
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*"],
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -45,3 +49,5 @@ app.add_middleware(
 app.add_middleware(SecurityMiddleware)
 app.add_middleware(AuthenticationMiddleware)
 app.add_middleware(JWTRefreshMiddleware)
+
+
