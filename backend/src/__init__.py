@@ -19,7 +19,7 @@ from src.db.utils import create_and_delete_tables_db
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await check_redis_connection()
-    # await create_and_delete_tables_db()
+    await create_and_delete_tables_db()
     yield
 
 
@@ -52,5 +52,5 @@ app.add_middleware(SecurityMiddleware)
 app.add_middleware(AuthenticationMiddleware)
 app.add_middleware(JWTRefreshMiddleware)
 
-app.include_router(auth_api_router, tags=["Auth"])
+app.include_router(auth_api_router, prefix="/auth", tags=["Auth"])
 
