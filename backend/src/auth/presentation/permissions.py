@@ -6,7 +6,6 @@ from starlette.requests import Request
 
 from src.auth.domain.entities import AnonymousUser
 from src.core.domain.exceptions import PermissionDenied, AuthRequired
-from src.users.infrastructure.db.orm import UserRole
 
 
 class access_control:
