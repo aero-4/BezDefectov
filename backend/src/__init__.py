@@ -14,6 +14,7 @@ from src.core.config import settings
 from src.core.domain.exceptions import AppException
 from src.core.infrastructure.redis_setup import check_redis_connection
 from src.db.utils import create_and_delete_tables_db
+from src.lessons.presentation.api import lessons_api_router
 
 
 @asynccontextmanager
@@ -53,4 +54,4 @@ app.add_middleware(AuthenticationMiddleware)
 app.add_middleware(JWTRefreshMiddleware)
 
 app.include_router(auth_api_router, prefix="/auth", tags=["Auth"])
-
+app.include_router(lessons_api_router, prefix="/lessons", tags=["Lessons"])
