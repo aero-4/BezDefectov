@@ -1,20 +1,23 @@
 import abc
+from typing import List
+
+from src.cards.domain.entities import CardCreate, Card, CardUpdate
 
 
 class ICardRepository(abc.ABC):
 
     @abc.abstractmethod
-    async def add(self):
+    async def add(self, card: CardCreate) -> Card:
         pass
 
     @abc.abstractmethod
-    async def update(self):
+    async def update(self, card: CardUpdate) -> Card:
         pass
 
     @abc.abstractmethod
-    async def delete(self):
+    async def delete(self, id: int) -> bool:
         pass
 
     @abc.abstractmethod
-    async def get_all(self):
-        ...
+    async def get_all(self) -> List[Card]:
+        pass
