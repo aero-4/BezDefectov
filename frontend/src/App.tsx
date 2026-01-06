@@ -4,6 +4,7 @@ import {Routes, Route, BrowserRouter} from "react-router-dom";
 import Loader from "./ui/loaders/Loader.tsx";
 import Layout from "./ui/components/Layout.tsx";
 import Home from "./ui/pages/Home.tsx";
+import Register from "./ui/pages/Register.tsx";
 
 function App() {
     return (
@@ -13,6 +14,8 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Layout/>}>
                             <Route index element={<Home/>}/>
+                            <Route path="/register" element={<Register/>}/>
+
                         </Route>
                     </Routes>
                 </Suspense>

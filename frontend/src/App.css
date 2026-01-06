@@ -8,8 +8,9 @@
     --font-prosto: "Arial" sans-serif ;
 }
 
+
 .action_btn {
-    @apply bg-[#3B19FF] hover:opacity-90 active:opacity-80 text-gray-100 text-lg font-semibold
+    @apply bg-[#3B19FF] hover:opacity-90 active:opacity-80 text-gray-100 text-lg font-medium p-3
 }
 
 .border {
@@ -18,4 +19,13 @@
 
 .link {
     @apply hover:bg-gray-100 p-3
+}
+
+.input {
+    @apply
+    bg-[#D9D9D9]
+    p-4
+    w-full
+    focus:outline-0
+    hover:bg-[#D9D9D9]/90
 }
