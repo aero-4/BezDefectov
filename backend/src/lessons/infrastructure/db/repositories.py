@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.domain.exceptions import AlreadyExists
-from src.lessons.domain.entities import Lesson, LessonCreate
+from src.lessons.domain.entities import Lesson, LessonCreate, LessonUpdate
 from src.lessons.domain.interfaces.lesson_repo import ILessonRepository
 from src.lessons.infrastructure.db.orm import LessonsOrm
 
@@ -23,6 +23,18 @@ class LessonRepository(ILessonRepository):
             raise AlreadyExists()
 
         return self._to_domain(obj)
+
+    async def update(self, lesson: LessonUpdate) -> Lesson:
+        ...
+
+    async def get(self, id: int) -> Lesson:
+        ...
+
+    async def get_all_by_filters(self, type: str) -> Lesson:
+        ...
+
+    async def delete(self, id: int):
+        ...
 
     @staticmethod
     async def _to_domain(lesson: LessonsOrm) -> Lesson:

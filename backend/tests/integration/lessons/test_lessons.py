@@ -14,13 +14,13 @@ from tests.integration.conftest import base_url
 async def test_add_lesson():
     async with AsyncClient(base_url=base_url) as client:
         create_card = CardCreateDTO(title="Слоги", text="ра-ра-ра ро-ро-ро ре-ре-ре")
-        response2 = await client.post("/api/cards", json=create_card.model_dump())
+        response2 = await client.post("/api/cards/", json=create_card.model_dump())
 
         card = Card(**response2.json())
 
         lesson_dto = LessonCreateDTO(duration=25, type=LessonTypes.r, cards=[card.id])
 
-        response = await client.post("/api/lessons", json=lesson_dto.model_dump())
+        response = await client.post("/api/lessons/", json=lesson_dto.model_dump())
 
         lesson = Lesson(**response.json())
 

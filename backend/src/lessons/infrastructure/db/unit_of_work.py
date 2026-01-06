@@ -20,7 +20,7 @@ class PGLessonUnitOfWork(ILessonUnitOfWork, ABC):
         await super().__aexit__(*args)
         await self.session.close()
 
-    async def commit(self):
+    async def _commit(self):
         await self.session.commit()
 
     async def rollback(self):

@@ -10,6 +10,7 @@ from src.auth.presentation.api import auth_api_router
 from src.auth.presentation.middlewares.authentication import AuthenticationMiddleware
 from src.auth.presentation.middlewares.jwtrefresh import JWTRefreshMiddleware
 from src.auth.presentation.middlewares.security import SecurityMiddleware
+from src.cards.presentation.api import cards_api_router
 from src.core.config import settings
 from src.core.domain.exceptions import AppException
 from src.core.infrastructure.redis_setup import check_redis_connection
@@ -26,7 +27,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 
@@ -49,9 +50,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(SecurityMiddleware)
+# app.add_middleware(SecurityMiddleware)
 app.add_middleware(AuthenticationMiddleware)
 app.add_middleware(JWTRefreshMiddleware)
 
-app.include_router(auth_api_router, prefix="/auth", tags=["Auth"])
-app.include_router(lessons_api_router, prefix="/lessons", tags=["Lessons"])
+app.include_router(auth_api_router, prefix="/api/auth", tags=["Auth"])
+app.include_router(lessons_api_router, prefix="/api/lessons", tags=["Lessons"])
+app.include_router(cards_api_router, prefix="/api/cards", tags=["Cards"])

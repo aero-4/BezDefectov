@@ -9,7 +9,6 @@ class Card(BaseModel):
 
 
 class CardCreate(BaseModel):
-    id: int
     lesson_id: int | None = None
     title: str
     text: str

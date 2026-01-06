@@ -5,6 +5,7 @@ from src.db.base import Base
 
 
 class CardsOrm(Base):
+    __tablename__ = "cards"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
