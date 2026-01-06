@@ -1,11 +1,12 @@
 import React from 'react';
 
-function Loader(props) {
+export default function Loader({size = 4}): JSX.Element {
     return (
-        <div>
-
-        </div>
+        <>
+            <div className="flex min-h-screen justify-center my-auto items-center z-50 w-screen h-screen">
+                <span className={`p-${size} rounded-full animate-spin border-5 border-blue-500 border-t-transparent`}>
+                </span>
+            </div>
+        </>
     );
 }
-
-export default Loader;

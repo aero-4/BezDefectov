@@ -1,2 +1,13 @@
 @import "tailwindcss";
 
+.action_btn {
+    @apply bg-[#3B19FF] hover:opacity-90 active:opacity-80 text-gray-200
+}
+
+.border {
+    @apply p-4 rounded-4xl bg-[#F8F6FF] border-0
+}
+
+.link {
+    @apply hover:bg-gray-100 p-3
+}
