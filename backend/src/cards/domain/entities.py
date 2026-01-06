@@ -3,9 +3,9 @@ from pydantic import BaseModel
 
 class Card(BaseModel):
     id: int
-    lesson_id: int | None = None
     title: str
     text: str
+    lesson_id: int | None = None
 
 
 class CardCreate(BaseModel):

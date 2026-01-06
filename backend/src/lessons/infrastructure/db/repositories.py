@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.cards.domain.entities import Card
 from src.cards.infrastructure.db.orm import CardsOrm
 from src.core.domain.exceptions import AlreadyExists, NotFound
 from src.lessons.domain.entities import Lesson, LessonCreate, LessonUpdate
@@ -16,16 +17,6 @@ class LessonRepository(ILessonRepository):
         self.session = session
 
     async def add(self, lesson: LessonCreate):
-        # stmt_cards = (
-        #     select(CardsOrm)
-        #     .where(CardsOrm.id.in_(lesson.cards))
-        # )
-        # result = await self.session.execute(stmt_cards)
-        # cards_orm = result.scalars().all()
-        #
-        # if len(cards_orm) != len(lesson.cards):
-        #     raise ValueError("Some cards not found")
-
         obj = LessonsOrm(**lesson.model_dump())
         self.session.add(obj)
 
@@ -69,5 +60,9 @@ class LessonRepository(ILessonRepository):
             updated_at=lesson.updated_at,
             duration=lesson.duration,
             type=lesson.type,
-            cards=[i.id for i in lesson.cards],
+            cards=[Card(
+                id=i.id,
+                title=i.title,
+                text=i.text
+            ) for i in lesson.cards],
         )

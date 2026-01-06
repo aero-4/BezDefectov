@@ -28,4 +28,4 @@ async def test_add_lesson():
         response3 = await client.get(f"/api/lessons/{lesson.id}")
         lesson2 = Lesson(**response3.json())
 
-        assert lesson2.cards[0] == card.id
+        assert lesson2.cards[0]["id"] == card.id
