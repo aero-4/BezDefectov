@@ -12,6 +12,7 @@ class Lesson(BaseModel):
     updated_at: datetime.datetime
     duration: int
     type: LessonTypes
+    cards: list
 
 
 class LessonCreate(BaseModel):

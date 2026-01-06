@@ -8,6 +8,7 @@ from src.db.base import Base
 from src.utils.datetimes import get_timezone_now
 from src.cards.infrastructure.db.orm import *
 
+
 class LessonTypes(StrEnum):
     sh = "sh"
     r = "r"
@@ -22,5 +23,4 @@ class LessonsOrm(Base):
     duration: Mapped[int] = mapped_column(nullable=False)
     type: Mapped[LessonTypes] = mapped_column(nullable=False)
 
-    cards: Mapped[list["CardsOrm"]] = relationship(back_populates="lesson")
-
+    cards: Mapped[list["CardsOrm"]] = relationship(back_populates="lesson", lazy="selectin")

@@ -14,6 +14,7 @@ async def drop_all_tables_cascade():
                 text(f'DROP TABLE IF EXISTS "{table.name}" CASCADE')
             )
 
+
 async def recreate_schema():
     async with engine.begin() as conn:
         try:

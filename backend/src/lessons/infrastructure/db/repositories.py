@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.cards.infrastructure.db.orm import CardsOrm
-from src.core.domain.exceptions import AlreadyExists
+from src.core.domain.exceptions import AlreadyExists, NotFound
 from src.lessons.domain.entities import Lesson, LessonCreate, LessonUpdate
 from src.lessons.domain.interfaces.lesson_repo import ILessonRepository
 from src.lessons.infrastructure.db.orm import LessonsOrm
@@ -34,13 +34,26 @@ class LessonRepository(ILessonRepository):
         except IntegrityError:
             raise AlreadyExists()
 
+        stmt = select(LessonsOrm).where(LessonsOrm.id == obj.id)
+        result = await self.session.execute(stmt)
+        obj = result.scalar_one_or_none()
+
         return self._to_domain(obj)
 
     async def update(self, lesson: LessonUpdate) -> Lesson:
         ...
 
     async def get(self, id: int) -> Lesson:
-        ...
+        stmt = select(LessonsOrm).where(LessonsOrm.id == id)
+        result = await self.session.execute(stmt)
+        obj = result.scalar_one_or_none()
+
+        if not obj:
+            raise NotFound()
+
+        return self._to_domain(obj)
+
+
 
     async def get_all_by_filters(self, type: str) -> Lesson:
         ...
@@ -49,11 +62,12 @@ class LessonRepository(ILessonRepository):
         ...
 
     @staticmethod
-    async def _to_domain(lesson: LessonsOrm) -> Lesson:
+    def _to_domain(lesson: LessonsOrm) -> Lesson:
         return Lesson(
             id=lesson.id,
             created_at=lesson.created_at,
-            update_at=lesson.updated_at,
+            updated_at=lesson.updated_at,
             duration=lesson.duration,
-            type=lesson.type
+            type=lesson.type,
+            cards=[i.id for i in lesson.cards],
         )
