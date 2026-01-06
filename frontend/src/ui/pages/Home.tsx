@@ -5,9 +5,9 @@ import homePhoto from "../../assets/home.png";
 function Home() {
     return (
         <div className="flex flex-col gap-17">
-            <div className="flex flex-row gap-3 my-9">
+            <div className="flex flex-col md:flex-row gap-5 my-9">
                 <div className="flex flex-col gap-9">
-                    <h1 className="text-4xl font-bold">Идеальное произношение - близко</h1>
+                    <h1 className="text-4xl font-bold font-mono">Идеальное произношение - близко</h1>
 
                     <p>
                         Попробуйте исправить свои дефекты с помощью нашего сервиса совершенно бесплатно!
@@ -31,30 +31,30 @@ function Home() {
             </div>
 
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6 font-semibold">
                 <div className="border text-black">
 
                     <span className="text-[180px] text-[#0022FF] font-bold">1</span>
 
-                    Составим план уроков за вас. Вы можете проходить их в любое время
+                    <p className="font-prosto">Составим план уроков за вас. Вы можете проходить их в любое время</p>
                 </div>
                 <div className="border text-black translate-y-24">
 
                     <span className="text-[180px] text-[#0022FF] font-bold">2</span>
 
-                    Проходите уроки каждый день и создайте новую привычку
+                    <p className="font-prosto">Проходите уроки каждый день и создайте новую привычку</p>
                 </div>
                 <div className="border text-black translate-y-10">
 
                     <span className="text-[180px] text-[#0022FF] font-bold">3</span>
+                    <p className="font-prosto">Закрепляйте новые умения вместе с ИИ партнером</p>
 
-                    Закрепляйте новые умения вместе с ИИ партнером
                 </div>
                 <div className="border text-black translate-y-32">
 
                     <span className="text-[180px] text-[#0022FF] font-bold">4</span>
+                    <p className="font-prosto">Получайте новые рекомандации каждый день от наших логопедов</p>
 
-                    Получайте новые рекомандации каждый день от наших логопедов
                 </div>
 
             </div>
