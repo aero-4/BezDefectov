@@ -14,14 +14,14 @@ from src.cards.presentation.api import cards_api_router
 from src.core.config import settings
 from src.core.domain.exceptions import AppException
 from src.core.infrastructure.redis_setup import check_redis_connection
-from src.db.utils import create_and_delete_tables_db
+from src.db.utils import recreate_schema
 from src.lessons.presentation.api import lessons_api_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await check_redis_connection()
-    await create_and_delete_tables_db()
+    await recreate_schema()
     yield
 
 

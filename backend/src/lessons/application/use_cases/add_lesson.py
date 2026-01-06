@@ -7,4 +7,5 @@ async def add_lesson(lesson_data: LessonCreateDTO, uow: LessonUoWDeps) -> Lesson
     lesson_data = LessonCreate(**lesson_data.model_dump())
     async with uow:
         lesson = await uow.lessons.add(lesson_data)
+        await uow.commit()
     return lesson

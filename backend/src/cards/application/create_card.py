@@ -8,4 +8,5 @@ async def create_card(card_data: CardCreateDTO, uow: CardUowDep):
 
     async with uow:
         card = await uow.cards.add(card_data)
+        await uow.commit()
     return card

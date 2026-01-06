@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-
 from src.db.base import Base
+from src.lessons.infrastructure.db.orm import *
 
 
 class CardsOrm(Base):
@@ -10,5 +10,5 @@ class CardsOrm(Base):
     title: Mapped[str] = mapped_column(nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
 
-    lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"), nullable=True)
+    lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"))
     lesson: Mapped["LessonsOrm"] = relationship(back_populates="cards")

@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -11,17 +12,14 @@ class Lesson(BaseModel):
     updated_at: datetime.datetime
     duration: int
     type: LessonTypes
-    cards: list["CardsOrm"]
 
 
 class LessonCreate(BaseModel):
     duration: int
     type: LessonTypes
-    cards: list[int]
 
 
 class LessonUpdate(BaseModel):
     id: int
     duration: int | None = None
-    cards: list["CardsOrm"] | None = None
     type: LessonTypes | None = None
