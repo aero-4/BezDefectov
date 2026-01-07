@@ -8,7 +8,7 @@ function Layout(props) {
         <div className="flex flex-col mx-auto min-h-screen max-w-screen-lg">
             <Navbar/>
 
-            <main className="flex-1 overflow-auto p-4">
+            <main className="flex-1 overflow-auto p-5">
                 <div className="w-full h-full">
                     <Outlet/>
                 </div>

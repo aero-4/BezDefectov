@@ -18,7 +18,7 @@ export default function SwitchWithCross({ checked, onChange, label }) {
                 )}
             </span>
 
-            <span className="text-left flex my-auto select-none font-semibold">
+            <span className="text-left flex my-auto select-none font-semibold text-sm">
                 {label}
             </span>
         </button>
