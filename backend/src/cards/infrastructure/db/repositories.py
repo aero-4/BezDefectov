@@ -32,11 +32,30 @@ class PGCardRepository(ICardRepository):
         objs = [self._to_domain(obj) for obj in result.scalars().all()]
         return objs
 
-    async def delete(self, id: int) -> bool:
-        ...
+    async def delete(self, id: int) -> None:
+        stmt = select(CardsOrm).where(CardsOrm.id == id)
+        result = await self.session.execute(stmt)
+        obj = result.scalar_one_or_none()
+        if not obj:
+            raise NotFound()
+
+        await self.session.delete(obj)
+        await self.session.flush()
 
     async def update(self, card: CardUpdate) -> Card:
-        ...
+        stmt = select(CardsOrm).where(CardsOrm.id == card.id)
+        result = await self.session.execute(stmt)
+        obj = result.scalar_one_or_none()
+
+        if not obj:
+            raise NotFound()
+
+        for field, value in card.model_dump(exclude_none=True).items():
+            setattr(obj, field, value)
+
+        await self.session.flush()
+
+        return self._to_domain(obj)
 
     @staticmethod
     def _to_domain(obj: CardsOrm):

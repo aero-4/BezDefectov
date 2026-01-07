@@ -47,3 +47,4 @@ async def test_get_lessons_with_type(clear_db):
 
         assert data[0]["id"] == l1.id
         assert data[1]["id"] == l3.id
+

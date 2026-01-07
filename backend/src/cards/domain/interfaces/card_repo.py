@@ -15,7 +15,7 @@ class ICardRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def delete(self, id: int) -> bool:
+    async def delete(self, id: int) -> None:
         pass
 
     @abc.abstractmethod
