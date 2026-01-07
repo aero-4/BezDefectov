@@ -6,7 +6,7 @@ from src.cards.domain.entities import Card
 from src.cards.presentation.dtos import CardCreateDTO
 from src.lessons.domain.entities import Lesson
 from src.lessons.infrastructure.db.orm import LessonTypes
-from src.lessons.presentation.dtos import LessonCreateDTO
+from src.lessons.presentation.dtos import LessonCreateDTO, LessonUpdateDTO
 from tests.integration.conftest import base_url
 
 
@@ -48,3 +48,25 @@ async def test_get_lessons_with_type(clear_db):
         assert data[0]["id"] == l1.id
         assert data[1]["id"] == l3.id
 
+
+@pytest.mark.asyncio
+async def test_delete_lesson(clear_db):
+    async with AsyncClient(base_url=base_url) as client:
+        lesson = await test_add_lesson(clear_db)
+
+        response = await client.delete(f"/api/lessons/{lesson.id}")
+
+        assert response.status_code == 200
+        assert response.json() is None
+
+
+@pytest.mark.asyncio
+async def test_update_lesson(clear_db):
+    async with AsyncClient(base_url=base_url) as client:
+        lesson = await test_add_lesson(clear_db)
+
+        lesson_data = LessonUpdateDTO(duration=21, type=LessonTypes.sh)
+        response = await client.patch(f"/api/lessons/{lesson.id}", json=lesson_data.model_dump())
+        lesson_updated = Lesson(**response.json())
+
+        assert lesson_updated.id == lesson.id

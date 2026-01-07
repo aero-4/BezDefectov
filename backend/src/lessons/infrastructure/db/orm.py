@@ -23,4 +23,4 @@ class LessonsOrm(Base):
     duration: Mapped[int] = mapped_column(nullable=False)
     type: Mapped[LessonTypes] = mapped_column(nullable=False)
 
-    cards: Mapped[list["CardsOrm"]] = relationship(back_populates="lesson", lazy="selectin")
+    cards: Mapped[list["CardsOrm"]] = relationship(back_populates="lesson", lazy="selectin", cascade="all, delete")

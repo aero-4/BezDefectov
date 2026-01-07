@@ -34,7 +34,19 @@ class LessonRepository(ILessonRepository):
         return self._to_domain(obj)
 
     async def update(self, lesson: LessonUpdate) -> Lesson:
-        ...
+        stmt = select(LessonsOrm).where(LessonsOrm.id == lesson.id)
+        result = await self.session.execute(stmt)
+        obj = result.scalar_one_or_none()
+
+        if not obj:
+            raise NotFound()
+
+        for field, value in lesson.model_dump(exclude_none=True).items():
+            setattr(obj, field, value)
+
+        await self.session.flush()
+
+        return self._to_domain(obj)
 
     async def get(self, id: int) -> Lesson:
         stmt = select(LessonsOrm).where(LessonsOrm.id == id)
@@ -45,7 +57,6 @@ class LessonRepository(ILessonRepository):
             raise NotFound()
 
         return self._to_domain(obj)
-
 
     async def get_all_by_type(self, type: str) -> List[Lesson]:
         stmt = select(LessonsOrm).filter_by(type=type)
