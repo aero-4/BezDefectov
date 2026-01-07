@@ -1,12 +1,18 @@
+import datetime
+
 import pytest
 import httpx
 from httpx import AsyncClient
 
+from src.auth.presentation.dtos import AuthUserDTO
 from src.cards.domain.entities import Card
 from src.cards.presentation.dtos import CardCreateDTO
 from src.lessons.domain.entities import Lesson
 from src.lessons.infrastructure.db.orm import LessonTypes
 from src.lessons.presentation.dtos import LessonCreateDTO, LessonUpdateDTO
+from src.users.domain.entities import User
+from src.users.presentation.dtos import UserCreateDTO
+from src.utils.strings import generate_random_alphanum
 from tests.integration.conftest import base_url
 
 
@@ -70,3 +76,61 @@ async def test_update_lesson(clear_db):
         lesson_updated = Lesson(**response.json())
 
         assert lesson_updated.id == lesson.id
+
+
+@pytest.mark.asyncio
+async def test_update_series_start(clear_db, new_user):
+    async with AsyncClient(base_url=base_url) as client:
+        lesson = await test_add_lesson(clear_db)
+
+        await new_user(client)
+
+        response = await client.options(f"/api/lessons/series")
+        user = User(**response.json())
+
+        print(user)
+        assert user.series_days == 1
+
+
+
+@pytest.mark.asyncio
+async def test_update_series_continue(clear_db, new_user):
+    async with AsyncClient(base_url=base_url) as client:
+        lesson = await test_add_lesson(clear_db)
+
+        await new_user(client)
+
+        response = await client.options(f"/api/lessons/series")
+        user = User(**response.json())
+        assert user.series_days == 1
+
+        response = await client.options(f"/api/lessons/series")
+        user = User(**response.json())
+        assert user.series_days != 2
+
+
+
+
+@pytest.mark.asyncio
+async def test_update_series_finish(clear_db, new_user):
+    async with AsyncClient(base_url=base_url) as client:
+        data = UserCreateDTO(email=generate_random_alphanum() + "@email.com",
+                             password=generate_random_alphanum(),
+                             updated_at=datetime.datetime(day=10, month=4, year=2024),
+                             series_days=7)
+        response = await client.post("/api/users/", json=data.model_dump(mode="json"))
+        user = User(**response.json())
+
+        response4 = await client.post("/api/auth/login", json=AuthUserDTO(email=data.email, password=data.password).model_dump())
+
+        client.cookies.update(response4.cookies)
+
+        response2 = await client.options("/api/lessons/series")
+        user_updated = User(**response2.json())
+
+        assert user_updated.series_days == 1
+
+        response3 = await client.get("/api/users/me")
+        user_me = User(**response3.json())
+
+        assert user_me.series_days == 1

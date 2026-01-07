@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.domain.exceptions import AlreadyExists, NotFound
-from src.users.domain.entities import User, UserCreate
+from src.users.domain.entities import User, UserCreate, UserUpdate
 from src.users.domain.interfaces.user_repo import IUserRepository
 from src.users.infrastructure.db.orm import UsersOrm
 
@@ -22,6 +22,7 @@ class PGUserRepository(IUserRepository):
         try:
             await self.session.flush()
         except IntegrityError as e:
+            print(e)
             raise AlreadyExists()
 
         return self._to_domain(obj)
@@ -62,12 +63,27 @@ class PGUserRepository(IUserRepository):
         await self.session.delete(obj)
         await self.session.flush()
 
+    async def update(self, user_data: UserUpdate) -> User:
+        stmt = select(UsersOrm).where(UsersOrm.id == user_data.id)
+        result = await self.session.execute(stmt)
+        obj: UsersOrm = result.scalar_one_or_none()
+
+        if not obj:
+            raise NotFound(detail=f"User with id {user_data.id} not found")
+
+        for field, value in user_data.model_dump(exclude_none=True).items():
+            setattr(obj, field, value)
+
+        await self.session.flush()
+
+        return self._to_domain(obj)
 
     @staticmethod
     def _to_domain(obj: UsersOrm) -> User:
         return User(
             id=obj.id,
             created_at=obj.created_at,
+            updated_at=obj.updated_at,
             email=obj.email,
             hashed_password=obj.hashed_password,
             user_name=obj.user_name,

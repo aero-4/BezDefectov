@@ -11,16 +11,17 @@ class TokenType(enum.StrEnum):
 
 class TokenData(CustomModel):
     user_id: int
+    exp: datetime.datetime
     aud: str | None = None
     iss: str | None = None
     jti: str | None = None
-    exp: datetime.datetime
 
 
 class AnonymousUser(CustomModel):
-    id: str = None
-    first_name: str | None = None
-    last_name: str | None = None
-    birthday: datetime.date | None = None
+    id: int | None = None
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
+    user_name: str | None = None
     email: str | None = None
-    role: int | None = None
+    hashed_password: str | None = None
+    series_days: int | None = None
