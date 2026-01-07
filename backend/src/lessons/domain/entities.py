@@ -12,7 +12,6 @@ class Lesson(BaseModel):
     updated_at: datetime.datetime
     duration: int
     type: LessonTypes
-    cards: list
 
 
 class LessonCreate(BaseModel):
@@ -24,3 +23,4 @@ class LessonUpdate(BaseModel):
     id: int
     duration: int | None = None
     type: LessonTypes | None = None
+    cards: list | None = None

@@ -19,5 +19,5 @@ class ICardRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_all(self) -> List[Card]:
+    async def get_by_id(self, lesson_id: int) -> List[Card]:
         pass

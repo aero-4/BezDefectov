@@ -1,12 +1,13 @@
 from typing import List
 
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.cards.domain.entities import CardCreate, Card, CardUpdate
 from src.cards.domain.interfaces.card_repo import ICardRepository
 from src.cards.infrastructure.db.orm import CardsOrm
-from src.core.domain.exceptions import AlreadyExists
+from src.core.domain.exceptions import AlreadyExists, NotFound
 
 
 class PGCardRepository(ICardRepository):
@@ -21,14 +22,15 @@ class PGCardRepository(ICardRepository):
         try:
             await self.session.flush()
         except IntegrityError as e:
-            print(e)
             raise AlreadyExists()
 
         return self._to_domain(obj)
 
-
-    async def get_all(self) -> List[Card]:
-        ...
+    async def get_by_id(self, lesson_id: int) -> List[Card]:
+        stmt = select(CardsOrm).where(CardsOrm.lesson_id == lesson_id)
+        result = await self.session.execute(stmt)
+        objs = [self._to_domain(obj) for obj in result.scalars().all()]
+        return objs
 
     async def delete(self, id: int) -> bool:
         ...

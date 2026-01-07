@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,7 +18,7 @@ class LessonRepository(ILessonRepository):
         super().__init__()
         self.session = session
 
-    async def add(self, lesson: LessonCreate):
+    async def add(self, lesson: LessonCreate) -> Lesson:
         obj = LessonsOrm(**lesson.model_dump())
         self.session.add(obj)
 
@@ -45,12 +47,27 @@ class LessonRepository(ILessonRepository):
         return self._to_domain(obj)
 
 
+    async def get_all_by_type(self, type: str) -> List[Lesson]:
+        stmt = select(LessonsOrm).filter_by(type=type)
+        result = await self.session.execute(stmt)
+        objs = result.scalars().all()
 
-    async def get_all_by_filters(self, type: str) -> Lesson:
-        ...
+        if not objs:
+            raise NotFound()
 
-    async def delete(self, id: int):
-        ...
+        return [self._to_domain(obj) for obj in objs]
+
+    async def delete(self, id: int) -> None:
+        stmt = select(LessonsOrm).where(LessonsOrm.id == id)
+        result = await self.session.execute(stmt)
+        obj = result.scalar_one_or_none()
+        if not obj:
+            raise NotFound()
+
+        await self.session.delete(obj)
+        await self.session.flush()
+
+        return None
 
     @staticmethod
     def _to_domain(lesson: LessonsOrm) -> Lesson:
@@ -60,9 +77,4 @@ class LessonRepository(ILessonRepository):
             updated_at=lesson.updated_at,
             duration=lesson.duration,
             type=lesson.type,
-            cards=[Card(
-                id=i.id,
-                title=i.title,
-                text=i.text
-            ) for i in lesson.cards],
         )

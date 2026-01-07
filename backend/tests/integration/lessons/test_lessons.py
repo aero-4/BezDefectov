@@ -11,7 +11,7 @@ from tests.integration.conftest import base_url
 
 
 @pytest.mark.asyncio
-async def test_add_lesson():
+async def test_add_lesson(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         lesson_dto = LessonCreateDTO(duration=25, type=LessonTypes.r)
         response = await client.post("/api/lessons/", json=lesson_dto.model_dump(mode="json"))
@@ -25,7 +25,25 @@ async def test_add_lesson():
         assert lesson.duration == lesson_dto.duration
         assert create_card.text == card.text
 
-        response3 = await client.get(f"/api/lessons/{lesson.id}")
-        lesson2 = Lesson(**response3.json())
+        return lesson
 
-        assert lesson2.cards[0]["id"] == card.id
+
+@pytest.mark.asyncio
+async def test_get_lessons_with_type(clear_db):
+    async with AsyncClient(base_url=base_url) as client:
+        lessons_dto1 = LessonCreateDTO(duration=10, type=LessonTypes.r)
+        lessons_dto2 = LessonCreateDTO(duration=20, type=LessonTypes.sh)
+        lessons_dto3 = LessonCreateDTO(duration=5, type=LessonTypes.r)
+
+        resp1 = await client.post("/api/lessons/", json=lessons_dto1.model_dump())
+        resp2 = await client.post("/api/lessons/", json=lessons_dto2.model_dump())
+        resp3 = await client.post("/api/lessons/", json=lessons_dto3.model_dump())
+
+        l1 = Lesson(**resp1.json())
+        l3 = Lesson(**resp3.json())
+
+        resp4 = await client.get(f"/api/lessons/types/{LessonTypes.r}")
+        data = resp4.json()
+
+        assert data[0]["id"] == l1.id
+        assert data[1]["id"] == l3.id
