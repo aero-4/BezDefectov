@@ -14,6 +14,8 @@ class UsersOrm(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), default=get_timezone_now)
+
     user_name: Mapped[str] = mapped_column(nullable=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
+    series_days: Mapped[int] = mapped_column(default=0)

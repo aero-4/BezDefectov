@@ -4,7 +4,6 @@ from enum import Enum, StrEnum
 from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.db.base import Base
 from src.utils.datetimes import get_timezone_now
 from src.cards.infrastructure.db.orm import *
 

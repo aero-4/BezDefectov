@@ -33,3 +33,5 @@ async def delete(id: int, uow: LessonUoWDeps):
 @lessons_api_router.patch("/{id}")
 async def update(id: int, lesson_data: LessonUpdateDTO, uow: LessonUoWDeps):
     return await update_lesson(id, lesson_data, uow)
+
+

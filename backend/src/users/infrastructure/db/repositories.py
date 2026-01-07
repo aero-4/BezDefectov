@@ -71,4 +71,5 @@ class PGUserRepository(IUserRepository):
             email=obj.email,
             hashed_password=obj.hashed_password,
             user_name=obj.user_name,
+            series_days=obj.series_days
         )

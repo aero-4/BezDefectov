@@ -9,6 +9,7 @@ class User(BaseModel):
     user_name: str | None
     email: str
     hashed_password: str
+    series_days: int
 
 
 class UserCreate(BaseModel):

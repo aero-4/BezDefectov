@@ -19,3 +19,5 @@ async def clear_db():
         logging.info("DB cleared")
 
     return True
+
+
