@@ -5,6 +5,7 @@ import Loader from "./ui/loaders/Loader.tsx";
 import Layout from "./ui/components/Layout.tsx";
 import Home from "./ui/pages/Home.tsx";
 import Register from "./ui/pages/Register.tsx";
+import Login from "./ui/pages/Login.tsx";
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                         <Route path="/" element={<Layout/>}>
                             <Route index element={<Home/>}/>
                             <Route path="/register" element={<Register/>}/>
+                            <Route path="/login" element={<Login/>}/>
 
                         </Route>
                     </Routes>
