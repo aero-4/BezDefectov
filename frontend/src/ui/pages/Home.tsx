@@ -31,26 +31,26 @@ function Home() {
             </div>
 
 
-            <div className="grid grid-cols-2 gap-6 font-semibold">
+            <div className="grid grid-cols-1 md:grid-cols-2  gap-6 font-semibold">
                 <div className="border text-black">
 
                     <span className="text-[180px] text-[#0022FF] font-bold">1</span>
 
                     <p className="font-prosto">Составим план уроков за вас. Вы можете проходить их в любое время</p>
                 </div>
-                <div className="border text-black translate-y-24">
+                <div className="border text-black md:translate-y-24">
 
                     <span className="text-[180px] text-[#0022FF] font-bold">2</span>
 
                     <p className="font-prosto">Проходите уроки каждый день и создайте новую привычку</p>
                 </div>
-                <div className="border text-black translate-y-10">
+                <div className="border text-black md:translate-y-10">
 
                     <span className="text-[180px] text-[#0022FF] font-bold">3</span>
                     <p className="font-prosto">Закрепляйте новые умения вместе с ИИ партнером</p>
 
                 </div>
-                <div className="border text-black translate-y-32">
+                <div className="border text-black md:translate-y-32">
 
                     <span className="text-[180px] text-[#0022FF] font-bold">4</span>
                     <p className="font-prosto">Получайте новые рекомандации каждый день от наших логопедов</p>
