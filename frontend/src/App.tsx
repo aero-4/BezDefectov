@@ -6,6 +6,7 @@ import Layout from "./ui/components/Layout.tsx";
 import Home from "./ui/pages/Home.tsx";
 import Register from "./ui/pages/Register.tsx";
 import Login from "./ui/pages/Login.tsx";
+import FAQ from "./ui/pages/FAQ.tsx";
 
 function App() {
     return (
@@ -17,7 +18,7 @@ function App() {
                             <Route index element={<Home/>}/>
                             <Route path="/register" element={<Register/>}/>
                             <Route path="/login" element={<Login/>}/>
-
+                            <Route path="/faq" element={<FAQ/>}/>
                         </Route>
                     </Routes>
                 </Suspense>
