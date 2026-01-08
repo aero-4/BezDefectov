@@ -21,7 +21,7 @@ from src.users.presentation.api import users_api_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await check_redis_connection()
+    # await check_redis_connection()
     await recreate_schema()
     yield
 
@@ -42,11 +42,10 @@ async def app_exception_handler(request: Request, exc: AppException):
         }
     )
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

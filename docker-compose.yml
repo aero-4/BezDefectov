@@ -1,0 +1,147 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: bezdefectov:latest
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./backend:/app
+      - ./logs/fastapi:/app/logs
+      - ./media:/media
+      - ./static:/static
+    env_file:
+      - backend/.env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+    ports:
+      - "8000:8000"
+    command: uvicorn src:app --reload
+
+
+#  frontend:
+#    build: ./frontend
+#    volumes:
+#      - frontend_dist:/app/dist
+
+
+  redis:
+    image: redis:latest
+    environment:
+      REDIS_HOST: "0.0.0.0"
+      REDIS_PORT: "6379"
+    volumes:
+      - redis_data:/data  # RDB + AOF
+      - ./infra/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    restart: always
+
+
+  nginx:
+    build: ./infra/nginx
+    depends_on:
+      - backend
+    volumes:
+      - ./media:/media:ro
+      - ./static:/static:ro
+      - ./logs/nginx:/var/log/nginx
+    env_file:
+      - backend/.env
+    ports:
+      - "80:80"
+      - "443:443"
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_etc:/etc/letsencrypt
+    env_file:
+      - backend/.env
+    command: >
+      certonly
+      --webroot
+      --webroot-path=/var/www/certbot
+      --email admin@migom.shop
+      --agree-tos
+      --no-eff-email
+      -d ${DOMAIN}
+  
+
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./logs/postgresql:/var/log/postgresql
+    env_file:
+      - backend/.env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    restart: always
+
+#  prometheus:
+#    image: prom/prometheus:v3.2.1
+#    container_name: prometheus
+#    depends_on:
+#      - app
+#    volumes:
+#      - prometheus_data:/prometheus
+#      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#    ports:
+#      - "9090:9090"
+#    command:
+#      - "--config.file=/etc/prometheus/prometheus.yml"
+#      - "--storage.tsdb.path=/prometheus"
+#      - "--storage.tsdb.retention.time=7d"
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+#    ports:
+#      - "9100:9100"
+
+#  postgres_exporter:
+#    image: prometheuscommunity/postgres-exporter:latest
+#    container_name: postgres_exporter
+#    depends_on:
+#      - db
+#    env_file:
+#      - .env
+#    environment:
+#      DATA_SOURCE_NAME: postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/postgres?sslmode=disable
+#    ports:
+#      - "9187:9187"
+#    restart: always
+
+  nginx_exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx_exporter
+    depends_on:
+      - nginx
+    ports:
+     - "9113:9113"
+    command:
+      - '-nginx.scrape-uri=http://nginx/stub_status'
+    restart: always
+
+
+
+volumes:
+  redis_data:
+  postgres_data:
+  frontend_dist:
+  certbot_www:
+  certbot_etc:
