@@ -1,0 +1,30 @@
+import React from 'react';
+import BurgerMenu from "../buttons/BurgerMenu";
+
+function Menu({ onClose }) {
+    return (
+        <div className="fixed inset-0 bg-white z-50 ">
+
+            <div className="relative h-24">
+                <h1 className="p-2 absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-mono">
+                    Меню
+                </h1>
+
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <BurgerMenu onClick={onClose} />
+                </div>
+            </div>
+
+            <nav className="flex flex-col gap-15 p-24 text-lg font-bold">
+                <a href="/lessons" className="link" onClick={onClose}>Уроки</a>
+                <a href="/profile" className="link"  onClick={onClose}>Профиль</a>
+                <a href="/register" className="link"  onClick={onClose}>Регистрация</a>
+                <a href="/login" className="link"  onClick={onClose}>Войти</a>
+                <a href="/faq" className="link"  onClick={onClose}>О нас</a>
+            </nav>
+
+        </div>
+    );
+}
+
+export default Menu;

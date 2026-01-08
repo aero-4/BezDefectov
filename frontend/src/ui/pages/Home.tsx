@@ -4,7 +4,7 @@ import homePhoto from "../../assets/home.png";
 
 function Home() {
     return (
-        <div className="flex flex-col gap-17">
+        <div className="flex flex-col gap-18">
             <div className="flex flex-col md:flex-row gap-5 my-9">
                 <div className="flex flex-col gap-9">
                     <h1 className="text-4xl font-bold font-mono">Идеальное произношение - близко</h1>

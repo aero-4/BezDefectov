@@ -1,18 +1,33 @@
-import React from 'react';
-import menuPng from "../../assets/menu.png";
+import React, { useState } from 'react';
+import Menu from "./Menu.tsx";
+import BurgerMenu from "../buttons/BurgerMenu.tsx";
 
 function Navbar() {
+    const [isVisibleMenu, setVisibleMenu] = useState(false);
+
+    const closeMenu = () => setVisibleMenu(false);
+
     return (
-        <div className="flex flex-row gap-3 my-6">
+        <>
+            {isVisibleMenu && <Menu onClose={closeMenu} />}
 
-            <a className="p-3 hover:opacity-70" href="/">
-                БезДефектов.ру
-            </a>
+            <header className="w-full h-24 bg-white z-40">
+                <div className="relative h-full w-full">
 
-            <button className="p-4 ml-auto">
-                <img className="w-6" src={menuPng} alt="menu"/>
-            </button>
-        </div>
+                    <a
+                        href="/"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 font-medium"
+                    >
+                        БезДефектов.ру
+                    </a>
+
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                        <BurgerMenu onClick={() => setVisibleMenu(true)}/>
+                    </div>
+
+                </div>
+            </header>
+        </>
     );
 }
 
