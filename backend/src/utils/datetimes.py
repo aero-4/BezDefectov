@@ -16,5 +16,6 @@ def is_yesterday_two_dates(date1: datetime.date, date2: datetime.date = datetime
     return date2 - date1 == datetime.timedelta(days=1)
 
 
+
 def is_today(date1: datetime.date, date2: datetime.date = datetime.date.today()):
-    return date2 - date1 == datetime.timedelta(days=0)
+    return date1 == date2

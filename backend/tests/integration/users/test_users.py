@@ -12,3 +12,4 @@ async def test_get_me_user(clear_db, new_user):
         user = await new_user(client)
         print(user)
 
+

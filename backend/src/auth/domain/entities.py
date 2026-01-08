@@ -19,8 +19,8 @@ class TokenData(CustomModel):
 
 class AnonymousUser(CustomModel):
     id: int | None = None
-    created_at: datetime.datetime | None
-    updated_at: datetime.datetime | None
+    created_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None
     user_name: str | None = None
     email: str | None = None
     hashed_password: str | None = None
