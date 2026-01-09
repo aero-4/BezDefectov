@@ -16,6 +16,25 @@ from src.utils.strings import generate_random_alphanum
 from tests.integration.conftest import base_url
 
 
+
+@pytest.mark.asyncio
+async def test_add_some_lessons(clear_db):
+    async with AsyncClient(base_url=base_url) as client:
+        lesson_dto = LessonCreateDTO(duration=12, type=LessonTypes.r)
+        response = await client.post("/api/lessons/", json=lesson_dto.model_dump(mode="json"))
+        lesson = Lesson(**response.json())
+
+        for i in range(50):
+            create_card = CardCreateDTO(title="Слоги", text="ра-ра-ра ро-ро-ро ре-ре-ре", lesson_id=lesson.id)
+            response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
+
+            card = Card(**response2.json())
+
+            assert lesson.duration == lesson_dto.duration
+            assert create_card.text == card.text
+
+        return lesson
+
 @pytest.mark.asyncio
 async def test_add_lesson(clear_db):
     async with AsyncClient(base_url=base_url) as client:
@@ -88,7 +107,6 @@ async def test_update_series_start(clear_db, new_user):
         response = await client.options(f"/api/lessons/series")
         user = User(**response.json())
 
-        print(user)
         assert user.series_days == 1
 
 

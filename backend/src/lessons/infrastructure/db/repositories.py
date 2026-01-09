@@ -63,9 +63,6 @@ class LessonRepository(ILessonRepository):
         result = await self.session.execute(stmt)
         objs = result.scalars().all()
 
-        if not objs:
-            raise NotFound()
-
         return [self._to_domain(obj) for obj in objs]
 
     async def delete(self, id: int) -> None:

@@ -1,10 +1,8 @@
-/* 1. IMPORT GOOGLE FONTS FIRST */
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-/* 2. Import Tailwind AFTER external fonts */
+
 @import "tailwindcss";
 
-/* 3. Define local fonts */
 @font-face {
     font-family: "Prosto One";
     src: url("/public/fonts/ProstoOne-Regular.ttf") format("truetype");
@@ -48,8 +46,8 @@
     --font-mono: 'Druk Wide Cyr';
 
     --font-oswald: 'Oswald', sans-serif;
-    --font-prosto: 'Prosto One', sans-serif;
     --font-alata: 'Alata', sans-serif;
     --font-montserrat: 'Montserrat', sans-serif;
     --font-capriola: 'Capriola' sans-serif;
+    --font-prosto: 'Arial' sans-serif;
 }

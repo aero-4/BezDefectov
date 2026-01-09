@@ -30,7 +30,6 @@
 .input {
     @apply
     bg-[#D9D9D9]
-    font-prosto
     p-4
     w-full
     focus:outline-0
@@ -40,7 +39,6 @@
 .lesson {
     @apply
     bg-[#3B19FF]
-    font-prosto
     text-white
     rounded-lg
     w-25 h-25
@@ -58,7 +56,6 @@
 .border-big {
     @apply
     bg-[#3B19FF]
-    font-prosto
     text-white
     rounded-xl
     flex

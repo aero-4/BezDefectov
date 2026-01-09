@@ -26,6 +26,8 @@ export default function Lessons() {
 
     if (!type) return <span>Не знаю такого типа уроков</span>;
 
+    console.log(lessons)
+
     useEffect(() => {
         let mounted = true;
 
@@ -38,7 +40,8 @@ export default function Lessons() {
 
                 const data: Lesson[] = await res.json();
 
-                if (!mounted) return;
+                if (!mounted)
+                    return;
 
                 setLessons(data);
             } catch (e) {
@@ -53,6 +56,7 @@ export default function Lessons() {
     }, [type]);
 
     if (loading) return <Loader />;
+    if (!lessons || lessons === []) return;
 
     return (
         <div className="flex flex-col gap-6">

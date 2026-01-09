@@ -20,8 +20,11 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             request.state.user = AnonymousUser()
         else:
             async with PGUserUnitOfWork() as uow:
-                if user := await uow.users.get_by_id(token_data.user_id):
-                    request.state.user = user or AnonymousUser()
+                try:
+                    if user := await uow.users.get_by_id(token_data.user_id):
+                        request.state.user = user or AnonymousUser()
+                except:
+                    request.state.user = AnonymousUser()
 
         response = await call_next(request)
         return response
