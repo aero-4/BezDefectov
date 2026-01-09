@@ -1,19 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 export type TimerProps = {
-    /** Начальное количество минут (integer). По умолчанию 25 */
     minutes?: number;
-    /** Если true — запускает таймер сразу */
     isStarted?: boolean;
-    /** Если true — ставит таймер на паузу */
     isStopped?: boolean;
-    /** Вызывается один раз при достижении 0 */
     finish_callback?: () => void;
-    /** Диаметр в пикселях — удобно для кастомизации */
     size?: number;
-    /** Толщина ободка круга */
     strokeWidth?: number;
-    /** Разрешить ввод минут внутри компонента */
     allowEdit?: boolean;
     className?: string;
 };
@@ -27,7 +20,6 @@ const Timer: React.FC<TimerProps> = ({
                                          finish_callback,
                                          size = 160,
                                          strokeWidth = 8,
-                                         allowEdit = true,
                                          className = '',
                                      }) => {
     const [totalSeconds, setTotalSeconds] = useState<number>(Math.max(0, Math.floor(minutes) * 60));
@@ -36,13 +28,11 @@ const Timer: React.FC<TimerProps> = ({
     const intervalRef = useRef<number | null>(null);
     const finishedRef = useRef(false);
 
-    // синхронизация с пропсами minutes / isStarted / isStopped
     useEffect(() => {
         const secs = Math.max(0, Math.floor(minutes) * 60);
         setTotalSeconds(secs);
         setRemainingSeconds(secs);
         finishedRef.current = false;
-        // старт/пауза в зависимости от пропсов
         if (isStopped) {
             setRunning(false);
         } else if (isStarted && secs > 0) {
@@ -52,18 +42,15 @@ const Timer: React.FC<TimerProps> = ({
         }
     }, [minutes, isStarted, isStopped]);
 
-    // основной интервал
     useEffect(() => {
         if (running && remainingSeconds > 0) {
             intervalRef.current = window.setInterval(() => {
                 setRemainingSeconds((s) => {
                     if (s <= 1) {
-                        // остановка
                         window.clearInterval(intervalRef.current ?? undefined);
                         intervalRef.current = null;
                         finishedRef.current = true;
                         setRunning(false);
-                        // callback один раз
                         if (finish_callback) finish_callback();
                         return 0;
                     }
@@ -80,13 +67,11 @@ const Timer: React.FC<TimerProps> = ({
         };
     }, [running]);
 
-    // SVG progress values
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const progress = totalSeconds > 0 ? remainingSeconds / totalSeconds : 0;
     const dashOffset = circumference * (1 - progress);
 
-    // local edit (only while not running)
     const [inputMinutes, setInputMinutes] = useState<string>(String(Math.max(0, Math.floor(minutes))));
 
     const applyInput = () => {
