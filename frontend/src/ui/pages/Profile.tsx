@@ -68,13 +68,13 @@ const Profile: React.FC = () => {
     const fireImg = series > 0 ? fireActivePng : fireDisactivePng;
 
     return (
-        <div className="flex flex-col items-center justify-center mx-auto gap-6 max-w-md">
+        <div className="flex flex-col items-center justify-center mx-auto gap-6 max-w-md font-medium">
             <div className="flex items-center gap-4">
                 <div className="flex flex-col gap-3 items-center">
                     <img src={profilePng} alt="profile" className="w-20 h-20 rounded-full object-cover"/>
 
                     <div className="flex items-center gap-2 items-center">
-                        <span className="text-lg font-medium">{displayName}</span>
+                        <span className="font-medium">{displayName}</span>
 
                         <button type="button" aria-label="edit">
                             <img src={editPng} alt="edit" className="w-4 h-4"/>
@@ -84,7 +84,7 @@ const Profile: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 border w-full">
-                <p className="mb-auto my-12 font-montserrat">Серия уроков</p>
+                <p className="mb-auto my-12">Серия уроков</p>
 
                 <div className="flex flex-row gap-2 ml-auto p-3 items-center">
                     <h1 className="text-3xl font-bold font-montserrat">{series}</h1>

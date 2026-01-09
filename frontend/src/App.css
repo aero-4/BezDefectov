@@ -1,47 +1,5 @@
 @import "tailwindcss";
 
-
-@font-face {
-    font-family: "Prosto One";
-    src: url("fonts/ProstoOne-Regular.ttf") format("ttf");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-    font-family: 'Alata';
-    font-style: normal;
-    font-weight: 400;
-    src: url('fonts/alata-v12-latin-regular.eot'); /* IE9 Compat Modes */
-    src: url('fonts/alata-v12-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('fonts/alata-v12-latin-regular.woff2') format('woff2'), /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-    url('fonts/alata-v12-latin-regular.woff') format('woff'), /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-    url('fonts/alata-v12-latin-regular.ttf') format('truetype'), /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
-    url('fonts/alata-v12-latin-regular.svg#Alata') format('svg'); /* Legacy iOS */
-}
-
-@font-face {
-    font-family: "Montserrat";
-    src: url("./fonts/Montserrat/static/Montserrat-Medium.ttf") format("ttf");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-
-
-@theme {
-    --default-font-family: 'Inter', var(--font-sans);
-    --font-mono: "Druk Wide Cyr" ;
-    --font-prosto: "Prosto One" sans-serif;
-    --font-zed: "Zed";
-    --font-alata: "Alata";
-    --font-montserrat: "Montserrat" sans-serif;
-}
-
-
 .action_btn {
     @apply bg-[#3B19FF] hover:opacity-90 active:opacity-80 text-gray-100 text-lg font-medium p-3
 }

@@ -1,5 +1,6 @@
 import {useState, Suspense} from 'react'
 import './App.css'
+import './fonts.css'
 import {Routes, Route, BrowserRouter} from "react-router-dom";
 import Loader from "./ui/loaders/Loader.tsx";
 import Layout from "./ui/components/Layout.tsx";
