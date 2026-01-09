@@ -31,9 +31,8 @@ function Home() {
             </div>
 
 
-            <div className="grid grid-cols-1 md:grid-cols-2  gap-6 font-semibold">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-semibold">
                 <div className="border text-black">
-
                     <span className="text-[180px] text-[#0022FF] font-bold">1</span>
 
                     <p className="font-prosto">Составим план уроков за вас. Вы можете проходить их в любое время</p>
