@@ -27,3 +27,20 @@
     focus:outline-0
     hover:bg-[#D9D9D9]/90
 }
+
+.lesson {
+    @apply
+    bg-[#3B19FF]
+    text-white
+    rounded-lg
+    w-25 h-25
+    flex
+    items-center
+    justify-center
+    no-underline
+    text-3xl
+    font-medium
+    hover:opacity-90
+    active:opacity-85
+
+}
