@@ -16,7 +16,7 @@ function Menu({ onClose }) {
             </div>
 
             <nav className="flex flex-col gap-15 p-24 text-lg font-bold">
-                <a href="/lessons" className="link" onClick={onClose}>Уроки</a>
+                <a href="/types" className="link" onClick={onClose}>Уроки</a>
                 <a href="/profile" className="link"  onClick={onClose}>Профиль</a>
                 <a href="/register" className="link"  onClick={onClose}>Регистрация</a>
                 <a href="/login" className="link"  onClick={onClose}>Войти</a>

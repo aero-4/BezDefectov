@@ -25,7 +25,7 @@
 
 
 .action_btn {
-    @apply bg-[#3B19FF] hover:opacity-90 active:opacity-80 text-gray-100 text-lg font-medium px-3
+    @apply bg-[#3B19FF] hover:opacity-90 active:opacity-80 text-gray-100 text-lg font-medium p-3
 }
 
 .border {
@@ -59,6 +59,21 @@
     no-underline
     text-3xl
     font-bold
+    hover:opacity-90
+    active:opacity-85
+
+}
+
+.border-mini {
+    @apply
+    bg-[#3B19FF]
+    p-12
+    font-prosto
+    text-white
+    rounded-xl
+    flex
+    no-underline
+    text-xl
     hover:opacity-90
     active:opacity-85
 

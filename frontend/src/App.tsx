@@ -8,6 +8,7 @@ import Register from "./ui/pages/Register.tsx";
 import Login from "./ui/pages/Login.tsx";
 import FAQ from "./ui/pages/FAQ.tsx";
 import Lessons from "./ui/pages/Lessons.tsx";
+import Types from "./ui/pages/Types.tsx";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                             <Route path="/register" element={<Register/>}/>
                             <Route path="/login" element={<Login/>}/>
                             <Route path="/faq" element={<FAQ/>}/>
+                            <Route path="/types" element={<Types/>}/>
                             <Route path="/lessons/:type" element={<Lessons/>}/>
                         </Route>
                     </Routes>
