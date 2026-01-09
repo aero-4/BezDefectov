@@ -9,6 +9,7 @@ import Login from "./ui/pages/Login.tsx";
 import FAQ from "./ui/pages/FAQ.tsx";
 import Lessons from "./ui/pages/Lessons.tsx";
 import Types from "./ui/pages/Types.tsx";
+import Profile from "./ui/pages/Profile.tsx";
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                             <Route path="/faq" element={<FAQ/>}/>
                             <Route path="/types" element={<Types/>}/>
                             <Route path="/lessons/:type" element={<Lessons/>}/>
+                            <Route path="/profile" element={<Profile/>}/>
                         </Route>
                     </Routes>
                 </Suspense>

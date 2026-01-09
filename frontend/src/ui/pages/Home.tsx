@@ -9,7 +9,7 @@ function Home() {
                 <div className="flex flex-col gap-9">
                     <h1 className="text-4xl font-bold font-mono">Идеальное произношение - близко</h1>
 
-                    <p>
+                    <p className="font-montserrat">
                         Попробуйте исправить свои дефекты с помощью нашего сервиса совершенно бесплатно!
                     </p>
 
