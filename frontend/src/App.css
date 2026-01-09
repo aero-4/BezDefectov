@@ -46,6 +46,21 @@
     @apply bg-[#3B19FF] hover:opacity-90 active:opacity-80 text-gray-100 text-lg font-medium p-3
 }
 
+.dialog_btn {
+    @apply
+    flex flex-row gap-1
+    bg-blue-200 border-2
+    border-blue-500
+    rounded-md
+    hover:opacity-90
+    active:opacity-80
+    text-lg
+    font-bold
+    p-4
+
+}
+
+
 .border {
     @apply p-4 rounded-4xl bg-[#F8F6FF] border-0 hover:opacity-70
 }
