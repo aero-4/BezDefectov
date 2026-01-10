@@ -21,4 +21,4 @@ async def update_series(uow: UserUoWDeps, user: User) -> User:
         user = await uow.users.update(user_data)
         await uow.commit()
 
-    return user
+    return user.model_dump(exclude={"hashed_password", "id"})

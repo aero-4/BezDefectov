@@ -12,21 +12,12 @@ type Lesson = {
 };
 
 export default function Lessons() {
-    const mockLessons: Lesson[] = Array.from({ length: 10 }, (_, i) => ({
-        id: i + 1,
-        created_at: new Date(Date.now() - Math.random() * 1e10).toISOString(),
-        updated_at: new Date(Date.now() - Math.random() * 1e9).toISOString(),
-        duration: Math.floor(Math.random() * 120) + 10,
-        type: 'test',
-    }));
-
-    const [lessons, setLessons] = useState<Lesson[]>(mockLessons);
+    const [lessons, setLessons] = useState<Lesson[]>(null);
     const [loading, setLoading] = useState(true);
     const { type } = useParams<{ type: string }>();
 
     if (!type) return <span>Не знаю такого типа уроков</span>;
 
-    console.log(lessons)
 
     useEffect(() => {
         let mounted = true;
@@ -56,7 +47,8 @@ export default function Lessons() {
     }, [type]);
 
     if (loading) return <Loader />;
-    if (!lessons || lessons === []) return;
+    if (!lessons) return <h1>Нет уроков</h1>;
+
 
     return (
         <div className="flex flex-col gap-6">

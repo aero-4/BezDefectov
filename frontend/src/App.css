@@ -6,8 +6,11 @@
 
 .dialog_btn {
     @apply
-    flex flex-row gap-1
-    bg-blue-200 border-2
+    justify-center
+    flex flex-row
+    gap-1
+    bg-blue-200
+    border-2
     border-blue-500
     rounded-md
     hover:opacity-90
@@ -15,12 +18,14 @@
     text-lg
     font-bold
     p-4
-
 }
 
+.title {
+    @apply text-2xl font-semibold font-mono
+}
 
 .border {
-    @apply p-4 rounded-4xl bg-[#F8F6FF] border-0 hover:opacity-70
+    @apply p-4 rounded-4xl bg-[#F8F6FF] border-0 hover:opacity-90
 }
 
 .link {

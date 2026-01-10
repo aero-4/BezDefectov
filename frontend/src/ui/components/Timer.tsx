@@ -14,7 +14,7 @@ export type TimerProps = {
 const pad = (n: number) => n.toString().padStart(2, '0');
 
 const Timer: React.FC<TimerProps> = ({
-                                         minutes = 25,
+                                         minutes,
                                          isStarted = false,
                                          isStopped = false,
                                          finish_callback,

@@ -5,6 +5,8 @@ import Loader from '../loaders/Loader.tsx';
 import Timer from '../components/Timer.tsx';
 import avatarRobotPng from '../../assets/ai-avatar.png';
 import microfonePng from '../../assets/microfone.png';
+import Tooltip from "../buttons/Tooltip.tsx";
+import Series from "../components/Series.tsx";
 
 export interface Card {
     id: number;
@@ -30,6 +32,7 @@ function Lesson() {
     const [cards, setCards] = useState<Card[]>([]);
     const [stage, setStage] = useState<Stage>('intro');
 
+
     const [isUseMicrofone, setUseMicrofone] = useState(false);
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
@@ -37,6 +40,7 @@ function Lesson() {
     const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
     const [webrtcStatus, setWebrtcStatus] = useState('idle');
     const pcRef = useRef<RTCPeerConnection | null>(null);
+    const [series, setSeries] = useState(null)
 
     useEffect(() => {
         let mounted = true;
@@ -112,6 +116,31 @@ function Lesson() {
         setLocalStream(null);
     };
 
+
+    const handleSubmitSeries = async (e) => {
+        try {
+            setLoading(true);
+            const res = await fetch(`${API_URL}/lessons/series`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include"
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                return;
+            }
+
+            setSeries(data)
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (!lesson || !lesson.duration) return <h1>Урок не найден</h1>
+
     return (
         <div className="min-h-screen flex flex-col">
 
@@ -134,30 +163,32 @@ function Lesson() {
             )}
 
             {stage === 'cards' && (
-                <div className="flex flex-col gap-7 w-full">
-                    <h1 className="text-xl font-semibold font-mono">Произносите</h1>
+                <div className="flex flex-col w-full">
+                    <div className="flex flex-row">
+                        <h1 className="text-2xl font-semibold font-mono">Произносите</h1>
 
-                    <div className="flex ml-auto">
-                        <Timer
-                            minutes={lesson.duration}
-                            isStarted
-                            size={120}
-                            strokeWidth={3}
-                            showControls
-                            finish_callback={() => setStage('dialog')}
-                        />
+                        <div className="flex ml-auto">
+                            <Timer
+                                minutes={lesson.duration}
+                                isStarted
+                                size={120}
+                                strokeWidth={3}
+                                showControls
+                                finish_callback={() => setStage('dialog')}
+                            />
+                        </div>
                     </div>
 
-                    <div className="flex flex-col gap-6 mt-6">
+                    <div className="flex flex-col gap-6">
                         {Object.entries(groupedCards).map(([title, group]) => (
                             <div key={title}>
-                                <h2 className="font-semibold mb-2">{title}</h2>
+                                <h2 className="font-semibold p-2">{title}</h2>
 
-                                <div className="rounded-xl p-4 flex flex-col gap-3">
+                                <div className="rounded-xl flex flex-col gap-3">
                                     {group.map((card) => (
                                         <p
                                             key={card.id}
-                                            className="whitespace-pre-line"
+                                            className="border whitespace-pre-line"
                                         >
                                             {card.text}
                                         </p>
@@ -170,28 +201,54 @@ function Lesson() {
             )}
 
             {stage === 'dialog' && (
-                <div className="my-20 max-w-md mx-auto flex flex-col gap-6">
-                    <h1 className="text-2xl font-semibold font-mono text-center">Диалог</h1>
+                <div>
+                    <div className="flex flex-row gap-3">
+                        <h1 className="title">Диалог</h1>
 
-                    <img
-                        src={avatarRobotPng}
-                        alt="AI"
-                        className="rounded-xl mx-auto"
-                    />
+                        <Tooltip children={<button>зачем?</button>}
+                                 content="Для того чтобы вырабатывать автоматизацию при разговоре с реальным человеком, говоря звуки даже не задумываясь."/>
 
-                    {!isUseMicrofone ? (
-                        <button onClick={requestMicAndStartRecording} className="dialog_btn">
-                            <p>Разрешить микрофон</p>
-                            <img src={microfonePng} alt="mic" />
-                        </button>
-                    ) : (
-                        <button
-                            onClick={isRecording ? stopRecording : requestMicAndStartRecording}
-                            className="py-2 px-4 rounded-lg bg-gray-200"
-                        >
-                            {isRecording ? 'Остановить запись' : 'Начать запись'}
-                        </button>
+                    </div>
+
+                    <div className="my-20 max-w-md mx-auto flex flex-col items-center gap-6">
+
+                        <img
+                            src={avatarRobotPng}
+                            alt="AI"
+                            className="rounded-xl mx-auto"
+                        />
+
+                        {!isUseMicrofone ? (
+                            <button onClick={requestMicAndStartRecording} className="dialog_btn">
+                                <p>Разрешить микрофон</p>
+                                <img src={microfonePng} alt="mic"/>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={isRecording ? stopRecording : requestMicAndStartRecording}
+                                className="dialog_btn"
+                            >
+                                {isRecording ? 'Остановить запись' : 'Начать запись'}
+                            </button>
+                        )}
+
+                    </div>
+                </div>
+            )}
+
+            {stage === "finish" && (
+                <div className="flex flex-col h-full min-h-screen">
+
+                    {series && series.series_days > 0 && (
+                        <Series series_day={series.series_days}/>
                     )}
+
+                    <h1 className="title">Завершение</h1>
+
+                    <button className="action_btn w-full items-center my-auto justify-center max-w-xl mx-auto"
+                            onClick={handleSubmitSeries}>
+                        Закончить урок
+                    </button>
                 </div>
             )}
 

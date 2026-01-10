@@ -1,6 +1,7 @@
 import React from 'react';
 import homePhoto from "../../assets/home.png";
-
+import arrowPng from "../../assets/arrow.png";
+import calendarPng from "../../assets/calendar.png";
 
 function Home() {
     return (
@@ -34,9 +35,13 @@ function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-semibold font-montserrat">
                 <div className="border text-black">
-                    <span className="text-[180px] text-[#0022FF] font-bold">1</span>
+                    <div className="flex flex-row">
+                        <span className="flex text-[180px] text-[#0022FF] font-bold">1</span>
+                    </div>
 
                     <p>Составим план уроков за вас. Вы можете проходить их в любое время</p>
+
+
                 </div>
                 <div className="border text-black md:translate-y-24">
 
@@ -62,6 +67,7 @@ function Home() {
             <div className="my-24 p-4">
                 <button className="flex action_btn mx-auto p-5 w-full text-lg text-center rounded"
                         onClick={() => document.location.assign("/register")}>
+                    <img src={arrowPng} alt="arrow" className="w-8"/>
                     Начать
                 </button>
             </div>

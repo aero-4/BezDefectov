@@ -1,4 +1,5 @@
 import datetime
+import random
 
 import pytest
 import httpx
@@ -16,24 +17,90 @@ from src.utils.strings import generate_random_alphanum
 from tests.integration.conftest import base_url
 
 
-
 @pytest.mark.asyncio
-async def test_add_some_lessons(clear_db):
+async def test_add_some_test_lessons(clear_db):
     async with AsyncClient(base_url=base_url) as client:
-        lesson_dto = LessonCreateDTO(duration=12, type=LessonTypes.r)
-        response = await client.post("/api/lessons/", json=lesson_dto.model_dump(mode="json"))
-        lesson = Lesson(**response.json())
+        cards = ["Слоги", "Предложения", "Скороговорки"]
+        texts = ["ра-ра-ра ро-ро-ро ре-ре-ре", "Арина приводит комнату в порядок", "Белые бараны били в барабаны"]
+        types = [LessonTypes.r, LessonTypes.sh]
 
-        for i in range(50):
-            create_card = CardCreateDTO(title="Слоги", text="ра-ра-ра ро-ро-ро ре-ре-ре", lesson_id=lesson.id)
-            response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
+        for i in range(random.randint(50, 100)):
+            lesson_dto = LessonCreateDTO(duration=random.randint(15, 30), type=random.choice(types))
+            response = await client.post("/api/lessons/", json=lesson_dto.model_dump(mode="json"))
+            lesson = Lesson(**response.json())
 
-            card = Card(**response2.json())
+            for i in range(random.randint(50, 100)):
+                create_card = CardCreateDTO(title=random.choice(cards), text=random.choice(texts), lesson_id=lesson.id)
+                response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
 
-            assert lesson.duration == lesson_dto.duration
-            assert create_card.text == card.text
+                card = Card(**response2.json())
+
+                assert lesson.duration == lesson_dto.duration
+                assert create_card.text == card.text
 
         return lesson
+
+
+def load_lines(path: str) -> list[str]:
+    with open(path, encoding="utf-8") as f:
+        return [line.strip() for line in f if line.strip()]
+
+
+@pytest.mark.asyncio
+async def test_massive_real_unique_content(clear_db):
+    async with AsyncClient(base_url=base_url) as client:
+
+        content_r = {
+            "Скороговорки": load_lines("files/r_skorogovorki.txt"),
+            "Слоги": load_lines("files/r_slogi.txt"),
+            "Предложения": load_lines("files/r_predlojenie.txt"),
+        }
+
+        content_sh = {
+            "Скороговорки": load_lines("files/sh_skorogovorki.txt"),
+            "Слоги": load_lines("files/sh_slogi.txt"),
+            "Предложения": load_lines("files/sh_predlojenie.txt"),
+        }
+
+        lessons = []
+        for _ in range(10):  # Можно уменьшить количество уроков, если все карты будут в одном
+            lesson_type = random.choice([LessonTypes.r, LessonTypes.sh])
+            dto = LessonCreateDTO(
+                duration=random.randint(15, 30),
+                type=lesson_type,
+            )
+            r = await client.post("/api/lessons/", json=dto.model_dump(mode="json"))
+            assert r.status_code == 200
+            lessons.append(Lesson(**r.json()))
+
+        for lesson in lessons:
+            queues = content_r if lesson.type == LessonTypes.r else content_sh
+
+            cards = []
+            for category, texts in queues.items():
+                for idx, text in enumerate(texts, start=1):
+                    title = f"{category}"
+                    cards.append((title, text))
+
+            random.shuffle(cards) 
+
+            for title, text in cards:
+                card_dto = CardCreateDTO(
+                    title=title,
+                    text=text,
+                    lesson_id=lesson.id,
+                )
+                r = await client.post(
+                    "/api/cards/",
+                    json=card_dto.model_dump(mode="json"),
+                )
+                assert r.status_code == 200
+
+                card = Card(**r.json())
+                assert card.title == title
+                assert card.text == text
+                assert card.lesson_id == lesson.id
+
 
 @pytest.mark.asyncio
 async def test_add_lesson(clear_db):
@@ -164,7 +231,7 @@ async def test_update_series_started_today(clear_db, new_user):
         SERIES_DAYS = 3
         user_data = UserCreateDTO(email=generate_random_alphanum() + "@email.com",
                                   password=generate_random_alphanum(),
-                                  updated_at=datetime.datetime.now(), # today
+                                  updated_at=datetime.datetime.now(),  # today
                                   series_days=SERIES_DAYS)
         response = await client.post("/api/users/", json=user_data.model_dump(mode="json"))
         user = User(**response.json())
@@ -189,4 +256,3 @@ async def test_update_series_started_today(clear_db, new_user):
         user_me = UserMe(**response3.json())
 
         assert user_me.series_days == SERIES_DAYS
-
