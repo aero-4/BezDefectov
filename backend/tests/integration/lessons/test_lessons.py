@@ -82,7 +82,7 @@ async def test_massive_real_unique_content(clear_db):
                     title = f"{category}"
                     cards.append((title, text))
 
-            random.shuffle(cards) 
+            random.shuffle(cards)
 
             for title, text in cards:
                 card_dto = CardCreateDTO(

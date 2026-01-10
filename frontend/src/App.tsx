@@ -12,28 +12,27 @@ import Lessons from "./ui/pages/Lessons.tsx";
 import Types from "./ui/pages/Types.tsx";
 import Profile from "./ui/pages/Profile.tsx";
 import Lesson from "./ui/pages/Lesson.tsx";
-
+import {AuthProvider} from "./ui/context/AuthContext.tsx";
 function App() {
     return (
-        <>
+        <AuthProvider>
             <BrowserRouter>
                 <Suspense fallback={<Loader/>}>
                     <Routes>
-                        <Route path="/" element={<Layout/>}>
-                            <Route index element={<Home/>}/>
-                            <Route path="/register" element={<Register/>}/>
-                            <Route path="/login" element={<Login/>}/>
-                            <Route path="/faq" element={<FAQ/>}/>
-                            <Route path="/types" element={<Types/>}/>
-                            <Route path="/lessons/:type" element={<Lessons/>}/>
-                            <Route path="/lesson/:id" element={<Lesson/>}/>
-
-                            <Route path="/profile" element={<Profile/>}/>
-                        </Route>
+                            <Route path="/" element={<Layout/>}>
+                                <Route index element={<Home/>}/>
+                                <Route path="/register" element={<Register/>}/>
+                                <Route path="/login" element={<Login/>}/>
+                                <Route path="/faq" element={<FAQ/>}/>
+                                <Route path="/types" element={<Types/>}/>
+                                <Route path="/lessons/:type" element={<Lessons/>}/>
+                                <Route path="/lesson/:id" element={<Lesson/>}/>
+                                <Route path="/profile" element={<Profile/>}/>
+                            </Route>
                     </Routes>
                 </Suspense>
             </BrowserRouter>
-        </>
+        </AuthProvider>
     )
 }
 

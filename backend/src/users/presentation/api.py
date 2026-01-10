@@ -3,8 +3,9 @@ from starlette.requests import Request
 
 from src.auth.presentation.dependencies import PasswordHasherDep
 from src.users.application.use_cases.add_user import add_user
+from src.users.application.use_cases.change_username import change_username
 from src.users.presentation.dependencies import UserUoWDeps
-from src.users.presentation.dtos import UserCreateDTO
+from src.users.presentation.dtos import UserCreateDTO, UserUpdateDTO
 
 users_api_router = APIRouter()
 
@@ -14,6 +15,11 @@ async def me(request: Request):
     return request.state.user.model_dump(
         exclude={"hashed_password", "id"}
     )
+
+
+@users_api_router.patch("/username")
+async def username(request: Request, dto: UserUpdateDTO, uow: UserUoWDeps):
+    return await change_username(dto.user_name, uow, request.state.user)
 
 
 @users_api_router.post("/")

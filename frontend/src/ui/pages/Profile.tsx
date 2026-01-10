@@ -75,10 +75,6 @@ const Profile: React.FC = () => {
 
                     <div className="flex items-center gap-2 items-center">
                         <span className="font-medium">{displayName}</span>
-
-                        <button type="button" aria-label="edit">
-                            <img src={editPng} alt="edit" className="w-4 h-4"/>
-                        </button>
                     </div>
                 </div>
             </div>

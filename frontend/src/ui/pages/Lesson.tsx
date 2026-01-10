@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { API_URL } from '../../config.tsx';
+import React, {useEffect, useRef, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {API_URL} from '../../config.tsx';
 import Loader from '../loaders/Loader.tsx';
 import Timer from '../components/Timer.tsx';
 import avatarRobotPng from '../../assets/ai-avatar.png';
 import microfonePng from '../../assets/microfone.png';
 import Tooltip from "../buttons/Tooltip.tsx";
 import Series from "../components/Series.tsx";
+import {useAuth} from "../context/AuthContext.tsx";
 
 export interface Card {
     id: number;
@@ -26,11 +27,12 @@ type Lesson = {
 type Stage = 'intro' | 'cards' | 'dialog' | 'finish';
 
 function Lesson() {
-    const { id } = useParams();
+    const {id} = useParams();
+    const {user} = useAuth();
     const [loading, setLoading] = useState(true);
     const [lesson, setLesson] = useState<Lesson | null>(null);
     const [cards, setCards] = useState<Card[]>([]);
-    const [stage, setStage] = useState<Stage>('intro');
+    const [stage, setStage] = useState<Stage>('finish');
 
 
     const [isUseMicrofone, setUseMicrofone] = useState(false);
@@ -41,6 +43,7 @@ function Lesson() {
     const [webrtcStatus, setWebrtcStatus] = useState('idle');
     const pcRef = useRef<RTCPeerConnection | null>(null);
     const [series, setSeries] = useState(null)
+    const navigator = useNavigate();
 
     useEffect(() => {
         let mounted = true;
@@ -82,7 +85,7 @@ function Lesson() {
         };
     }, [id]);
 
-    if (loading || !lesson) return <Loader />;
+    if (loading || !lesson) return <Loader/>;
 
     const groupedCards = cards.reduce<Record<string, Card[]>>((acc, card) => {
         if (!acc[card.title]) acc[card.title] = [];
@@ -92,7 +95,7 @@ function Lesson() {
 
     const requestMicAndStartRecording = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia({audio: true});
             setLocalStream(stream);
             setUseMicrofone(true);
 
@@ -122,7 +125,7 @@ function Lesson() {
             setLoading(true);
             const res = await fetch(`${API_URL}/lessons/series`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 credentials: "include"
             });
 
@@ -134,12 +137,21 @@ function Lesson() {
 
             setSeries(data)
 
+            const timer = setTimeout(() => {
+                navigator(-1)
+            }, 3000)
+
+            return () => clearTimeout(timer);
+
+
         } finally {
             setLoading(false);
         }
     };
 
     if (!lesson || !lesson.duration) return <h1>Урок не найден</h1>
+
+    console.log(user)
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -169,7 +181,7 @@ function Lesson() {
 
                         <div className="flex ml-auto">
                             <Timer
-                                minutes={lesson.duration}
+                                minutes={1}
                                 isStarted
                                 size={120}
                                 strokeWidth={3}
@@ -182,7 +194,7 @@ function Lesson() {
                     <div className="flex flex-col gap-6">
                         {Object.entries(groupedCards).map(([title, group]) => (
                             <div key={title}>
-                                <h2 className="font-semibold p-2">{title}</h2>
+                                <h2 className="font-semibold p-1">{title}</h2>
 
                                 <div className="rounded-xl flex flex-col gap-3">
                                     {group.map((card) => (
@@ -205,8 +217,8 @@ function Lesson() {
                     <div className="flex flex-row gap-3">
                         <h1 className="title">Диалог</h1>
 
-                        <Tooltip children={<button>зачем?</button>}
-                                 content="Для того чтобы вырабатывать автоматизацию при разговоре с реальным человеком, говоря звуки даже не задумываясь."/>
+                        <Tooltip children={<button className="my-auto text-sm text-center justify-center">зачем?</button>}
+                                 content="Очень важно чтобы вы могли выработать автоматизацию при разговоре, говоря звуки даже не задумываясь."/>
 
                     </div>
 
@@ -215,31 +227,35 @@ function Lesson() {
                         <img
                             src={avatarRobotPng}
                             alt="AI"
-                            className="rounded-xl mx-auto"
+                            className="size-100"
                         />
+
+                        <h1>Алиса</h1>
+
 
                         {!isUseMicrofone ? (
                             <button onClick={requestMicAndStartRecording} className="dialog_btn">
-                                <p>Разрешить микрофон</p>
-                                <img src={microfonePng} alt="mic"/>
+                                <img src={microfonePng} alt="mic" className="size-5 my-auto"/>
                             </button>
                         ) : (
                             <button
                                 onClick={isRecording ? stopRecording : requestMicAndStartRecording}
-                                className="dialog_btn"
+                                className="dialog_btn w-full"
                             >
                                 {isRecording ? 'Остановить запись' : 'Начать запись'}
+                                <img src={microfonePng} alt="mic" className="size-5 my-auto"/>
+
                             </button>
                         )}
-
                     </div>
+
+
                 </div>
             )}
 
             {stage === "finish" && (
                 <div className="flex flex-col h-full min-h-screen">
-
-                    {series && series.series_days > 0 && (
+                    {series && series.series_days !== user.series_days && (
                         <Series series_day={series.series_days}/>
                     )}
 

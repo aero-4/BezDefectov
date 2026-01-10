@@ -31,3 +31,4 @@ class UserCreate(BaseModel):
 class UserUpdate(BaseModel):
     id: int
     series_days: int | None = None
+    user_name: str | None = None

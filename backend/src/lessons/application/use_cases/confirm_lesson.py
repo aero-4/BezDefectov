@@ -1,16 +1,18 @@
-from src.users.domain.entities import UserUpdate, User
+from typing import Dict, Any
+
+from src.users.domain.entities import UserUpdate, User, UserMe
 from src.users.presentation.dependencies import UserUoWDeps
 from src.utils.datetimes import is_yesterday_two_dates, is_today
 
 
-async def update_series(uow: UserUoWDeps, user: User) -> User:
+async def update_series(uow: UserUoWDeps, user: User) -> dict[str, Any] | Any:
     series = 1
 
     if not user.updated_at:
         series = 1
 
     elif is_today(user.updated_at.date()):  # сегодняшняя ничего не делаем
-        return user
+        return user.model_dump(exclude={"hashed_password", "id"})
 
     elif is_yesterday_two_dates(user.updated_at.date()):  # вчера был пройден урок
         series += 1
