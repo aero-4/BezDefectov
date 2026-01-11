@@ -1,5 +1,0 @@
-2026/01/08 17:33:51 [emerg] 1#1: host not found in upstream "app" in /etc/nginx/nginx.conf:74
-2026/01/08 17:34:34 [emerg] 1#1: host not found in upstream "app" in /etc/nginx/nginx.conf:74
-2026/01/08 17:37:17 [emerg] 1#1: host not found in upstream "app" in /etc/nginx/nginx.conf:74
-2026/01/08 17:37:56 [emerg] 1#1: host not found in upstream "app" in /etc/nginx/nginx.conf:74
-2026/01/09 12:49:39 [emerg] 1#1: host not found in upstream "app" in /etc/nginx/nginx.conf:74

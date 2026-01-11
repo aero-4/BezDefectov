@@ -1,3 +1,10 @@
+worker_processes auto;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
 http {
     include       /etc/nginx/mime.types;
     default_type  application/octet-stream;
@@ -45,47 +52,6 @@ http {
             add_header Cache-Control public;
         }
 
-        location /.well-known/acme-challenge/ {
-            root /var/www/certbot;
-        }
-
-        # Проксирование всех остальных запросов к FastAPI-приложению
-        location / {
-            proxy_pass http://app:8000;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-
-    server {
-        listen 443 ssl;
-        server_name ${DOMAIN};
-
-        # SSL-настройки (пути к сертификатам, полученным через Certbot)
-        ssl_certificate     /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
-        ssl_protocols       TLSv1.2 TLSv1.3;
-        ssl_prefer_server_ciphers on;
-        ssl_session_cache   shared:SSL:10m;
-
-        # Обслуживание статических файлов
-        location /static/ {
-            root /;
-            autoindex off;
-            expires max;
-            add_header Cache-Control public;
-        }
-
-        # Обслуживание media-файлов
-        location /media/ {
-            root /;
-            autoindex off;
-            expires max;
-            add_header Cache-Control public;
-        }
-
         location /__internal_metrics__ {
             allow 127.0.0.1;
             allow 172.20.0.0/16;
@@ -99,7 +65,11 @@ http {
             deny all;
         }
 
-        # Проксирование запросов к FastAPI-приложению
+        location /.well-known/acme-challenge/ {
+            root /var/www/certbot;
+        }
+
+        # Проксирование всех остальных запросов к FastAPI-приложению
         location / {
             proxy_pass http://app:8000;
             proxy_set_header Host $host;

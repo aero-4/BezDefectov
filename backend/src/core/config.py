@@ -36,15 +36,14 @@ class Settings(BaseSettings):
     DB_PASSWORD: str | None = os.environ.get("DB_PASSWORD")
     DB_HOST: str | None = os.environ.get("DB_HOST")
     DB_PORT: str | None = os.environ.get("DB_PORT")
-    DATABASE_URI: AnyUrl | None = None
-    ALEMBIC_DATABASE_URI: AnyUrl | None = None
+    DATABASE_URI: str | None = None
+    ALEMBIC_DATABASE_URI: str | None = None
 
     REDIS_URL: str | None = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
     ELASTICSEARCH_HOSTS: str | None = os.environ.get("ELASTICSEARCH_HOSTS")
 
     @staticmethod
     def _build_dsn(scheme: str, values: dict) -> str:
-        """Формирует DSN строку"""
         return str(
             PostgresDsn.build(
                 scheme=scheme,

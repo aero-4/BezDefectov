@@ -22,7 +22,7 @@ from src.users.presentation.api import users_api_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # await check_redis_connection()
-    # await recreate_schema()
+    await recreate_schema()
     yield
 
 
