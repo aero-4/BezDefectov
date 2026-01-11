@@ -101,7 +101,8 @@ services:
       --no-eff-email 
       --non-interactive 
       --expand 
-      -d ${DOMAIN}"
+      -d ${DOMAIN}
+      -d ${API_DOMAIN}"
     networks:
       - backend_net
 
