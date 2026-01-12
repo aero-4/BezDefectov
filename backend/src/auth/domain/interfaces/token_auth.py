@@ -31,5 +31,3 @@ class ITokenAuth(abc.ABC):
     @abc.abstractmethod
     async def unset_tokens(self) -> None:
         ...
-
-

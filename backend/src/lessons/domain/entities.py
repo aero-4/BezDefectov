@@ -1,5 +1,5 @@
 import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -24,3 +24,11 @@ class LessonUpdate(BaseModel):
     duration: int | None = None
     type: LessonTypes | None = None
     cards: list | None = None
+
+
+class Dialog(BaseModel):
+    type: str | None = None
+    action: Literal["start", "end", "chunk"] | None = None
+    bytes: bytes | None = None
+    text: str | None = None
+    payload: dict | None = None

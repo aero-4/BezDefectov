@@ -1,10 +1,12 @@
 from fastapi import APIRouter
 from starlette.requests import Request
+from starlette.websockets import WebSocket
 
 from src.lessons.application.use_cases.add_lesson import add_lesson
 from src.lessons.application.use_cases.collect_lessons import collect_lesson, collect_with_type_lessons
 from src.lessons.application.use_cases.confirm_lesson import update_series
 from src.lessons.application.use_cases.delete_lesson import delete_lesson
+from src.lessons.application.use_cases.dialog_lesson import dialog_lesson
 from src.lessons.application.use_cases.update_lesson import update_lesson
 from src.lessons.presentation.dependencies import LessonUoWDeps
 from src.lessons.presentation.dtos import LessonCreateDTO, LessonUpdateDTO
@@ -41,3 +43,8 @@ async def update(id: int, lesson_data: LessonUpdateDTO, uow: LessonUoWDeps):
 @lessons_api_router.post("/series")
 async def confirm(request: Request, user_uow: UserUoWDeps):
     return await update_series(user_uow, request.state.user)
+
+
+@lessons_api_router.websocket("/dialog")
+async def dialog(websocket: WebSocket, request: Request, user_uow: UserUoWDeps):
+    return dialog_lesson(websocket, request, request.state.user)
