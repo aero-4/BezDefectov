@@ -1,21 +1,13 @@
 import abc
-import asyncio
-from asyncio import Event
-from typing import Optional, Dict, Any
 
 from starlette.requests import Request
-from starlette.types import Message
 from starlette.websockets import WebSocket
 
-from src.lessons.domain.interfaces.lesson_provider import ILessonAIProvider
+from src.lessons.domain.interfaces.lesson_provider import InterfaceAIProvider
 
 
-class IDialogManager(abc.ABC):
-    queue: asyncio.Queue[bytes]
-    finished: Event
-    external_result: Optional[Dict[str, Any]]
-
-    def __init__(self, provider: ILessonAIProvider, websocket: WebSocket, request: Request):
+class IWebsocketManager(abc.ABC):
+    def __init__(self, provider: InterfaceAIProvider, websocket: WebSocket, request: Request):
         self.provider = provider
         self.websocket = websocket
         self.request = request

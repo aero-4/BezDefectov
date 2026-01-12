@@ -29,6 +29,12 @@ class LessonUpdate(BaseModel):
 class Dialog(BaseModel):
     type: str | None = None
     action: Literal["start", "end", "chunk"] | None = None
-    bytes: bytes | None = None
+    bytes: bytes = None
     text: str | None = None
     payload: dict | None = None
+
+
+class ResponseDialog(BaseModel):
+    type: str
+    received_bytes: int | None = None
+    reason: str | None = None

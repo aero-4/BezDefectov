@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from starlette.requests import Request
 from starlette.websockets import WebSocket
 
+from src.auth.presentation.permissions import access_control
 from src.lessons.application.use_cases.add_lesson import add_lesson
 from src.lessons.application.use_cases.collect_lessons import collect_lesson, collect_with_type_lessons
 from src.lessons.application.use_cases.confirm_lesson import update_series
@@ -46,5 +47,5 @@ async def confirm(request: Request, user_uow: UserUoWDeps):
 
 
 @lessons_api_router.websocket("/dialog")
-async def dialog(websocket: WebSocket, request: Request, user_uow: UserUoWDeps):
+async def dialog(websocket: WebSocket, request: Request):
     return dialog_lesson(websocket, request, request.state.user)

@@ -96,5 +96,7 @@ class Settings(BaseSettings):
     S3_URL: str | None = None
     S3_BUCKET_NAME: str | None = None
 
+    OPENAI_API_KEY: str | None = None
+
 
 settings = Settings()
