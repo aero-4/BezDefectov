@@ -13,6 +13,7 @@ import Types from "./ui/pages/Types.tsx";
 import Profile from "./ui/pages/Profile.tsx";
 import Lesson from "./ui/pages/Lesson.tsx";
 import {AuthProvider} from "./ui/context/AuthContext.tsx";
+import Admin from "./ui/pages/Admin.tsx";
 function App() {
     return (
         <AuthProvider>
@@ -29,6 +30,7 @@ function App() {
                                 <Route path="/lesson/:id" element={<Lesson/>}/>
                                 <Route path="/profile" element={<Profile/>}/>
                             </Route>
+                            <Route path="/admin" element={<Admin/>}/>
                     </Routes>
                 </Suspense>
             </BrowserRouter>
