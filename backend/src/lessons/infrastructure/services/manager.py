@@ -2,6 +2,7 @@ import asyncio
 import base64
 import json
 import logging
+from asyncio import Task
 from typing import Any, Dict
 
 from starlette.requests import Request
@@ -23,25 +24,29 @@ class DialogManager(IWebsocketManager):
         self.external_result = {}
 
         self.message: Dialog | None = None
-        self.forward_task = None
+        self.forward_task: Task | None = None
 
     async def accept(self):
         await self.websocket.accept()
 
-        while True:
-            try:
-                await self.receive()
+        try:
+            await self.receive()
 
-            except WebSocketDisconnect():
-                await self.queue.put(None)
+        except WebSocketDisconnect():
+            await self.queue.put(None)
 
-            finally:
-                await self.websocket.close()
+        finally:
+            await self.websocket.close()
 
     async def receive(self):
         message = await self.websocket.receive()
+        self.message = self._to_entity(message)
 
-        await self._to_entity(message)
+        if self.message.type == "websocket.disconnect":
+            raise WebSocketDisconnect()
+
+        if self.message.bytes:
+            await self.queue.put(self.message.bytes)
 
         if self.message.action == "start":
             await self._start()
@@ -54,9 +59,13 @@ class DialogManager(IWebsocketManager):
 
     async def _start(self) -> None:
         meta_data: Dict[str, Any] = self.message.payload.get("meta")
-        self.forward_task = asyncio.create_task(self.provider.request(meta_data))
+        self.forward_task = asyncio.create_task(
+            self.provider.request(meta_data)
+        )
 
-        await self.websocket.send_json({"type": "started"})
+        await self.websocket.send_json(
+            ResponseDialog(type="started").model_dump()
+        )
 
     async def _chunk(self) -> None:
         data_b64 = self.message.payload.get("data")
@@ -75,7 +84,7 @@ class DialogManager(IWebsocketManager):
 
         await self.queue.put(chunk_bytes)
         await self.websocket.send_json(
-            ResponseDialog(type="ack", received_bytes=len(chunk_bytes))
+            ResponseDialog(type="ack", received_bytes=len(chunk_bytes)).model_dump()
         )
 
     async def _end(self) -> None:
@@ -84,18 +93,9 @@ class DialogManager(IWebsocketManager):
 
         if self.forward_task is None:
             return await self.websocket.send_json(
-                ResponseDialog(type="error", reason="not_started")
+                ResponseDialog(type="error", reason="not_started").model_dump()
             )
 
-    async def _to_entity(self, message: Message):
-        self.message = Dialog(**message)
-
-        if self.message.type == "websocket.disconnect":
-            raise WebSocketDisconnect()
-
-        if self.message.bytes:
-            await self.queue.put(self.message.bytes)
-
-        if self.message.text:
-            self.message.payload = json.loads(self.message.text)
-            self.message.action = self.message.payload.get("action")
+    @staticmethod
+    def _to_entity(message: Message):
+        return Dialog(**message)

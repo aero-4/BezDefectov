@@ -24,4 +24,4 @@ def get_websocket_manager(websocket: WebSocket = None, request: Request = None) 
 
 
 
-LessonUoWDeps = Annotated[ILessonUnitOfWork, Depends(get_lessons_uow)]
+LessonUoWDep = Annotated[ILessonUnitOfWork, Depends(get_lessons_uow)]

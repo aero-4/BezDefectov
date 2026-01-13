@@ -1,11 +1,11 @@
 from src.auth.presentation.dependencies import PasswordHasherDep
 from src.users.domain.entities import User, UserCreate
-from src.users.presentation.dependencies import UserUoWDeps
+from src.users.presentation.dependencies import UserUoWDep
 from src.users.presentation.dtos import UserCreateDTO
 
 
-async def add_user(user: UserCreateDTO, uow: UserUoWDeps, pwd_hasher: PasswordHasherDep,
-) -> User:
+async def add_user(user: UserCreateDTO, uow: UserUoWDep, pwd_hasher: PasswordHasherDep,
+                   ) -> User:
     user_data = UserCreate(email=user.email,
                            hashed_password=pwd_hasher.hash(user.password),
                            updated_at=user.updated_at,

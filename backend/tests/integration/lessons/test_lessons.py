@@ -22,6 +22,7 @@ async def test_add_some_test_lessons(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         cards = ["Слоги", "Предложения", "Скороговорки"]
         texts = ["ра-ра-ра ро-ро-ро ре-ре-ре", "Арина приводит комнату в порядок", "Белые бараны били в барабаны"]
+        dialogs_texts = ["Алекс", "ПРивет", "Привет, как дела у тебя?", "У меня все хоррошо!", "Это супер!"]
         types = [LessonTypes.r, LessonTypes.sh]
 
         for i in range(random.randint(50, 100)):
@@ -31,6 +32,15 @@ async def test_add_some_test_lessons(clear_db):
 
             for i in range(random.randint(50, 100)):
                 create_card = CardCreateDTO(title=random.choice(cards), text=random.choice(texts), lesson_id=lesson.id)
+                response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
+
+                card = Card(**response2.json())
+
+                assert lesson.duration == lesson_dto.duration
+                assert create_card.text == card.text
+
+            for num, d in dialogs_texts:
+                create_card = CardCreateDTO(title=random.choice(dialogs_texts), text=random.choice(texts), lesson_id=lesson.id, dialog_index=i)
                 response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
 
                 card = Card(**response2.json())

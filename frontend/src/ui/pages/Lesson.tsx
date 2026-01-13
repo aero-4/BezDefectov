@@ -200,7 +200,7 @@ function Lesson() {
         try {
             recorder?.stop();
         } catch (e)
-
+            
         try {
             localStream?.getTracks().forEach((t) => t.stop());
         } catch (e)

@@ -4,6 +4,7 @@ from enum import Enum, StrEnum
 from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from src.db.base import Base
 from src.utils.datetimes import get_timezone_now
 from src.cards.infrastructure.db.orm import *
 
@@ -23,3 +24,4 @@ class LessonsOrm(Base):
     type: Mapped[LessonTypes] = mapped_column(nullable=False)
 
     cards: Mapped[list["CardsOrm"]] = relationship(back_populates="lesson", lazy="selectin", cascade="all, delete")
+    dialogs: Mapped[list["DialogsOrm"]] = relationship(back_populates="lesson", )

@@ -1,11 +1,11 @@
 from typing import Dict, Any
 
 from src.users.domain.entities import UserUpdate, User, UserMe
-from src.users.presentation.dependencies import UserUoWDeps
+from src.users.presentation.dependencies import UserUoWDep
 from src.utils.datetimes import is_yesterday_two_dates, is_today
 
 
-async def update_series(uow: UserUoWDeps, user: User) -> dict[str, Any] | Any:
+async def update_series(uow: UserUoWDep, user: User) -> dict[str, Any] | Any:
     series = 1
 
     if not user.updated_at:

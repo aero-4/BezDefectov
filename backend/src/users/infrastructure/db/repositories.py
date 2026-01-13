@@ -22,7 +22,6 @@ class PGUserRepository(IUserRepository):
         try:
             await self.session.flush()
         except IntegrityError as e:
-            print(e)
             raise AlreadyExists()
 
         return self._to_domain(obj)

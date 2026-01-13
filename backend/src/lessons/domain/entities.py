@@ -1,7 +1,8 @@
 import datetime
+import json
 from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from src.lessons.infrastructure.db.orm import LessonTypes
 
@@ -27,14 +28,9 @@ class LessonUpdate(BaseModel):
 
 
 class Dialog(BaseModel):
-    type: str | None = None
-    action: Literal["start", "end", "chunk"] | None = None
-    bytes: bytes = None
-    text: str | None = None
-    payload: dict | None = None
+    user_name: str
+    content: str
+    index: int
+    lesson_id: int
 
 
-class ResponseDialog(BaseModel):
-    type: str
-    received_bytes: int | None = None
-    reason: str | None = None

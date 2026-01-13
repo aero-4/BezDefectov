@@ -1,6 +1,7 @@
 import abc
+from typing import List
 
-from src.lessons.domain.entities import LessonCreate, Lesson, LessonUpdate
+from src.lessons.domain.entities import LessonCreate, Lesson, LessonUpdate, Dialog
 
 
 class ILessonRepository(abc.ABC):
@@ -23,4 +24,8 @@ class ILessonRepository(abc.ABC):
 
     @abc.abstractmethod
     async def get_all_by_type(self, type: str) -> list[Lesson]:
+        pass
+
+    @abc.abstractmethod
+    async def get_dialogs(self, id: int) -> List[Dialog]:
         pass

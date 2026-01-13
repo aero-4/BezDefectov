@@ -50,7 +50,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(SecurityMiddleware)
+# app.add_middleware(SecurityMiddleware)
 app.add_middleware(AuthenticationMiddleware)
 app.add_middleware(JWTRefreshMiddleware)
 

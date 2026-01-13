@@ -4,7 +4,7 @@ from src.auth.application.use_cases.authenication import authenticate
 from src.auth.application.use_cases.registration import registrate
 from src.auth.presentation.dependencies import PasswordHasherDep, TokenAuthDep
 from src.auth.presentation.dtos import AuthUserDTO, RegisterUserDTO
-from src.users.presentation.dependencies import UserUoWDeps
+from src.users.presentation.dependencies import UserUoWDep
 
 auth_api_router = APIRouter()
 
@@ -12,7 +12,7 @@ auth_api_router = APIRouter()
 @auth_api_router.post("/login")
 async def login(credentials: AuthUserDTO,
                 pwd_hasher: PasswordHasherDep,
-                uow: UserUoWDeps,
+                uow: UserUoWDep,
                 auth: TokenAuthDep):
     await authenticate(credentials.email, credentials.password, pwd_hasher, uow, auth)
     return {"msg": "Login successful"}
@@ -21,7 +21,7 @@ async def login(credentials: AuthUserDTO,
 @auth_api_router.post("/register")
 async def register(credentials: RegisterUserDTO,
                    pwd_hasher: PasswordHasherDep,
-                   uow: UserUoWDeps,
+                   uow: UserUoWDep,
                    auth: TokenAuthDep):
     await registrate(credentials.email, credentials.password, pwd_hasher=pwd_hasher, uow=uow, auth=auth)
     return {"msg": "Register successful"}

@@ -1,8 +1,8 @@
 from src.users.domain.entities import UserUpdate, User
-from src.users.presentation.dependencies import UserUoWDeps
+from src.users.presentation.dependencies import UserUoWDep
 
 
-async def change_username(username: str, uow: UserUoWDeps, user: User) -> User:
+async def change_username(username: str, uow: UserUoWDep, user: User) -> User:
     user_data = UserUpdate(id=user.id,
                            user_name=username)
 

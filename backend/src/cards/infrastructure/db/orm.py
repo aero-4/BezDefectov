@@ -7,8 +7,12 @@ from src.lessons.infrastructure.db.orm import *
 class CardsOrm(Base):
     __tablename__ = "cards"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    title: Mapped[str] = mapped_column(nullable=False)
+    type: Mapped[str] = mapped_column(nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
+
 
     lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"))
     lesson: Mapped["LessonsOrm"] = relationship(back_populates="cards")
+
+
+

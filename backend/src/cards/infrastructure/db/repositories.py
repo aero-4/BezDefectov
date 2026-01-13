@@ -6,8 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.cards.domain.entities import CardCreate, Card, CardUpdate
 from src.cards.domain.interfaces.card_repo import ICardRepository
-from src.cards.infrastructure.db.orm import CardsOrm
+from src.cards.infrastructure.db.orm import CardsOrm, DialogsOrm
 from src.core.domain.exceptions import AlreadyExists, NotFound
+from src.lessons.domain.entities import Dialog
 
 
 class PGCardRepository(ICardRepository):
@@ -31,6 +32,8 @@ class PGCardRepository(ICardRepository):
         result = await self.session.execute(stmt)
         objs = [self._to_domain(obj) for obj in result.scalars().all()]
         return objs
+
+
 
     async def delete(self, id: int) -> None:
         stmt = select(CardsOrm).where(CardsOrm.id == id)
@@ -63,5 +66,5 @@ class PGCardRepository(ICardRepository):
             id=obj.id,
             lesson_id=obj.lesson_id,
             text=obj.text,
-            title=obj.title
+            title=obj.type
         )

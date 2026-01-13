@@ -10,4 +10,4 @@ def get_user_uow() -> PGUserUnitOfWork():
     return PGUserUnitOfWork()
 
 
-UserUoWDeps = Annotated[IUserUnitOfWork, Depends(get_user_uow)]
+UserUoWDep = Annotated[IUserUnitOfWork, Depends(get_user_uow)]
