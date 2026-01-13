@@ -1,3 +1,4 @@
+// src/components/lessons/Lesson.tsx
 import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {API_URL} from '../../config.tsx';
@@ -34,7 +35,6 @@ function Lesson() {
     const [cards, setCards] = useState<Card[]>([]);
     const [stage, setStage] = useState<Stage>('finish');
 
-
     const [isUseMicrofone, setUseMicrofone] = useState(false);
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
@@ -42,8 +42,11 @@ function Lesson() {
     const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
     const [webrtcStatus, setWebrtcStatus] = useState('idle');
     const pcRef = useRef<RTCPeerConnection | null>(null);
-    const [series, setSeries] = useState(null)
+    const [series, setSeries] = useState<any>(null)
     const navigator = useNavigate();
+
+    // WebSocket ref
+    const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
         let mounted = true;
@@ -85,6 +88,37 @@ function Lesson() {
         };
     }, [id]);
 
+    useEffect(() => {
+        if (stage !== 'dialog') return;
+
+        const wsUrl = API_URL.replace(/^http/, 'ws') + '/lessons/dialog';
+        const ws = new WebSocket(wsUrl);
+
+        ws.onopen = () => {
+            setWebrtcStatus('connected');
+            console.log('ws open', wsUrl);
+        };
+        ws.onclose = (e) => {
+            setWebrtcStatus('closed');
+            console.log('ws closed', e);
+        };
+        ws.onerror = (e) => {
+            setWebrtcStatus('error');
+            console.error('ws error', e);
+        };
+        ws.onmessage = (ev) => {
+            // Если сервер шлёт что-то — можно обработать здесь.
+            // console.log('ws msg', ev.data);
+        };
+
+        wsRef.current = ws;
+
+        return () => {
+            try { ws.close(); } catch (e) { /* ignore */ }
+            wsRef.current = null;
+        };
+    }, [stage]);
+
     if (loading || !lesson) return <Loader/>;
 
     const groupedCards = cards.reduce<Record<string, Card[]>>((acc, card) => {
@@ -93,28 +127,91 @@ function Lesson() {
         return acc;
     }, {});
 
+    // helper: blob -> base64 (без metadata)
+    const blobToBase64 = (blob: Blob): Promise<string> =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const res = reader.result as string | null;
+                if (!res) return reject(new Error('empty reader result'));
+                const base64 = res.split(',')[1];
+                resolve(base64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+
+    // replaced: start recording and stream chunks to websocket as base64
     const requestMicAndStartRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({audio: true});
             setLocalStream(stream);
             setUseMicrofone(true);
 
-            const mr = new MediaRecorder(stream);
+            // prefer opus/webm where available
+            let mimeType = 'audio/webm;codecs=opus';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                // fallback
+                mimeType = '';
+            }
+
+            const mr = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+            // accumulate for local preview/save only if needed
             const chunks: Blob[] = [];
-            mr.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-            mr.onstop = () => setAudioChunks(chunks.slice());
-            mr.start();
+            mr.ondataavailable = async (e: BlobEvent) => {
+                if (!e.data || e.data.size === 0) return;
+
+                // keep local copy (optional)
+                chunks.push(e.data);
+
+                // if websocket open - send base64
+                const ws = wsRef.current;
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    try {
+                        const base64 = await blobToBase64(e.data);
+                        ws.send(JSON.stringify({
+                            type: 'chunk',
+                            payload: base64,
+                        }));
+                    } catch (err) {
+                        console.error('blob->base64 error', err);
+                    }
+                } else {
+                    console.warn('ws not open, chunk dropped or buffered locally');
+                }
+            };
+            mr.onstop = () => {
+                // store local chunks if needed
+                setAudioChunks(chunks.slice());
+            };
+
+            // timeslice — отправка чанков каждые 250ms
+            mr.start(250);
 
             setRecorder(mr);
             setIsRecording(true);
-        } catch {
+        } catch (err) {
+            console.error('getUserMedia error', err);
             setUseMicrofone(false);
         }
     };
 
     const stopRecording = () => {
-        recorder?.stop();
-        localStream?.getTracks().forEach((t) => t.stop());
+        try {
+            recorder?.stop();
+        } catch (e)
+
+        try {
+            localStream?.getTracks().forEach((t) => t.stop());
+        } catch (e)
+
+        try {
+            const ws = wsRef.current;
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'end' }));
+            }
+        } catch (e)
+
         setIsRecording(false);
         setLocalStream(null);
     };
@@ -151,7 +248,6 @@ function Lesson() {
 
     if (!lesson || !lesson.duration) return <h1>Урок не найден</h1>
 
-    console.log(user)
 
     return (
         <div className="min-h-screen flex flex-col">
