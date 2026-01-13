@@ -5,7 +5,6 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.cards.domain.entities import Card
-from src.cards.infrastructure.db.orm import CardsOrm, DialogsOrm
 from src.core.domain.exceptions import AlreadyExists, NotFound
 from src.lessons.domain.entities import Lesson, LessonCreate, LessonUpdate, Dialog
 from src.lessons.domain.interfaces.lesson_repo import ILessonRepository
@@ -64,12 +63,6 @@ class LessonRepository(ILessonRepository):
         objs = result.scalars().all()
 
         return [self._to_domain(obj) for obj in objs]
-
-    async def get_dialogs(self, lesson_id: int) -> List[Dialog]:
-        stmt = select(DialogsOrm).where(DialogsOrm.lesson_id == lesson_id)
-        result = await self.session.execute(stmt)
-        objs = [self._to_domain(obj) for obj in result.scalars().all()]
-        return objs
 
     async def delete(self, id: int) -> None:
         stmt = select(LessonsOrm).where(LessonsOrm.id == id)

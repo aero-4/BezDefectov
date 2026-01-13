@@ -15,6 +15,7 @@ from src.core.config import settings
 from src.core.domain.exceptions import AppException
 from src.core.infrastructure.redis_setup import check_redis_connection
 from src.db.utils import recreate_schema
+from src.dialogs.presentation.api import dialogs_api_router
 from src.lessons.presentation.api import lessons_api_router
 from src.users.presentation.api import users_api_router
 
@@ -58,3 +59,4 @@ app.include_router(auth_api_router, prefix="/api/auth", tags=["Auth"])
 app.include_router(lessons_api_router, prefix="/api/lessons", tags=["Lessons"])
 app.include_router(cards_api_router, prefix="/api/cards", tags=["Cards"])
 app.include_router(users_api_router, prefix="/api/users", tags=["Users"])
+app.include_router(dialogs_api_router, prefix="/api/dialogs", tags=["Dialogs"])

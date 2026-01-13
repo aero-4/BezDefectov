@@ -10,7 +10,7 @@ from src.auth.presentation.dtos import RegisterUserDTO
 from src.db.engine import engine
 from src.utils.strings import generate_random_alphanum
 
-base_url = "http://localhost:8000"
+base_url = "http://0.0.0.0:8000"
 TABLES_TO_TRUNCATE = ["cards", "lessons", "users"]
 
 
