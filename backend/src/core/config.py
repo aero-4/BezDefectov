@@ -13,10 +13,9 @@ load_dotenv(env_file)
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = os.environ.get("PROJECT_NAME", "UNNAMED PROJECT")
-    API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     DOMAIN: str = os.environ.get("DOMAIN")
-    SSL_ENABLED: bool = os.environ.get("SSL_ENABLED")
+
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'

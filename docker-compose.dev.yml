@@ -1,0 +1,62 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env.dev
+    image: bezdefectov:latest
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - ./logs/fastapi:/app/logs
+      - ./media:/media
+      - ./static:/static
+    command: uvicorn src:app --reload --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    networks:
+      - backend_net
+
+  db:
+    image: postgres:16
+    user: "999:999"
+    env_file:
+      - .env.dev
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: strongpassword
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - backend_net
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis_data:/data
+      - ./infra/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+    networks:
+      - backend_net
+    restart: always
+
+
+volumes:
+  pgdata:
+  redis_data:
+
+networks:
+  backend_net:
+    driver: bridge

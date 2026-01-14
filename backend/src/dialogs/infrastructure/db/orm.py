@@ -14,4 +14,4 @@ class DialogsOrm(Base):
     index: Mapped[int] = mapped_column(nullable=False)
 
     lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"))
-    lesson: Mapped["LessonsOrm"] = relationship(back_populates="cards")
+    dialog_lesson: Mapped["LessonsOrm"] = relationship(back_populates="dialogs")

@@ -1,0 +1,89 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: bezdefectov:latest
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - ./logs/fastapi:/app/logs
+      - ./media:/media
+      - ./static:/static
+    env_file:
+      - .env.test
+    command: uvicorn src:app --reload --host 0.0.0.0 --port 8000 && pytest -s
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/ || exit 1" ]
+      interval: 5s
+      retries: 5
+    ports:
+      - "8000:8000"
+    networks:
+      - backend_net
+  tests:
+    build:
+      context: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: pytest -s
+    env_file:
+      - .env.test
+    volumes:
+      - ./backend:/app
+    networks:
+      - backend_net
+
+
+  db:
+    image: postgres:16
+    user: "999:999"
+    env_file: .env.test
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 5s
+      retries: 5
+    networks:
+      - backend_net
+    restart: always
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis_data:/data
+      - ./infra/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      retries: 5
+    networks:
+      - backend_net
+    restart: always
+
+
+volumes:
+  pgdata:
+  redis_data:
+
+networks:
+  backend_net:
+    driver: bridge

@@ -6,9 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.cards.domain.entities import CardCreate, Card, CardUpdate
 from src.cards.domain.interfaces.card_repo import ICardRepository
-from src.cards.infrastructure.db.orm import CardsOrm, DialogsOrm
+from src.cards.infrastructure.db.orm import CardsOrm
 from src.core.domain.exceptions import AlreadyExists, NotFound
-from src.lessons.domain.entities import Dialog
 
 
 class PGCardRepository(ICardRepository):

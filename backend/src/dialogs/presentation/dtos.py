@@ -9,7 +9,6 @@ class DialogCreateDTO(BaseModel):
 
 
 class DialogUpdateDTO(BaseModel):
-    id: int
     lesson_id: int | None = None
     user_name: str | None = None
     content: str | None = None

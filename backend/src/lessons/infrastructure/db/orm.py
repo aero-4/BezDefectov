@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.base import Base
 from src.utils.datetimes import get_timezone_now
 from src.cards.infrastructure.db.orm import *
+from src.dialogs.infrastructure.db.orm import *
 
 
 class LessonTypes(StrEnum):
@@ -23,5 +24,5 @@ class LessonsOrm(Base):
     duration: Mapped[int] = mapped_column(nullable=False)
     type: Mapped[LessonTypes] = mapped_column(nullable=False)
 
-    cards: Mapped[list["CardsOrm"]] = relationship(back_populates="lesson", lazy="selectin", cascade="all, delete")
-    dialogs: Mapped[list["DialogsOrm"]] = relationship(back_populates="lesson", )
+    cards: Mapped[list["CardsOrm"]] = relationship(back_populates="card_lesson", lazy="selectin", cascade="all, delete")
+    dialogs: Mapped[list["DialogsOrm"]] = relationship(back_populates="dialog_lesson", lazy="selectin", cascade="all, delete")

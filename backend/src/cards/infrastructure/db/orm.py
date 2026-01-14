@@ -12,7 +12,7 @@ class CardsOrm(Base):
 
 
     lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"))
-    lesson: Mapped["LessonsOrm"] = relationship(back_populates="cards")
+    card_lesson: Mapped["LessonsOrm"] = relationship(back_populates="cards")
 
 
 

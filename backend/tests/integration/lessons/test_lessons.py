@@ -39,15 +39,6 @@ async def test_add_some_test_lessons(clear_db):
                 assert lesson.duration == lesson_dto.duration
                 assert create_card.text == card.text
 
-            for num, d in dialogs_texts:
-                create_card = CardCreateDTO(title=random.choice(dialogs_texts), text=random.choice(texts), lesson_id=lesson.id, dialog_index=i)
-                response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
-
-                card = Card(**response2.json())
-
-                assert lesson.duration == lesson_dto.duration
-                assert create_card.text == card.text
-
         return lesson
 
 
@@ -73,7 +64,7 @@ async def test_massive_real_unique_content(clear_db):
         }
 
         lessons = []
-        for _ in range(10):  # Можно уменьшить количество уроков, если все карты будут в одном
+        for _ in range(10):
             lesson_type = random.choice([LessonTypes.r, LessonTypes.sh])
             dto = LessonCreateDTO(
                 duration=random.randint(15, 30),

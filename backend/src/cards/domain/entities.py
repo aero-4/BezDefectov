@@ -12,7 +12,6 @@ class CardCreate(BaseModel):
     lesson_id: int | None = None
     title: str
     text: str
-    dialog_index: int
 
 
 class CardUpdate(BaseModel):
