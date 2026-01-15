@@ -12,3 +12,10 @@ async def collect_with_type_lessons(type: str, uow: ILessonUnitOfWork) -> list[L
     async with uow:
         lessons = await uow.lessons.get_all_by_type(type)
     return lessons
+
+
+async def collect_lessons(uow: ILessonUnitOfWork) -> list[Lesson]:
+    async with uow:
+        lessons = await uow.lessons.get_all()
+
+    return lessons

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, createContext, useContext, use} from "react";
+import {useState, useEffect, useRef, createContext, useContext, use} from "react";
 import {API_URL} from "../../config";
 
 const AuthContext = createContext<any | null>(null);

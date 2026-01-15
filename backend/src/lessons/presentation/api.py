@@ -3,7 +3,7 @@ from starlette.requests import Request
 from starlette.websockets import WebSocket
 
 from src.lessons.application.use_cases.add_lesson import add_lesson
-from src.lessons.application.use_cases.collect_lessons import collect_lesson, collect_with_type_lessons
+from src.lessons.application.use_cases.collect_lessons import collect_lesson, collect_with_type_lessons, collect_lessons
 from src.lessons.application.use_cases.confirm_lesson import update_series
 from src.lessons.application.use_cases.delete_lesson import delete_lesson
 from src.lessons.application.use_cases.update_lesson import update_lesson
@@ -27,6 +27,11 @@ async def get(id: int, uow: LessonUoWDep):
 @lessons_api_router.get("/types/{type}")
 async def get_by_type(type: str, uow: LessonUoWDep):
     return await collect_with_type_lessons(type, uow)
+
+
+@lessons_api_router.get("/")
+async def get_all(uow: LessonUoWDep):
+    return await collect_lessons(uow)
 
 
 @lessons_api_router.delete("/{id}")

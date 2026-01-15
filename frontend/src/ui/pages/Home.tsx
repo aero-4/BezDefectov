@@ -1,7 +1,5 @@
-import React from 'react';
 import homePhoto from "../../assets/home.png";
 import arrowPng from "../../assets/arrow.png";
-import calendarPng from "../../assets/calendar.png";
 
 function Home() {
     return (

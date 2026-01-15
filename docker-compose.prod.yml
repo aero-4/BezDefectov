@@ -26,6 +26,17 @@ services:
     networks:
       - backend_net
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: bezdefectov:latest
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+
   db:
     image: postgres:16
     user: "999:999"
@@ -34,9 +45,9 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./infra/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: strongpassword
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
     healthcheck:
@@ -109,6 +120,8 @@ services:
       - api.migom.shop
     networks:
       - backend_net
+
+
 
 volumes:
   pgdata:

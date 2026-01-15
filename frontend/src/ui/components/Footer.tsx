@@ -1,5 +1,3 @@
-import React from 'react';
-
 function Footer(props) {
     return (
         <div className="flex flex-col gap-3 p-9 border-t border-t-gray-100">

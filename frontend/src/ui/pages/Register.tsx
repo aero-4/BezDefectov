@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {API_URL} from "../../config.tsx";
 import SwitchWithCross from "../switches/Switch.tsx";
 

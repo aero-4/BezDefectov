@@ -23,7 +23,7 @@ http {
         server_name migom.shop;
         ssl_certificate /etc/letsencrypt/live/migom.shop/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/migom.shop/privkey.pem;
-        root /usr/share/nginx/html;
+        root /app/dist/frontend;
         index index.html;
         location / {
             try_files $uri $uri/ /index.html;

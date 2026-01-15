@@ -1,4 +1,3 @@
-// src/components/lessons/Lesson.tsx
 import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {API_URL} from '../../config.tsx';
@@ -25,6 +24,15 @@ type Lesson = {
     type: string;
 };
 
+
+interface Dialog {
+    id: number;
+    user_name: string;
+    content: string;
+    index: number;
+    lesson_id: number;
+}
+
 type Stage = 'intro' | 'cards' | 'dialog' | 'finish';
 
 function Lesson() {
@@ -32,8 +40,10 @@ function Lesson() {
     const {user} = useAuth();
     const [loading, setLoading] = useState(true);
     const [lesson, setLesson] = useState<Lesson | null>(null);
+    const [dialogs, setDialogs] = useState<Dialog[] | null>([]);
+
     const [cards, setCards] = useState<Card[]>([]);
-    const [stage, setStage] = useState<Stage>('finish');
+    const [stage, setStage] = useState<Stage>('intro');
 
     const [isUseMicrofone, setUseMicrofone] = useState(false);
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
@@ -45,7 +55,6 @@ function Lesson() {
     const [series, setSeries] = useState<any>(null)
     const navigator = useNavigate();
 
-    // WebSocket ref
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
@@ -91,31 +100,22 @@ function Lesson() {
     useEffect(() => {
         if (stage !== 'dialog') return;
 
-        const wsUrl = API_URL.replace(/^http/, 'ws') + '/lessons/dialog';
-        const ws = new WebSocket(wsUrl);
+        let mounted = true;
 
-        ws.onopen = () => {
-            setWebrtcStatus('connected');
-            console.log('ws open', wsUrl);
-        };
-        ws.onclose = (e) => {
-            setWebrtcStatus('closed');
-            console.log('ws closed', e);
-        };
-        ws.onerror = (e) => {
-            setWebrtcStatus('error');
-            console.error('ws error', e);
-        };
-        ws.onmessage = (ev) => {
-            // Если сервер шлёт что-то — можно обработать здесь.
-            // console.log('ws msg', ev.data);
-        };
-
-        wsRef.current = ws;
+        (async () => {
+            try {
+                const res = await fetch(API_URL + `/dialogs/${id}`, {
+                    credentials: 'include',
+                });
+                const data = await res.json();
+                if (mounted) setDialogs(Array.isArray(data) ? data : [data]);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        })();
 
         return () => {
-            try { ws.close(); } catch (e) { /* ignore */ }
-            wsRef.current = null;
+            mounted = false;
         };
     }, [stage]);
 
@@ -127,7 +127,6 @@ function Lesson() {
         return acc;
     }, {});
 
-    // helper: blob -> base64 (без metadata)
     const blobToBase64 = (blob: Blob): Promise<string> =>
         new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -141,30 +140,24 @@ function Lesson() {
             reader.readAsDataURL(blob);
         });
 
-    // replaced: start recording and stream chunks to websocket as base64
     const requestMicAndStartRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({audio: true});
             setLocalStream(stream);
             setUseMicrofone(true);
 
-            // prefer opus/webm where available
             let mimeType = 'audio/webm;codecs=opus';
             if (!MediaRecorder.isTypeSupported(mimeType)) {
-                // fallback
                 mimeType = '';
             }
 
-            const mr = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
-            // accumulate for local preview/save only if needed
+            const mr = mimeType ? new MediaRecorder(stream, {mimeType}) : new MediaRecorder(stream);
             const chunks: Blob[] = [];
             mr.ondataavailable = async (e: BlobEvent) => {
                 if (!e.data || e.data.size === 0) return;
 
-                // keep local copy (optional)
                 chunks.push(e.data);
 
-                // if websocket open - send base64
                 const ws = wsRef.current;
                 if (ws && ws.readyState === WebSocket.OPEN) {
                     try {
@@ -181,11 +174,9 @@ function Lesson() {
                 }
             };
             mr.onstop = () => {
-                // store local chunks if needed
                 setAudioChunks(chunks.slice());
             };
 
-            // timeslice — отправка чанков каждые 250ms
             mr.start(250);
 
             setRecorder(mr);
@@ -199,18 +190,24 @@ function Lesson() {
     const stopRecording = () => {
         try {
             recorder?.stop();
-        } catch (e)
-            
+        } catch (e) {
+            console.error('stopRecording error', e);
+        }
+
         try {
             localStream?.getTracks().forEach((t) => t.stop());
-        } catch (e)
+        } catch (e) {
+            console.error('stopRecording error', e);
+        }
 
         try {
             const ws = wsRef.current;
             if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'end' }));
+                ws.send(JSON.stringify({type: 'end'}));
             }
-        } catch (e)
+        } catch (e) {
+            console.error('stopRecording error', e);
+        }
 
         setIsRecording(false);
         setLocalStream(null);
@@ -312,10 +309,8 @@ function Lesson() {
                 <div>
                     <div className="flex flex-row gap-3">
                         <h1 className="title">Диалог</h1>
-
                         <Tooltip children={<button className="my-auto text-sm text-center justify-center">зачем?</button>}
                                  content="Очень важно чтобы вы могли выработать автоматизацию при разговоре, говоря звуки даже не задумываясь."/>
-
                     </div>
 
                     <div className="my-20 max-w-md mx-auto flex flex-col items-center gap-6">
@@ -326,26 +321,35 @@ function Lesson() {
                             className="size-100"
                         />
 
-                        <h1>Алиса</h1>
+                        <div className="flex flex-col space-y-2">
+                            {dialogs?.map((dialog, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`border p-2 rounded max-w-xs ${
+                                        dialog.index % 2 === 0 ? "self-start bg-gray-200" : "self-end bg-blue-200 text-white"
+                                    }`}
+                                >
+                                    <p className="font-semibold">{dialog.user_name}</p>
+                                    <p>{dialog.content}</p>
+                                </div>
+                            ))}
+                        </div>
 
+                        {/*{!isUseMicrofone ? (*/}
+                        {/*    <button onClick={requestMicAndStartRecording} className="dialog_btn">*/}
+                        {/*        <img src={microfonePng} alt="mic" className="size-5 my-auto"/>*/}
+                        {/*    </button>*/}
+                        {/*) : (*/}
+                        {/*    <button*/}
+                        {/*        onClick={isRecording ? stopRecording : requestMicAndStartRecording}*/}
+                        {/*        className="dialog_btn w-full"*/}
+                        {/*    >*/}
+                        {/*        {isRecording ? 'Остановить запись' : 'Начать запись'}*/}
+                        {/*        <img src={microfonePng} alt="mic" className="size-5 my-auto"/>*/}
 
-                        {!isUseMicrofone ? (
-                            <button onClick={requestMicAndStartRecording} className="dialog_btn">
-                                <img src={microfonePng} alt="mic" className="size-5 my-auto"/>
-                            </button>
-                        ) : (
-                            <button
-                                onClick={isRecording ? stopRecording : requestMicAndStartRecording}
-                                className="dialog_btn w-full"
-                            >
-                                {isRecording ? 'Остановить запись' : 'Начать запись'}
-                                <img src={microfonePng} alt="mic" className="size-5 my-auto"/>
-
-                            </button>
-                        )}
+                        {/*    </button>*/}
+                        {/*)}*/}
                     </div>
-
-
                 </div>
             )}
 

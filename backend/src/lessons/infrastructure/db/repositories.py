@@ -64,6 +64,12 @@ class LessonRepository(ILessonRepository):
 
         return [self._to_domain(obj) for obj in objs]
 
+    async def get_all(self) -> List[Lesson]:
+        stmt = select(LessonsOrm)
+        result = await self.session.execute(stmt)
+        objs = result.scalars().all()
+        return [self._to_domain(obj) for obj in objs]
+
     async def delete(self, id: int) -> None:
         stmt = select(LessonsOrm).where(LessonsOrm.id == id)
         result = await self.session.execute(stmt)

@@ -1,4 +1,3 @@
-import React from 'react';
 import BurgerMenu from "../buttons/BurgerMenu";
 import {useAuth} from "../context/AuthContext.tsx";
 

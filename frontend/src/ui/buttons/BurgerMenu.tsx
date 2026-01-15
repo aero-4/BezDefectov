@@ -1,4 +1,3 @@
-import React from 'react';
 import menuPng from "../../assets/menu.png";
 
 function BurgerMenu({ onClick }) {

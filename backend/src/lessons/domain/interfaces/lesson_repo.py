@@ -26,3 +26,6 @@ class ILessonRepository(abc.ABC):
     async def get_all_by_type(self, type: str) -> list[Lesson]:
         pass
 
+    @abc.abstractmethod
+    async def get_all(self) -> List[Lesson]:
+        pass

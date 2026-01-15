@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Menu from "./Menu.tsx";
 import BurgerMenu from "../buttons/BurgerMenu.tsx";
 

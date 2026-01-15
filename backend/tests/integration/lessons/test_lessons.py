@@ -16,9 +16,12 @@ from src.users.presentation.dtos import UserCreateDTO
 from src.utils.strings import generate_random_alphanum
 from tests.integration.conftest import base_url
 
+from src.dialogs.presentation.dtos import DialogCreateDTO
+from src.dialogs.domain.entities import Dialog
+
 
 @pytest.mark.asyncio
-async def add_some_test_lessons(clear_db):
+async def test_add_some_test_lessons(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         cards = ["Слоги", "Предложения", "Скороговорки"]
         texts = ["ра-ра-ра ро-ро-ро ре-ре-ре", "Арина приводит комнату в порядок", "Белые бараны били в барабаны"]
@@ -47,19 +50,20 @@ def load_lines(path: str) -> list[str]:
 
 
 @pytest.mark.asyncio
-async def massive_real_unique_content(clear_db):
+async def test_massive_real_unique_content():
     async with AsyncClient(base_url=base_url) as client:
-
         content_r = {
             "Скороговорки": load_lines("./files/r_skorogovorki.txt"),
             "Слоги": load_lines("./files/r_slogi.txt"),
             "Предложения": load_lines("./files/r_predlojenie.txt"),
+            "Диалоги": load_lines("./files/r_dialogi.txt")
         }
 
         content_sh = {
             "Скороговорки": load_lines("./files/sh_skorogovorki.txt"),
             "Слоги": load_lines("./files/sh_slogi.txt"),
             "Предложения": load_lines("./files/sh_predlojenie.txt"),
+            "Диалоги": load_lines("./files/sh_dialogi.txt")
         }
 
         lessons = []
@@ -77,10 +81,14 @@ async def massive_real_unique_content(clear_db):
             queues = content_r if lesson.type == LessonTypes.r else content_sh
 
             cards = []
+            dialogs = []
             for category, texts in queues.items():
                 for idx, text in enumerate(texts, start=1):
-                    title = f"{category}"
-                    cards.append((title, text))
+                    if category == "Диалоги":
+                        user_name, content = text.split()
+                        dialogs.append((user_name, content, idx - 1))
+                    else:
+                        cards.append((category, text))
 
             random.shuffle(cards)
 
@@ -100,6 +108,25 @@ async def massive_real_unique_content(clear_db):
                 assert card.title == title
                 assert card.text == text
                 assert card.lesson_id == lesson.id
+
+            for user_name, content, index in dialogs:
+                dialog_dto = DialogCreateDTO(
+                    user_name=user_name,
+                    content=content,
+                    lesson_id=lesson.id
+                )
+                r = await client.post(
+                    "/api/dialogs/",
+                    json=dialog_dto.model_dump(mode="json"),
+                )
+
+                assert r.status_code == 200
+
+                dialog = Dialog(**r.json())
+
+                assert dialog.user_name == user_name
+                assert dialog.content == content
+                assert dialog.lesson_id == lesson.id
 
 
 @pytest.mark.asyncio

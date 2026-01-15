@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import profilePng from "../../assets/profile.png";
 import fireActivePng from "../../assets/fire-active.png";
 import fireDisactivePng from "../../assets/fire-disabled.png";
-import editPng from "../../assets/edit.png";
 import {API_URL} from "../../config.tsx";
 import Loader from "../loaders/Loader.tsx";
 

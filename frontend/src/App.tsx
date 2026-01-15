@@ -1,4 +1,4 @@
-import {useState, Suspense} from 'react'
+import {Suspense} from 'react'
 import './App.css'
 import './fonts.css'
 import {Routes, Route, BrowserRouter} from "react-router-dom";

@@ -1,4 +1,3 @@
-import React from "react";
 import closeSvg from "../../assets/close.svg";
 
 export default function SwitchWithCross({ checked, onChange, label }) {

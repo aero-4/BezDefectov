@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import firePng from "../../assets/fire.png";
 
 function Series({series_day}) {

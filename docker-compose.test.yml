@@ -33,7 +33,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: pytest -s
+    command: pytest -v
     env_file:
       - .env.test
     volumes:
