@@ -32,8 +32,6 @@ class PGCardRepository(ICardRepository):
         objs = [self._to_domain(obj) for obj in result.scalars().all()]
         return objs
 
-
-
     async def delete(self, id: int) -> None:
         stmt = select(CardsOrm).where(CardsOrm.id == id)
         result = await self.session.execute(stmt)
@@ -65,5 +63,5 @@ class PGCardRepository(ICardRepository):
             id=obj.id,
             lesson_id=obj.lesson_id,
             text=obj.text,
-            title=obj.type
+            title=obj.title
         )

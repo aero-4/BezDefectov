@@ -26,9 +26,9 @@ class LessonRepository(ILessonRepository):
         except IntegrityError:
             raise AlreadyExists()
 
-        stmt = select(LessonsOrm).where(LessonsOrm.id == obj.id)
-        result = await self.session.execute(stmt)
-        obj = result.scalar_one_or_none()
+        # stmt = select(LessonsOrm).where(LessonsOrm.id == obj.id)
+        # result = await self.session.execute(stmt)
+        # obj = result.scalar_one_or_none()
 
         return self._to_domain(obj)
 

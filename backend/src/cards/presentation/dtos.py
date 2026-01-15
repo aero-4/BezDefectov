@@ -5,7 +5,6 @@ class CardCreateDTO(BaseModel):
     lesson_id: int
     title: str
     text: str
-    dialog_index: int
 
 
 class CardUpdateDTO(BaseModel):

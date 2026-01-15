@@ -40,5 +40,5 @@ async def update(id: int, lesson_data: LessonUpdateDTO, uow: LessonUoWDep):
 
 
 @lessons_api_router.post("/series")
-async def confirm(request: Request, user_uow: UserUoWDep):
+async def series(request: Request, user_uow: UserUoWDep):
     return await update_series(user_uow, request.state.user)

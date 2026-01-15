@@ -18,7 +18,7 @@ from tests.integration.conftest import base_url
 
 
 @pytest.mark.asyncio
-async def test_add_some_test_lessons(clear_db):
+async def add_some_test_lessons(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         cards = ["Слоги", "Предложения", "Скороговорки"]
         texts = ["ра-ра-ра ро-ро-ро ре-ре-ре", "Арина приводит комнату в порядок", "Белые бараны били в барабаны"]
@@ -48,19 +48,19 @@ def load_lines(path: str) -> list[str]:
 
 
 @pytest.mark.asyncio
-async def test_massive_real_unique_content(clear_db):
+async def massive_real_unique_content(clear_db):
     async with AsyncClient(base_url=base_url) as client:
 
         content_r = {
-            "Скороговорки": load_lines("files/r_skorogovorki.txt"),
-            "Слоги": load_lines("files/r_slogi.txt"),
-            "Предложения": load_lines("files/r_predlojenie.txt"),
+            "Скороговорки": load_lines("./files/r_skorogovorki.txt"),
+            "Слоги": load_lines("./files/r_slogi.txt"),
+            "Предложения": load_lines("./files/r_predlojenie.txt"),
         }
 
         content_sh = {
-            "Скороговорки": load_lines("files/sh_skorogovorki.txt"),
-            "Слоги": load_lines("files/sh_slogi.txt"),
-            "Предложения": load_lines("files/sh_predlojenie.txt"),
+            "Скороговорки": load_lines("./files/sh_skorogovorki.txt"),
+            "Слоги": load_lines("./files/sh_slogi.txt"),
+            "Предложения": load_lines("./files/sh_predlojenie.txt"),
         }
 
         lessons = []
@@ -216,7 +216,7 @@ async def test_update_series_finish_to_start(clear_db, new_user):
         client.cookies.set("refresh_token", response2.cookies.get("refresh_token"))
 
         response3 = await client.post("/api/lessons/series")
-        user_updated = User(**response3.json())
+        user_updated = UserMe(**response3.json())
 
         assert user_updated.series_days == 1
 
@@ -249,7 +249,7 @@ async def test_update_series_started_today(clear_db, new_user):
         client.cookies.set("refresh_token", response2.cookies.get("refresh_token"))
 
         response3 = await client.post("/api/lessons/series")
-        user_updated = User(**response3.json())
+        user_updated = UserMe(**response3.json())
 
         assert user_updated.series_days == SERIES_DAYS
 

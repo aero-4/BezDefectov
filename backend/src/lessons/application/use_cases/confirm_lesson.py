@@ -12,7 +12,7 @@ async def update_series(uow: UserUoWDep, user: User) -> dict[str, Any] | Any:
         series = 1
 
     elif is_today(user.updated_at.date()):  # сегодняшняя ничего не делаем
-        return user.model_dump(exclude={"hashed_password", "id"})
+        return UserMe(**user.model_dump())
 
     elif is_yesterday_two_dates(user.updated_at.date()):  # вчера был пройден урок
         series += 1
@@ -23,4 +23,4 @@ async def update_series(uow: UserUoWDep, user: User) -> dict[str, Any] | Any:
         user = await uow.users.update(user_data)
         await uow.commit()
 
-    return user.model_dump(exclude={"hashed_password", "id"})
+    return UserMe(**user.model_dump())
