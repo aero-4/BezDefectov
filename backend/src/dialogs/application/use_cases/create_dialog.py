@@ -7,4 +7,5 @@ async def create_dialog(dialog_data: DialogCreateDTO, uow: IDialogUnitOfWork):
     dialog_data = DialogCreate(**dialog_data.model_dump())
     async with uow:
         dialog = await uow.dialogs.add(dialog_data)
+        await uow.commit()
     return dialog

@@ -20,11 +20,11 @@ async def get(lesson_id: int, uow: DialogUoWDep):
     return await collect_dialogs(lesson_id, uow)
 
 
-@dialogs_api_router.patch("/{lesson_id}")
-async def update(lesson_id: int, dialog_data: DialogUpdateDTO, uow: DialogUoWDep):
-    return await update_dialog(lesson_id, dialog_data, uow)
+@dialogs_api_router.patch("/{id}")
+async def update(id: int, dialog_data: DialogUpdateDTO, uow: DialogUoWDep):
+    return await update_dialog(id, dialog_data, uow)
 
 
-@dialogs_api_router.delete("/{lesson_id}")
-async def delete(lesson_id: int, uow: DialogUoWDep):
-    return await delete_dialog(lesson_id)
+@dialogs_api_router.delete("/{id}")
+async def delete(id: int, uow: DialogUoWDep):
+    return await delete_dialog(id, uow)

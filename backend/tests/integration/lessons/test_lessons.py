@@ -22,15 +22,14 @@ async def add_some_test_lessons(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         cards = ["Слоги", "Предложения", "Скороговорки"]
         texts = ["ра-ра-ра ро-ро-ро ре-ре-ре", "Арина приводит комнату в порядок", "Белые бараны били в барабаны"]
-        dialogs_texts = ["Алекс", "ПРивет", "Привет, как дела у тебя?", "У меня все хоррошо!", "Это супер!"]
         types = [LessonTypes.r, LessonTypes.sh]
 
-        for i in range(random.randint(50, 100)):
+        for i in range(random.randint(10, 20)):
             lesson_dto = LessonCreateDTO(duration=random.randint(15, 30), type=random.choice(types))
             response = await client.post("/api/lessons/", json=lesson_dto.model_dump(mode="json"))
             lesson = Lesson(**response.json())
 
-            for i in range(random.randint(50, 100)):
+            for i in range(random.randint(10, 20)):
                 create_card = CardCreateDTO(title=random.choice(cards), text=random.choice(texts), lesson_id=lesson.id)
                 response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
 
@@ -186,16 +185,16 @@ async def test_update_series_start(clear_db, new_user):
         await new_user(client)
 
         response = await client.post(f"/api/lessons/series")
-        user = User(**response.json())
+        user = UserMe(**response.json())
         assert user.series_days == 1
 
         response = await client.post(f"/api/lessons/series")
-        user = User(**response.json())
+        user = UserMe(**response.json())
         assert user.series_days == 1
 
 
 @pytest.mark.asyncio
-async def test_update_series_finish_to_start(clear_db, new_user):
+async def test_update_series_finish_to_start(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         user_data = UserCreateDTO(email=generate_random_alphanum() + "@email.com",
                                   password=generate_random_alphanum(),
@@ -227,7 +226,7 @@ async def test_update_series_finish_to_start(clear_db, new_user):
 
 
 @pytest.mark.asyncio
-async def test_update_series_started_today(clear_db, new_user):
+async def test_update_series_started_today(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         SERIES_DAYS = 3
         user_data = UserCreateDTO(email=generate_random_alphanum() + "@email.com",

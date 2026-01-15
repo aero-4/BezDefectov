@@ -16,7 +16,7 @@ class PGDialogUnitOfWork(IDialogUnitOfWork):
         return await super().__aenter__()
 
     async def __aexit__(self, *args):
-        await super().__aexit__(args)
+        await super().__aexit__(*args)
         await self.session.close()
 
     async def rollback(self):

@@ -59,6 +59,7 @@ class PGDialogsRepository(IDialogRepository):
     @staticmethod
     def _to_entity(obj: DialogsOrm) -> Dialog:
         return Dialog(
+            id=obj.id,
             user_name=obj.user_name,
             content=obj.content,
             index=obj.index,
