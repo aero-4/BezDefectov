@@ -8,7 +8,9 @@ RUN npm install
 
 COPY . .
 
-CMD ["npx", "vite", "--host"]
+RUN npx vite build
+
+CMD ["npx", "vite", "preview", "--host", "0.0.0.0"]
 
 
 

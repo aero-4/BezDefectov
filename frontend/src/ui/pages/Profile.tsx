@@ -4,6 +4,7 @@ import fireActivePng from "../../assets/fire-active.png";
 import fireDisactivePng from "../../assets/fire-disabled.png";
 import {API_URL} from "../../config.tsx";
 import Loader from "../loaders/Loader.tsx";
+import React from 'react';
 
 export interface User {
     id: number;

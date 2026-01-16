@@ -1,3 +1,6 @@
+import React from 'react';
+
+
 function Faq(props) {
     return (
         <div className="flex flex-col gap-12">

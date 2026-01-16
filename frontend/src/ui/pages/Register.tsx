@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {API_URL} from "../../config.tsx";
 import SwitchWithCross from "../switches/Switch.tsx";
+import React from 'react';
 
 const emailRegex = /^\S+@\S+\.\S+$/;
 

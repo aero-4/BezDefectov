@@ -1,5 +1,6 @@
 import {useEffect, useState, FormEvent} from 'react';
 import {API_URL} from "../../config.tsx";
+import React from 'react';
 
 
 type LessonType = 'sh' | 'r';

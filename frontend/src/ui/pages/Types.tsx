@@ -1,3 +1,5 @@
+import React from 'react';
+
 function Types(props) {
     return (
         <div className="flex flex-col gap-6">

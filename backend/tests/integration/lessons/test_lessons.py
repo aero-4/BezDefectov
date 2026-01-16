@@ -28,7 +28,7 @@ async def test_add_some_test_lessons(clear_db):
         types = [LessonTypes.r, LessonTypes.sh]
 
         for i in range(random.randint(10, 20)):
-            lesson_dto = LessonCreateDTO(duration=random.randint(15, 30), type=random.choice(types))
+            lesson_dto = LessonCreateDTO(duration=random.randint(1, 1), type=random.choice(types))
             response = await client.post("/api/lessons/", json=lesson_dto.model_dump(mode="json"))
             lesson = Lesson(**response.json())
 
@@ -41,6 +41,15 @@ async def test_add_some_test_lessons(clear_db):
                 assert lesson.duration == lesson_dto.duration
                 assert create_card.text == card.text
 
+            for i in range(10):
+                create_dialog = DialogCreateDTO(user_name=random.choice(cards), content=random.choice(texts), lesson_id=lesson.id, index=i)
+                response2 = await client.post("/api/dialogs/", json=create_dialog.model_dump(mode="json"))
+
+                dialog = Dialog(**response2.json())
+
+                assert dialog.user_name == create_dialog.user_name
+
+
         return lesson
 
 
@@ -50,7 +59,7 @@ def load_lines(path: str) -> list[str]:
 
 
 @pytest.mark.asyncio
-async def test_massive_real_unique_content():
+async def test_massive_real_unique_content(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         content_r = {
             "Скороговорки": load_lines("./files/r_skorogovorki.txt"),
@@ -85,7 +94,7 @@ async def test_massive_real_unique_content():
             for category, texts in queues.items():
                 for idx, text in enumerate(texts, start=1):
                     if category == "Диалоги":
-                        user_name, content = text.split()
+                        user_name, content = text.split(":")[0], text.split(":")[1]
                         dialogs.append((user_name, content, idx - 1))
                     else:
                         cards.append((category, text))

@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import SwitchWithCross from "../switches/Switch.tsx";
 import {API_URL} from "../../config.tsx";
+import React from 'react';
 
 export default function Login(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [errors, setErrors] = useState({ email: "", password: "", submit: "" });
+    const [errors, setErrors] = useState({email: "", password: "", submit: ""});
     const [loading, setLoading] = useState(false);
 
     const validate = () => {
-        const next = { email: "", password: "", submit: "" };
+        const next = {email: "", password: "", submit: ""};
         const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email.trim()) next.email = "Email обязателен";
         else if (!emailRe.test(email)) next.email = "Неверный формат email";
@@ -24,7 +25,7 @@ export default function Login(props) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors((s) => ({ ...s, submit: "" }));
+        setErrors((s) => ({...s, submit: ""}));
 
         if (!validate()) return;
 
@@ -32,8 +33,8 @@ export default function Login(props) {
             setLoading(true);
             const res = await fetch(`${API_URL}/auth/login`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({email, password}),
                 credentials: "include"
             });
 
@@ -41,13 +42,13 @@ export default function Login(props) {
 
             if (!res.ok) {
                 const msg = data?.message || data?.error || `Ошибка входа: ${res.status}`;
-                setErrors((s) => ({ ...s, submit: msg }));
+                setErrors((s) => ({...s, submit: msg}));
                 return;
             }
 
             if (props.onLogin) props.onLogin(data);
         } catch (err) {
-            setErrors((s) => ({ ...s, submit: "Сетевая ошибка. Попробуйте позже." }));
+            setErrors((s) => ({...s, submit: "Сетевая ошибка. Попробуйте позже."}));
         } finally {
             setLoading(false);
         }
@@ -88,7 +89,7 @@ export default function Login(props) {
 
                 <SwitchWithCross checked={showPassword}
                                  onChange={setShowPassword}
-                                 label={"ПОКАЗАТЬ ПАРОЛЬ"} />
+                                 label={"ПОКАЗАТЬ ПАРОЛЬ"}/>
 
                 {errors.submit && (
                     <p className="text-red-600 text-sm mt-2" role="alert" aria-live="polite">{errors.submit}</p>

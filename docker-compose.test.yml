@@ -33,13 +33,24 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: pytest -v
+    command: pytest -v tests/integration/lessons/test_lessons.py::test_add_some_test_lessons
     env_file:
       - .env.test
     volumes:
       - ./backend:/app
     networks:
       - backend_net
+
+  frontend:
+    build:
+      context: ./frontend
+    image: bezdefectov-frontend:latest
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+      - "4173:4173"
+
 
 
   db:

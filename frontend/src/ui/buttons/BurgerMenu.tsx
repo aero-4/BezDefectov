@@ -1,4 +1,5 @@
 import menuPng from "../../assets/menu.png";
+import React from 'react';
 
 function BurgerMenu({ onClick }) {
     return (

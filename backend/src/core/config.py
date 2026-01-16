@@ -1,4 +1,5 @@
 import os
+import pprint
 import secrets
 from pathlib import Path
 from typing import Literal
@@ -7,14 +8,14 @@ from dotenv import find_dotenv, load_dotenv
 from pydantic import AnyHttpUrl, EmailStr, PostgresDsn, field_validator, ValidationInfo, AnyUrl, ConfigDict
 from pydantic_settings import BaseSettings
 
-env_file = find_dotenv() or (Path(__file__).resolve().parents[1] / ".env")
+env_file = find_dotenv(".env.dev")
 load_dotenv(env_file)
 
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = os.environ.get("PROJECT_NAME", "UNNAMED PROJECT")
     SECRET_KEY: str = secrets.token_urlsafe(32)
-    DOMAIN: str = os.environ.get("DOMAIN")
+    DOMAIN: str | None = os.environ.get("DOMAIN")
 
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
@@ -30,7 +31,7 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     DB_TYPE: Literal['POSTGRESQL', 'ASYNC_POSTGRESQL', 'SQLITE', 'ASYNC_SQLITE'] = os.environ.get("DB_TYPE")
-    DB_NAME: str = os.environ.get("DB_NAME")
+    DB_NAME: str | None = os.environ.get("DB_NAME")
     DB_USER: str | None = os.environ.get("DB_USER")
     DB_PASSWORD: str | None = os.environ.get("DB_PASSWORD")
     DB_HOST: str | None = os.environ.get("DB_HOST")
@@ -99,3 +100,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+

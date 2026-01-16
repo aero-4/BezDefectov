@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import {useState, useRef, useEffect} from 'react';
+import {createPortal} from 'react-dom';
+import React from 'react';
 
 export default function Tooltip({
                                     children,
@@ -28,7 +29,10 @@ export default function Tooltip({
         }
         return () => {
             if (portalEl.current) {
-                try { document.body.removeChild(portalEl.current); } catch {}
+                try {
+                    document.body.removeChild(portalEl.current);
+                } catch {
+                }
             }
         };
     }, []);
@@ -103,6 +107,7 @@ export default function Tooltip({
     function handleFocus() {
         showImmediate();
     }
+
     function handleBlur() {
         hideImmediate();
     }
@@ -118,7 +123,7 @@ export default function Tooltip({
         {
             ref: (node) => {
                 triggerRef.current = node;
-                const { ref } = children;
+                const {ref} = children;
                 if (typeof ref === 'function') ref(node);
                 else if (ref && typeof ref === 'object') ref.current = node;
             },
@@ -152,7 +157,7 @@ export default function Tooltip({
             id={idRef.current}
             role="tooltip"
             className={`pointer-events-none fixed z-50 transform transition-opacity duration-150 ${open ? 'opacity-100' : 'opacity-0'} ${className}`}
-            style={{ top: 0, left: 0 }}
+            style={{top: 0, left: 0}}
             aria-hidden={!open}
         >
             <div className="inline-block select-none whitespace-normal max-w-xs text-sm px-3 py-1.5 rounded-2xl shadow-lg bg-slate-800 text-white">

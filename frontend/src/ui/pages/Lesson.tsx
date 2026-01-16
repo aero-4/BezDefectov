@@ -1,13 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {API_URL} from '../../config.tsx';
 import Loader from '../loaders/Loader.tsx';
 import Timer from '../components/Timer.tsx';
-import avatarRobotPng from '../../assets/ai-avatar.png';
-import microfonePng from '../../assets/microfone.png';
 import Tooltip from "../buttons/Tooltip.tsx";
 import Series from "../components/Series.tsx";
 import {useAuth} from "../context/AuthContext.tsx";
+import React from 'react';
 
 export interface Card {
     id: number;
@@ -98,8 +97,6 @@ function Lesson() {
     }, [id]);
 
     useEffect(() => {
-        if (stage !== 'dialog') return;
-
         let mounted = true;
 
         (async () => {
@@ -117,7 +114,7 @@ function Lesson() {
         return () => {
             mounted = false;
         };
-    }, [stage]);
+    }, [id]);
 
     if (loading || !lesson) return <Loader/>;
 
@@ -246,6 +243,8 @@ function Lesson() {
     if (!lesson || !lesson.duration) return <h1>Урок не найден</h1>
 
 
+    console.log(stage, lesson, dialogs, cards)
+
     return (
         <div className="min-h-screen flex flex-col">
 
@@ -274,7 +273,7 @@ function Lesson() {
 
                         <div className="flex ml-auto">
                             <Timer
-                                minutes={1}
+                                minutes={lesson.duration}
                                 isStarted
                                 size={120}
                                 strokeWidth={3}
@@ -287,7 +286,7 @@ function Lesson() {
                     <div className="flex flex-col gap-6">
                         {Object.entries(groupedCards).map(([title, group]) => (
                             <div key={title}>
-                                <h2 className="font-semibold p-1">{title}</h2>
+                                <h2 className="font-semibold my-3">{title}</h2>
 
                                 <div className="rounded-xl flex flex-col gap-3">
                                     {group.map((card) => (
@@ -313,27 +312,28 @@ function Lesson() {
                                  content="Очень важно чтобы вы могли выработать автоматизацию при разговоре, говоря звуки даже не задумываясь."/>
                     </div>
 
-                    <div className="my-20 max-w-md mx-auto flex flex-col items-center gap-6">
+                    <div className="my-6 flex flex-col gap-6">
 
-                        <img
-                            src={avatarRobotPng}
-                            alt="AI"
-                            className="size-100"
-                        />
-
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col space-y-3">
                             {dialogs?.map((dialog, idx) => (
                                 <div
                                     key={idx}
-                                    className={`border p-2 rounded max-w-xs ${
-                                        dialog.index % 2 === 0 ? "self-start bg-gray-200" : "self-end bg-blue-200 text-white"
+                                    className={`border max-w-md ${
+                                        dialog.index % 2 === 0 ? "self-start" : "self-end"
                                     }`}
                                 >
-                                    <p className="font-semibold">{dialog.user_name}</p>
-                                    <p>{dialog.content}</p>
+                                    <p className="font-semibold text-sm text-gray-500">{dialog.user_name}</p>
+                                    <p className=" break-words overflow-wrap anywhere">{dialog.content}</p>
                                 </div>
                             ))}
                         </div>
+
+                        <button
+                            onClick={() => setStage('finish')}
+                            className="action_btn w-full items-center my-auto justify-center max-w-xl mx-auto"
+                        >
+                            Продолжить
+                        </button>
 
                         {/*{!isUseMicrofone ? (*/}
                         {/*    <button onClick={requestMicAndStartRecording} className="dialog_btn">*/}
@@ -353,7 +353,7 @@ function Lesson() {
                 </div>
             )}
 
-            {stage === "finish" && (
+            {stage === 'finish' && (
                 <div className="flex flex-col h-full min-h-screen">
                     {series && series.series_days !== user.series_days && (
                         <Series series_day={series.series_days}/>

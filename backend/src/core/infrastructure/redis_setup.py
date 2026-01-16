@@ -13,7 +13,7 @@ def get_redis_client() -> Redis:
     return Redis.from_url(settings.REDIS_URL, decode_responses=True)
 
 
-async def check_redis_connection() -> bool:
+async def redis_ping_connection() -> bool:
     try:
         await get_redis_client().ping()
         logger.info("Redis is connected")

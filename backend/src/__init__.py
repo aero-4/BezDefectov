@@ -13,7 +13,7 @@ from src.auth.presentation.middlewares.security import SecurityMiddleware
 from src.cards.presentation.api import cards_api_router
 from src.core.config import settings
 from src.core.domain.exceptions import AppException
-from src.core.infrastructure.redis_setup import check_redis_connection
+from src.core.infrastructure.redis_setup import redis_ping_connection
 from src.db.utils import recreate_schema
 from src.dialogs.presentation.api import dialogs_api_router
 from src.lessons.presentation.api import lessons_api_router
@@ -22,7 +22,7 @@ from src.users.presentation.api import users_api_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # await check_redis_connection()
+    await redis_ping_connection()
     await recreate_schema()
     yield
 

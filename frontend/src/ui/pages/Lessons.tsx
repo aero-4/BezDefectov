@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Loader from '../loaders/Loader';
 import { API_URL } from '../../config.tsx';
 import { useParams } from 'react-router-dom';
+import React from 'react';
 
 type Lesson = {
     id: number;
