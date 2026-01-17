@@ -69,15 +69,15 @@ services:
     networks: [ backend_net ]
 
   certbot:
-    env_file: .env.prod
-    ports:
-      - "6000:80"
     build:
-      context: .
-      dockerfile: infra/certbot/Dockerfile
+      context: ./infra/certbot
+      dockerfile: Dockerfile
       args:
         DOMAIN_EMAIl: ${DOMAIN_EMAIL}
         DOMAIN: ${DOMAIN}
+    env_file: .env.prod
+    ports:
+      - "6000:80"
     image: certbot/certbot
     depends_on:
       - nginx

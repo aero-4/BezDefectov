@@ -13,7 +13,7 @@ ENV DOMAIN=$DOMAIN
 
 WORKDIR /certbot
 
-COPY infra/certbot /certbot/
+COPY . /certbot/
 
 RUN apt-get update && \
     apt-get -y install certbot && \
@@ -21,4 +21,4 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # запускаем скрипт генерации
-CMD ["sh", "/generate-certificate.sh"]
+CMD ["sh", "generate-certificate.sh"]
