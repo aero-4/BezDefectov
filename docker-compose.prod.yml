@@ -85,9 +85,8 @@ services:
       - --no-eff-email
       - --non-interactive
       - -d
-      - migom.shop
-      - -d
-      - api.migom.shop
+      - potok.cloud
+
     networks: [ backend_net ]
 
 volumes:
