@@ -1,0 +1,12 @@
+2026/01/16 22:57:24 [emerg] 1#1: invalid number of arguments in "try_files" directive in /etc/nginx/nginx.conf:14
+2026/01/17 08:36:56 [emerg] 1#1: invalid number of arguments in "try_files" directive in /etc/nginx/nginx.conf:14
+2026/01/17 08:39:34 [emerg] 1#1: invalid number of arguments in "try_files" directive in /etc/nginx/nginx.conf:14
+2026/01/17 09:35:39 [emerg] 1#1: directive "server_name" is not terminated by ";" in /etc/nginx/nginx.conf:11
+2026/01/17 09:37:21 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:22
+2026/01/17 09:37:21 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:34
+2026/01/17 09:37:21 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 09:52:26 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 09:59:28 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 10:48:07 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 11:37:07 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 11:50:31 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
