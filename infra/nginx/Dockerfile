@@ -17,6 +17,6 @@ FROM nginx:alpine
 RUN apk add --no-cache gettext
 COPY --from=frontend_build /app/frontend/dist /usr/share/nginx/html
 COPY infra/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY infra/nginx/entrypoint-simple.sh /entrypoint.sh
+COPY infra/nginx/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
