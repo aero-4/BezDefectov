@@ -10,3 +10,29 @@
 2026/01/17 10:48:07 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
 2026/01/17 11:37:07 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
 2026/01/17 11:50:31 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/localhost/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/localhost/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:30:14 [emerg] 1#1: "server" directive is not allowed here in /etc/nginx/nginx.conf:2
+2026/01/17 14:30:15 [emerg] 1#1: "server" directive is not allowed here in /etc/nginx/nginx.conf:2
+2026/01/17 14:30:15 [emerg] 1#1: "server" directive is not allowed here in /etc/nginx/nginx.conf:2
+2026/01/17 14:30:16 [emerg] 1#1: "server" directive is not allowed here in /etc/nginx/nginx.conf:2
+2026/01/17 14:30:17 [emerg] 1#1: "server" directive is not allowed here in /etc/nginx/nginx.conf:2
+2026/01/17 14:30:19 [emerg] 1#1: "server" directive is not allowed here in /etc/nginx/nginx.conf:2
+2026/01/17 14:30:22 [emerg] 1#1: "server" directive is not allowed here in /etc/nginx/nginx.conf:2
+2026/01/17 14:30:29 [emerg] 1#1: "server" directive is not allowed here in /etc/nginx/nginx.conf:2
+2026/01/17 14:30:53 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:30:53 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:30:53 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:30:53 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:30:54 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:30:54 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:30:55 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:30:55 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:30:56 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:30:56 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:30:58 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:30:58 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:31:01 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:31:01 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:31:08 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:31:08 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
+2026/01/17 14:31:21 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/nginx.conf:17
+2026/01/17 14:31:21 [emerg] 1#1: cannot load certificate "/etc/letsencrypt/live/potok.cloud/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/potok.cloud/fullchain.pem, r) error:10000080:BIO routines::no such file)
