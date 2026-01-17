@@ -1,64 +1,71 @@
+version: "3.9"
 services:
   db:
     image: postgres:16
-    user: "999:999"
-    env_file:
-      - .env.prod
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./infra/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    env_file: [ .env.prod ]
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: strongpassword
       POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres -h localhost" ]
       interval: 5s
       timeout: 5s
       retries: 10
-    ports:
-      - "5432:5432"
-    networks:
-      - backend_net
+    ports: [ "5432:5432" ]
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     restart: always
+    networks: [ backend_net ]
 
   redis:
     image: redis:latest
     volumes:
       - redis_data:/data
       - ./infra/redis/redis.conf:/usr/local/etc/redis/redis.conf
-    ports:
-      - "6379:6379"
     command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
-    env_file:
-      - .env.prod
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: [ "CMD-SHELL", "redis-cli ping || exit 1" ]
       interval: 5s
-      retries: 5
-    networks:
-      - backend_net
+      timeout: 5s
+      retries: 10
+    ports: [ "6379:6379" ]
     restart: always
+    networks: [ backend_net ]
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: [ .env.prod ]
+    image: bezdefectov:latest
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes: [ ]
+    command: [ "uvicorn", "src:app", "--host", "0.0.0.0", "--port", "8000" ]
+    ports: [ "8000:8000" ]
+    restart: on-failure
+    networks: [ backend_net ]
 
   nginx:
     build:
       context: .
       dockerfile: infra/nginx/Dockerfile
-    image: nginx:latest
+    image: myapp-nginx:latest
     depends_on:
       - backend
-    ports:
-      - "80:80"
-      - "443:443"
-    env_file:
-      - .env.prod
+    ports: [ "80:80","443:443" ]
+    env_file: [ .env.prod ]
     volumes:
       - ./logs/nginx:/var/log/nginx
       - certbot_www:/var/www/certbot
       - certbot_etc:/etc/letsencrypt
-    networks:
-      - backend_net
+    networks: [ backend_net ]
 
   certbot:
     image: certbot/certbot
@@ -78,33 +85,11 @@ services:
       - --agree-tos
       - --no-eff-email
       - --non-interactive
-      - --force-renewal
       - -d
       - migom.shop
       - -d
       - api.migom.shop
-    networks:
-      - backend_net
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    env_file:
-      - .env.prod
-    image: bezdefectov:latest
-    depends_on:
-      redis:
-        condition: service_healthy
-    volumes:
-      - ./backend:/app
-    command: uvicorn src:app --reload --host 0.0.0.0 --port 8000
-    ports:
-      - "8000:8000"
-    networks:
-      - backend_net
-
-
+    networks: [ backend_net ]
 
 volumes:
   pgdata:
