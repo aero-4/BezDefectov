@@ -60,9 +60,9 @@ services:
       - "443:443"
     env_file: [ .env.prod ]
     volumes:
-      - ./infra/nginx/nginx.init.conf:/etc/nginx/nginx.conf:ro   # init (HTTP only) while cert issued
-      - certbot_www:/var/www/certbot                           # webroot for ACME challenges
-      - certbot_etc:/etc/letsencrypt                           # where certs will be stored
+      - ./infra/nginx/nginx.init.conf:/etc/nginx/nginx.conf:ro
+      - certbot_www:/var/www/certbot
+      - certbot_etc:/etc/letsencrypt
     networks: [ backend_net ]
 
   certbot:
