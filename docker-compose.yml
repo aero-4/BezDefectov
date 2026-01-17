@@ -52,6 +52,9 @@ services:
     networks: [ backend_net ]
 
   nginx:
+    build:
+      context: infra/nginx
+      dockerfile: Dockerfile
     image: nginx:stable
     depends_on:
       - backend
