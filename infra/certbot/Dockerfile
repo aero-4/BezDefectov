@@ -5,18 +5,20 @@ EXPOSE 6000 80
 
 # читаем переменные среды из .env
 ARG DOMAIN_EMAIL
-ARG DOMAIN_URL
+ARG DOMAIN
 
 # устанавливаем переменные среды в переменные
 ENV DOMAIN_EMAIL=$DOMAIN_EMAIL
-ENV DOMAIN_URL=$DOMAIN_URL
+ENV DOMAIN=$DOMAIN
 
 WORKDIR /certbot
-COPY . /certbot
-WORKDIR /certbot
 
-RUN apt-get update
-RUN apt-get -y install certbot
+COPY infra/certbot /certbot/
+
+RUN apt-get update && \
+    apt-get -y install certbot && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # запускаем скрипт генерации
-CMD ["sh", "/certbot/generate-certificate.sh"]
+CMD ["sh", "/generate-certificate.sh"]
