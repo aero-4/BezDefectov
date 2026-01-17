@@ -53,8 +53,8 @@ services:
 
   nginx:
     build:
-      context: infra/nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: infra/nginx/Dockerfile
     image: nginx:stable
     depends_on:
       - backend
