@@ -43,6 +43,7 @@ async def app_exception_handler(request: Request, exc: AppException):
         }
     )
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -55,8 +56,8 @@ app.add_middleware(
 app.add_middleware(AuthenticationMiddleware)
 app.add_middleware(JWTRefreshMiddleware)
 
-app.include_router(auth_api_router, prefix="/api/auth", tags=["Auth"])
-app.include_router(lessons_api_router, prefix="/api/lessons", tags=["Lessons"])
-app.include_router(cards_api_router, prefix="/api/cards", tags=["Cards"])
-app.include_router(users_api_router, prefix="/api/users", tags=["Users"])
-app.include_router(dialogs_api_router, prefix="/api/dialogs", tags=["Dialogs"])
+app.include_router(auth_api_router, prefix="/auth", tags=["Auth"])
+app.include_router(lessons_api_router, prefix="/lessons", tags=["Lessons"])
+app.include_router(cards_api_router, prefix="/cards", tags=["Cards"])
+app.include_router(users_api_router, prefix="/users", tags=["Users"])
+app.include_router(dialogs_api_router, prefix="/dialogs", tags=["Dialogs"])
