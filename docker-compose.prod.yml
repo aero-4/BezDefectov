@@ -58,6 +58,7 @@ services:
     image: myapp-nginx:latest
     depends_on:
       - backend
+    restart: unless-stopped
     ports: [ "80:80","443:443" ]
     env_file: [ .env.prod ]
     volumes:
@@ -73,19 +74,14 @@ services:
     volumes:
       - certbot_www:/var/www/certbot
       - certbot_etc:/etc/letsencrypt
-    entrypoint:
-      - certbot
-      - certonly
-      - --webroot
-      - -w
-      - /var/www/certbot
-      - --email
-      - admin@gmail.com
-      - --agree-tos
-      - --no-eff-email
-      - --non-interactive
-      - -d
-      - potok.cloud
+    command: >
+      sh -c "
+      trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /var/www/certbot --quiet
+        sleep 12h
+      done
+      "
 
     networks: [ backend_net ]
 
