@@ -23,4 +23,5 @@ COPY infra/nginx/nginx.init.conf /etc/nginx/nginx.init.conf
 COPY infra/nginx/nginx.ssl.conf.template /etc/nginx/nginx.ssl.conf.template
 COPY infra/nginx/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
 ENTRYPOINT ["/entrypoint.sh"]
