@@ -52,10 +52,7 @@ services:
     networks: [ backend_net ]
 
   nginx:
-    build:
-      context: .
-      dockerfile: infra/nginx/Dockerfile
-    image: myapp-nginx:latest
+    image: nginx:stable
     depends_on:
       - backend
     ports:
@@ -63,26 +60,22 @@ services:
       - "443:443"
     env_file: [ .env.prod ]
     volumes:
-      - ./infra/nginx/nginx.init.conf:/etc/nginx/nginx.conf:ro
-      - ./infra/nginx/cert.pem:/etc/cert.pem
-      - ./infra/nginx/key.pem:/etc/key.pem
+      - ./infra/nginx/nginx.init.conf:/etc/nginx/nginx.conf:ro   # init (HTTP only) while cert issued
+      - certbot-www:/var/www/certbot                           # webroot for ACME challenges
+      - certbot-etc:/etc/letsencrypt                           # where certs will be stored
     networks: [ backend_net ]
 
   certbot:
-    build:
-      context: ./infra/certbot
-      dockerfile: Dockerfile
-      args:
-        DOMAIN_EMAIl: ${DOMAIN_EMAIL}
-        DOMAIN: ${DOMAIN}
-    env_file: .env.prod
-    ports:
-      - "6000:80"
     image: certbot/certbot
     depends_on:
       - nginx
+    env_file: [ .env.prod ]
     volumes:
-      - ./nginx:/etc/nginx/
+      - certbot-www:/var/www/certbot
+      - certbot-etc:/etc/letsencrypt
+    entrypoint: >
+      sh -c "certbot certonly --webroot -w /var/www/certbot -d ${DOMAIN} -d www.${DOMAIN} \
+      --email ${DOMAIN_EMAIL} --agree-tos --no-eff-email --non-interactive && echo 'CERT DONE'"
     networks: [ backend_net ]
 
 volumes:
