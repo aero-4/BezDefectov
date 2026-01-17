@@ -4,25 +4,20 @@ set -eu
 : "${DOMAIN:=migom.shop}"
 : "${API_DOMAIN:=api.migom.shop}"
 
-# 1. стартуем nginx БЕЗ ssl (только http + acme)
-envsubst '$DOMAIN $API_DOMAIN' \
-  < /etc/nginx/nginx.init.conf \
-  > /etc/nginx/nginx.conf
+# render init (HTTP-only) config
+envsubst '$DOMAIN $API_DOMAIN' < /etc/nginx/nginx.init.conf > /etc/nginx/nginx.conf
 
-# 2. фоновый watcher сертификата
+# background watcher: when real cert appears, switch to SSL config and reload
 (
   while true; do
-    if [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
-      echo "SSL cert found, enabling HTTPS"
-      envsubst '$DOMAIN $API_DOMAIN' \
-        < /etc/nginx/nginx.ssl.conf.template \
-        > /etc/nginx/nginx.conf
-      nginx -s reload
+    if [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ] && [ -s "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
+      envsubst '$DOMAIN $API_DOMAIN' < /etc/nginx/nginx.ssl.conf.template > /etc/nginx/nginx.conf
+      nginx -s reload || true
       break
     fi
     sleep 2
   done
 ) &
 
-# 3. nginx — PID 1
+# run nginx as PID 1 in foreground
 exec nginx -g 'daemon off;'
