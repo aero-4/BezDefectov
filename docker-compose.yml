@@ -14,7 +14,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    ports: [ "5432:5432"]
+    ports: [ "5432:5432" ]
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     restart: always
     networks: [ backend_net ]
@@ -58,36 +58,31 @@ services:
     image: myapp-nginx:latest
     depends_on:
       - backend
-    restart: unless-stopped
-    ports: [ "80:80","443:443" ]
+    ports:
+      - "80:80"
+      - "443:443"
     env_file: [ .env.prod ]
     volumes:
-      - ./logs/nginx:/var/log/nginx
-      - certbot_www:/var/www/certbot
-      - certbot_etc:/etc/letsencrypt
+      - ./infra/nginx/nginx.init.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/cert.pem:/etc/cert.pem
+      - ./infra/nginx/key.pem:/etc/key.pem
     networks: [ backend_net ]
 
   certbot:
+    env_file: .env.prod
+    ports:
+      - "6000:80"
+    build:
+      context: .
+      dockerfile: infra/certbot/Dockerfile
+      args:
+        DOMAIN_EMAIl: ${DOMAIN_EMAIL}
+        DOMAIN: ${DOMAIN}
     image: certbot/certbot
     depends_on:
       - nginx
     volumes:
-      - certbot_www:/var/www/certbot
-      - certbot_etc:/etc/letsencrypt
-    entrypoint:
-      - certbot
-      - certonly
-      - --webroot
-      - -w
-      - /var/www/certbot
-      - --email
-      - admin@gmail.com
-      - --agree-tos
-      - --no-eff-email
-      - --non-interactive
-      - -d
-      - potok.cloud
-
+      - ./nginx:/etc/nginx/
     networks: [ backend_net ]
 
 volumes:
