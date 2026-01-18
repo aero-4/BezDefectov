@@ -1,3 +1,4 @@
+// src/ui/context/AuthContext.tsx
 import {
     useState,
     useEffect,
@@ -29,9 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const res = await fetch(API_URL + "/users/me", {
                 method: "GET",
                 credentials: "include",
-                headers: {
-                    Accept: "application/json",
-                },
+                headers: { Accept: "application/json" },
             });
 
             const json = await res.json().catch(() => null);
@@ -90,8 +89,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (isAuthenticated) {
-            refreshToken();
-
             refreshIntervalRef.current = window.setInterval(() => {
                 refreshToken();
             }, 15 * 60 * 1000);
@@ -129,7 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     return { ok: false, message: msg };
                 }
 
-                setIsAuthenticated(true);
                 await fetchCurrentUser();
                 return { ok: true };
             } catch (err: any) {
@@ -158,7 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     return { ok: false, message: msg };
                 }
 
-                setIsAuthenticated(true);
+                // аналогично — подтянуть текущего пользователя
                 await fetchCurrentUser();
                 return { ok: true };
             } catch (err: any) {
@@ -194,15 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             refresh: fetchCurrentUser,
             setAuthenticated: setIsAuthenticated,
         }),
-        [
-            user,
-            loading,
-            isAuthenticated,
-            login,
-            register,
-            logout,
-            fetchCurrentUser,
-        ]
+        [user, loading, isAuthenticated, login, register, logout, fetchCurrentUser]
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

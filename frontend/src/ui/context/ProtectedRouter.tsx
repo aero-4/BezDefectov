@@ -1,9 +1,14 @@
 import React from 'react';
 import {useAuth} from "./AuthContext.tsx";
 import {Navigate, Outlet} from "react-router-dom";
+import Loader from "../loaders/Loader.tsx";
 
 function ProtectedRouter() {
-    const {isAuthenticated, user} = useAuth();
+    const {isAuthenticated, loading} = useAuth();
+
+    if (loading) {
+        return <Loader/>;
+    }
 
     if (isAuthenticated) {
         return <Outlet/>;
