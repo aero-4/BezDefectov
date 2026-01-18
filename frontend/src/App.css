@@ -29,7 +29,7 @@
 }
 
 .card {
-    @apply p-4 rounded-md bg-[#F8F6FF] border-0 hover:bg-blue-600
+    @apply p-4 rounded-md bg-[#F8F6FF] border-0 hover:bg-[#3B19FF] hover:text-white
 }
 
 .link {
