@@ -15,6 +15,7 @@ import Profile from "./ui/pages/Profile.tsx";
 import Lesson from "./ui/pages/Lesson.tsx";
 import Admin from "./ui/pages/Admin.tsx";
 import ProtectedRouter from "./ui/context/ProtectedRouter.tsx";
+
 function App(): JSX.Element {
     return (
         <Suspense fallback={<Loader/>}>

@@ -285,11 +285,11 @@ function Lesson() {
                             <div key={title}>
                                 <h2 className="font-semibold my-3">{title}</h2>
 
-                                <div className="rounded-xl flex flex-col gap-3">
+                                <div className="flex flex-col gap-3 md:grid md:grid-cols-2">
                                     {group.map((card) => (
                                         <p
                                             key={card.id}
-                                            className="border whitespace-pre-line"
+                                            className="card whitespace-pre-line"
                                         >
                                             {card.text}
                                         </p>

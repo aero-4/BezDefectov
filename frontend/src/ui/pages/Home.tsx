@@ -2,9 +2,14 @@ import homePhoto from "../../assets/home.png";
 import arrowPng from "../../assets/arrow.png";
 import React from 'react';
 import {useAuth} from "../context/AuthContext.tsx";
+import Loader from "../loaders/Loader.tsx";
 
 function Home() {
-    const {isAuthenticated} = useAuth();
+    const {isAuthenticated, loading} = useAuth();
+
+    if (loading) {
+        return <Loader/>;
+    }
 
     return (
         <div className="flex flex-col gap-18">
