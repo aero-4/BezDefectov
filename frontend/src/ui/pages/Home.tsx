@@ -1,11 +1,14 @@
 import homePhoto from "../../assets/home.png";
 import arrowPng from "../../assets/arrow.png";
 import React from 'react';
+import {useAuth} from "../context/AuthContext.tsx";
 
 function Home() {
+    const {isAuthenticated} = useAuth();
+
     return (
         <div className="flex flex-col gap-18">
-            <div className="flex flex-col md:flex-row gap-5 my-9">
+            <div className="flex flex-col md:flex-row gap-5 my-18">
                 <div className="flex flex-col gap-9">
                     <h1 className="text-4xl font-bold font-mono">Идеальное произношение - близко</h1>
 
@@ -15,10 +18,18 @@ function Home() {
 
 
                     <div>
-                        <button className="action_btn"
+                        {isAuthenticated ? (
+                            <button className="action_btn"
+                                onClick={() => document.location.assign("/types")}>
+                                К урокам
+                            </button>
+                        ) : (
+                            <button className="action_btn"
                                 onClick={() => document.location.assign("/register")}>
-                            Попробовать
-                        </button>
+                                Попробовать
+                            </button>
+                        )}
+
                     </div>
                 </div>
 

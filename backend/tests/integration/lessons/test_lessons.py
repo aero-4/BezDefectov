@@ -42,7 +42,7 @@ async def test_add_some_test_lessons(clear_db):
                 assert create_card.text == card.text
 
             for i in range(10):
-                create_dialog = DialogCreateDTO(user_name=random.choice(cards), content=random.choice(texts), lesson_id=lesson.id, index=i)
+                create_dialog = DialogCreateDTO(user_name=random.choice(cards), content=random.choice(texts), lesson_id=lesson.id)
                 response2 = await client.post("/api/dialogs/", json=create_dialog.model_dump(mode="json"))
 
                 dialog = Dialog(**response2.json())

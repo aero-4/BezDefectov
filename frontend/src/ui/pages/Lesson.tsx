@@ -242,9 +242,6 @@ function Lesson() {
 
     if (!lesson || !lesson.duration) return <h1>Урок не найден</h1>
 
-
-    console.log(stage, lesson, dialogs, cards)
-
     return (
         <div className="min-h-screen flex flex-col">
 
@@ -308,7 +305,11 @@ function Lesson() {
                 <div>
                     <div className="flex flex-row gap-3">
                         <h1 className="title">Диалог</h1>
-                        <Tooltip children={<button className="my-auto text-sm text-center justify-center">зачем?</button>}
+                        <Tooltip children={
+                            <button className="my-auto text-sm text-center justify-center">
+                                зачем?
+                            </button>
+                        }
                                  content="Очень важно чтобы вы могли выработать автоматизацию при разговоре, говоря звуки даже не задумываясь."/>
                     </div>
 
@@ -319,7 +320,7 @@ function Lesson() {
                                 <div
                                     key={idx}
                                     className={`border max-w-md ${
-                                        dialog.index % 2 === 0 ? "self-start" : "self-end"
+                                        idx % 2 === 0 ? "self-start" : "self-end"
                                     }`}
                                 >
                                     <p className="font-semibold text-sm text-gray-500">{dialog.user_name}</p>

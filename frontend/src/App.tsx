@@ -15,27 +15,27 @@ import Profile from "./ui/pages/Profile.tsx";
 import Lesson from "./ui/pages/Lesson.tsx";
 import {AuthProvider} from "./ui/context/AuthContext.tsx";
 import Admin from "./ui/pages/Admin.tsx";
-function App() {
+import ProtectedRouter from "./ui/context/ProtectedRouter.tsx";
+function App(): JSX.Element {
     return (
-        <AuthProvider>
-            <BrowserRouter>
-                <Suspense fallback={<Loader/>}>
-                    <Routes>
-                            <Route path="/" element={<Layout/>}>
-                                <Route index element={<Home/>}/>
-                                <Route path="/register" element={<Register/>}/>
-                                <Route path="/login" element={<Login/>}/>
-                                <Route path="/faq" element={<FAQ/>}/>
-                                <Route path="/types" element={<Types/>}/>
-                                <Route path="/lessons/:type" element={<Lessons/>}/>
-                                <Route path="/lesson/:id" element={<Lesson/>}/>
-                                <Route path="/profile" element={<Profile/>}/>
-                            </Route>
-                            <Route path="/admin" element={<Admin/>}/>
-                    </Routes>
-                </Suspense>
-            </BrowserRouter>
-        </AuthProvider>
+        <Suspense fallback={<Loader/>}>
+            <Routes>
+                <Route path="/" element={<Layout/>}>
+                    <Route index element={<Home/>}/>
+                    <Route path="register" element={<Register/>}/>
+                    <Route path="login" element={<Login/>}/>
+                    <Route path="faq" element={<FAQ/>}/>
+
+                    <Route element={<ProtectedRouter/>}>
+                        <Route path="types" element={<Types/>}/>
+                        <Route path="lessons/:type" element={<Lessons/>}/>
+                        <Route path="lesson/:id" element={<Lesson/>}/>
+                        <Route path="profile" element={<Profile/>}/>
+                        <Route path="admin" element={<Admin/>}/>
+                    </Route>
+                </Route>
+            </Routes>
+        </Suspense>
     )
 }
 

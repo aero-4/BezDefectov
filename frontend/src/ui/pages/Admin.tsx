@@ -37,7 +37,6 @@ interface UserForm {
 interface DialogForm {
     user_name: string;
     content: string;
-    index: number;
     lesson_id: number;
 }
 
@@ -141,7 +140,7 @@ function LessonsPanel(): JSX.Element {
     }, []);
 
     async function fetchLessons() {
-        const data = await fetch(`${API_URL}/lessons`).then(r => r.json());
+        const data = await fetch(`${API_URL}/lessons/`).then(r => r.json());
         setLessons(data);
     }
 
@@ -571,7 +570,6 @@ function UsersPanel(): JSX.Element {
                 </div>
             </div>
 
-            {/* Create User Modal */}
             <Modal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
@@ -643,7 +641,7 @@ function UsersPanel(): JSX.Element {
 function DialogsPanel(): JSX.Element {
     const [lessons, setLessons] = useState<Lesson[]>([]);
     const [showModal, setShowModal] = useState(false);
-    const [form, setForm] = useState<DialogForm>({user_name: '', content: '', index: 0, lesson_id: 0});
+    const [form, setForm] = useState<DialogForm>({user_name: '', content: '', lesson_id: 0});
     const [useFile, setUseFile] = useState(false);
     const [file, setFile] = useState<File | null>(null);
 
@@ -652,7 +650,7 @@ function DialogsPanel(): JSX.Element {
     }, []);
 
     function handleCreate() {
-        setForm({user_name: '', content: '', index: 0, lesson_id: 0});
+        setForm({user_name: '', content: '', lesson_id: 0});
         setUseFile(false);
         setFile(null);
         setShowModal(true);
@@ -675,7 +673,7 @@ function DialogsPanel(): JSX.Element {
                 return fetch(`${API_URL}/dialogs/`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({user_name: userName, content, index: i, lesson_id: form.lesson_id})
+                    body: JSON.stringify({user_name: userName, content, lesson_id: form.lesson_id})
                 });
             }));
             setShowModal(false);
@@ -690,7 +688,7 @@ function DialogsPanel(): JSX.Element {
         });
 
         setShowModal(false);
-        setForm({user_name: '', content: '', index: 0, lesson_id: 0});
+        setForm({user_name: '', content: '', lesson_id: 0});
         alert('Dialog created successfully!');
     }
 
@@ -806,19 +804,6 @@ function DialogsPanel(): JSX.Element {
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Index
-                                </label>
-                                <input
-                                    type="number"
-                                    value={form.index}
-                                    onChange={e => setForm({...form, index: Number(e.target.value)})}
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                                    placeholder="0"
-                                    required={!useFile}
-                                />
-                            </div>
                         </>
                     )}
 

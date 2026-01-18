@@ -12,7 +12,7 @@ async def test_add_dialog_success(clear_db):
     async with httpx.AsyncClient(base_url=base_url) as client:
         lesson = await test_add_lesson(clear_db)
 
-        dto = DialogCreateDTO(user_name="Alex", content="Привет, как у вас дела?", index=0, lesson_id=lesson.id)
+        dto = DialogCreateDTO(user_name="Alex", content="Привет, как у вас дела?", lesson_id=lesson.id)
         response = await client.post("/api/dialogs/", json=dto.model_dump())
 
         dialog = Dialog(**response.json())

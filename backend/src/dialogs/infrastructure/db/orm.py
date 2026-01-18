@@ -11,7 +11,6 @@ class DialogsOrm(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_name: Mapped[str] = mapped_column(nullable=False)
     content: Mapped[str] = mapped_column(nullable=False)
-    index: Mapped[int] = mapped_column(nullable=False)
 
     lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"))
     dialog_lesson: Mapped["LessonsOrm"] = relationship(back_populates="dialogs")
