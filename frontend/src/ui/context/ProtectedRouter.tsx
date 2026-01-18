@@ -9,7 +9,17 @@ function ProtectedRouter() {
         return <Outlet/>;
     }
 
-    return <Navigate to={"/login"} state={{from: location}} replace />
+    return (
+        <div className="flex flex-col gap-24 h-full w-full">
+            <span>Вы должны авторизоваться</span>
+            <button
+                className="action_btn"
+                onClick={() => (window.location.assign('/login'))}
+            >
+                Войти
+            </button>
+        </div>
+    );
 
 }
 
