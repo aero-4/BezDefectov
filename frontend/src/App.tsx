@@ -31,8 +31,10 @@ function App(): JSX.Element {
                         <Route path="lessons/:type" element={<Lessons/>}/>
                         <Route path="lesson/:id" element={<Lesson/>}/>
                         <Route path="profile" element={<Profile/>}/>
-                        <Route path="admin" element={<Admin/>}/>
                     </Route>
+                </Route>
+                <Route element={<ProtectedRouter/>}>
+                    <Route path="admin" element={<Admin/>}/>
                 </Route>
             </Routes>
         </Suspense>
