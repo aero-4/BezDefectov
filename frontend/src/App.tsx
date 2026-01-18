@@ -13,7 +13,6 @@ import Lessons from "./ui/pages/Lessons.tsx";
 import Types from "./ui/pages/Types.tsx";
 import Profile from "./ui/pages/Profile.tsx";
 import Lesson from "./ui/pages/Lesson.tsx";
-import {AuthProvider} from "./ui/context/AuthContext.tsx";
 import Admin from "./ui/pages/Admin.tsx";
 import ProtectedRouter from "./ui/context/ProtectedRouter.tsx";
 function App(): JSX.Element {

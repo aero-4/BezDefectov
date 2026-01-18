@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {API_URL} from "../../config.tsx";
 import SwitchWithCross from "../switches/Switch.tsx";
 import React from 'react';
 
 const emailRegex = /^\S+@\S+\.\S+$/;
-
 
 
 export default function Register() {
@@ -46,13 +45,13 @@ export default function Register() {
         try {
             const res = await fetch(API_URL + '/auth/register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email.trim(), password }),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email.trim(), password}),
                 credentials: "include"
             });
 
             if (res.ok) {
-                window.location.href = '/profile';
+                window.location.assign('/profile');
                 return;
             }
 
@@ -114,7 +113,7 @@ export default function Register() {
                 {errors.repeatPassword && <div className="text-sm text-red-600">{errors.repeatPassword}</div>}
 
                 <div className="flex flex-col gap-3 mt-6">
-                    <SwitchWithCross checked={showPassword} onChange={setShowPassword} label={"ПОКАЗАТЬ ПАРОЛЬ"} />
+                    <SwitchWithCross checked={showPassword} onChange={setShowPassword} label={"ПОКАЗАТЬ ПАРОЛЬ"}/>
                     <SwitchWithCross
                         checked={consent}
                         onChange={setConsent}

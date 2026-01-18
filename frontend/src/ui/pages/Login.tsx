@@ -2,6 +2,7 @@ import {useState} from 'react';
 import SwitchWithCross from "../switches/Switch.tsx";
 import {API_URL} from "../../config.tsx";
 import React from 'react';
+import {useAuth} from "../context/AuthContext.tsx";
 
 export default function Login(props) {
     const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export default function Login(props) {
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({email: "", password: "", submit: ""});
     const [loading, setLoading] = useState(false);
+    const {login} = useAuth();
 
     const validate = () => {
         const next = {email: "", password: "", submit: ""};
@@ -31,22 +33,13 @@ export default function Login(props) {
 
         try {
             setLoading(true);
-            const res = await fetch(`${API_URL}/auth/login`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({email, password}),
-                credentials: "include"
-            });
 
-            const data = await res.json().catch(() => ({}));
-
+            const res = await login({email, password})
             if (!res.ok) {
-                const msg = data?.message || data?.error || `Ошибка входа: ${res.status}`;
-                setErrors((s) => ({...s, submit: msg}));
-                return;
+                setErrors((s) => ({...s, submit: res.message}));
             }
+            window.location.assign("/profile")
 
-            if (props.onLogin) props.onLogin(data);
         } catch (err) {
             setErrors((s) => ({...s, submit: "Сетевая ошибка. Попробуйте позже."}));
         } finally {
