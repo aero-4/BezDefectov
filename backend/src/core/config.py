@@ -8,7 +8,7 @@ from dotenv import find_dotenv, load_dotenv
 from pydantic import AnyHttpUrl, EmailStr, PostgresDsn, field_validator, ValidationInfo, AnyUrl, ConfigDict
 from pydantic_settings import BaseSettings
 
-env_file = find_dotenv()
+env_file = find_dotenv(".env.dev")
 load_dotenv(env_file)
 
 

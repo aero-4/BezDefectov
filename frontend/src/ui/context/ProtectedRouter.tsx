@@ -10,7 +10,7 @@ function ProtectedRouter() {
         return <Loader/>;
     }
 
-    if (isAuthenticated && user.id) {
+    if (isAuthenticated && user.email) {
         return <Outlet/>;
     }
 

@@ -3,7 +3,6 @@ import {useAuth} from "../context/AuthContext.tsx";
 
 function Menu({ onClose }) {
     const {isAuthenticated} = useAuth();
-
     return (
         <div className="fixed inset-0 bg-white z-50 ">
 

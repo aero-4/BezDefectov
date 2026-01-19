@@ -1,4 +1,3 @@
-// src/ui/context/AuthContext.tsx
 import {
     useState,
     useEffect,
@@ -39,13 +38,20 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
                 if (json && (json.detail === "Not authenticated" || res.status === 401)) {
                     handleNotAuthenticated();
                 } else {
-                    setUser(null);
-                    setIsAuthenticated(false);
+                    handleNotAuthenticated();
                 }
             } else {
-                setUser(json);
-                setIsAuthenticated(true);
+                if (json.email) {
+                    setUser(json);
+                    setIsAuthenticated(true);
+                } else {
+                    handleNotAuthenticated();
+                }
+
             }
+
+            console.log(json)
+
         } catch (err) {
             console.error("fetchCurrentUser error", err);
             setUser(null);
@@ -180,14 +186,13 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
                     return {ok: false, message: msg};
                 }
 
-
+                await fetchCurrentUser();
                 return {ok: true}
-                handleNotAuthenticated();
             } catch (e) {
                 console.warn("logout error", e);
             }
 
-        }, [handleNotAuthenticated]
+        }, [fetchCurrentUser]
     );
 
     const value = useMemo(
