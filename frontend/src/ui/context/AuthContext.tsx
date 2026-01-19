@@ -167,6 +167,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
             try {
                 const res = await fetch(API_URL + "/auth/logout", {
                     method: "POST",
+                    headers: {"Content-Type": "application/json"},
                     credentials: "include",
                 });
 
@@ -179,16 +180,14 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
                     return {ok: false, message: msg};
                 }
 
-                await fetchCurrentUser();
-                return {ok: true}
 
+                return {ok: true}
+                handleNotAuthenticated();
             } catch (e) {
                 console.warn("logout error", e);
             }
 
-            setUser(null);
-            setIsAuthenticated(false);
-        }, [fetchCurrentUser]
+        }, [handleNotAuthenticated]
     );
 
     const value = useMemo(
