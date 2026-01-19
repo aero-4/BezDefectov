@@ -1,5 +1,3 @@
-# Backend - bezdefectov.ru
-
-# План - https://excalidraw.com/#json=5yaBik8IdgdXURFQz8aMS,yZM0JPibXqCYUKQx0eSxiw
+# Backend-часть
 
 Stack: FastAPI, SqlAlchemy, Pydantic, Redis
