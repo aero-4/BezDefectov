@@ -15,6 +15,7 @@ import Profile from "./ui/pages/Profile.tsx";
 import Lesson from "./ui/pages/Lesson.tsx";
 import Admin from "./ui/pages/Admin.tsx";
 import ProtectedRouter from "./ui/context/ProtectedRouter.tsx";
+import Logout from "./ui/pages/Logout.tsx";
 
 function App(): JSX.Element {
     return (
@@ -31,6 +32,7 @@ function App(): JSX.Element {
                         <Route path="lessons/:type" element={<Lessons/>}/>
                         <Route path="lesson/:id" element={<Lesson/>}/>
                         <Route path="profile" element={<Profile/>}/>
+                        <Route path="logout" element={<Logout/>}/>
                     </Route>
                 </Route>
                 <Route element={<ProtectedRouter/>}>

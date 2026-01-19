@@ -8,11 +8,11 @@ import {
     useCallback,
     useMemo,
 } from "react";
-import { API_URL } from "../../config";
+import {API_URL} from "../../config";
 
 const AuthContext = createContext<any | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({children}: { children: React.ReactNode }) {
     const [user, setUser] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const res = await fetch(API_URL + "/users/me", {
                 method: "GET",
                 credentials: "include",
-                headers: { Accept: "application/json" },
+                headers: {Accept: "application/json"},
             });
 
             const json = await res.json().catch(() => null);
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             const res = await fetch(API_URL + "/auth/refresh", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 credentials: "include",
             });
 
@@ -108,12 +108,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [isAuthenticated, refreshToken]);
 
     const login = useCallback(
-        async ({ email, password }: { email: string; password: string }) => {
+        async ({email, password}: { email: string; password: string }) => {
             try {
                 const res = await fetch(API_URL + "/auth/login", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password }),
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({email, password}),
                     credentials: "include",
                 });
 
@@ -123,13 +123,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     const msg =
                         (json && (json.detail || json.error || json.message)) ||
                         `Ошибка: ${res.status}`;
-                    return { ok: false, message: msg };
+                    return {ok: false, message: msg};
                 }
 
                 await fetchCurrentUser();
-                return { ok: true };
+                return {ok: true};
             } catch (err: any) {
-                return { ok: false, message: err?.message || "Ошибка при входе" };
+                return {ok: false, message: err?.message || "Ошибка при входе"};
             }
         },
         [fetchCurrentUser]
@@ -140,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             try {
                 const res = await fetch(API_URL + "/auth/register", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {"Content-Type": "application/json"},
                     credentials: "include",
                     body: JSON.stringify(body),
                 });
@@ -151,33 +151,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     const msg =
                         (json && (json.detail || json.error || json.message)) ||
                         `Ошибка: ${res.status}`;
-                    return { ok: false, message: msg };
+                    return {ok: false, message: msg};
                 }
 
-                // аналогично — подтянуть текущего пользователя
                 await fetchCurrentUser();
-                return { ok: true };
+                return {ok: true};
             } catch (err: any) {
-                return { ok: false, message: err?.message || "Ошибка при регистрации" };
+                return {ok: false, message: err?.message || "Ошибка при регистрации"};
             }
         },
         [fetchCurrentUser]
     );
 
     const logout = useCallback(async () => {
-        try {
-            await fetch(API_URL + "/auth/logout", {
-                method: "POST",
-                credentials: "include",
-            });
-        } catch (e) {
-            console.warn("logout error", e);
-        }
+            try {
+                const res = await fetch(API_URL + "/auth/logout", {
+                    method: "POST",
+                    credentials: "include",
+                });
 
-        setUser(null);
-        setIsAuthenticated(false);
-        window.location.assign("/");
-    }, []);
+                const json = await res.json()
+
+                if (!res.ok) {
+                    const msg =
+                        (json && (json.detail || json.error || json.message)) ||
+                        `Ошибка: ${res.status}`;
+                    return {ok: false, message: msg};
+                }
+
+                await fetchCurrentUser();
+                return {ok: true}
+
+            } catch (e) {
+                console.warn("logout error", e);
+            }
+
+            setUser(null);
+            setIsAuthenticated(false);
+        }, [fetchCurrentUser]
+    );
 
     const value = useMemo(
         () => ({
