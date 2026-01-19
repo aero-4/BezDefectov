@@ -1,6 +1,12 @@
 import datetime
+import enum
 
 from pydantic import BaseModel
+
+
+class Roles(enum.IntEnum):
+    USER = 1
+    ADMIN = 2
 
 
 class User(BaseModel):
@@ -11,11 +17,11 @@ class User(BaseModel):
     email: str
     hashed_password: str
     series_days: int | None = None
+    role: int
 
 
 class UserMe(BaseModel):
     created_at: datetime.datetime
-    updated_at: datetime.datetime | None
     user_name: str | None
     email: str
     series_days: int

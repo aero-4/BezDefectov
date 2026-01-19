@@ -21,7 +21,8 @@ class PGDialogsRepository(IDialogRepository):
 
         try:
             await self.session.flush()
-        except IntegrityError:
+        except Exception as e:
+            print(e)
             raise AlreadyExists()
 
         return self._to_entity(obj)
@@ -62,6 +63,5 @@ class PGDialogsRepository(IDialogRepository):
             id=obj.id,
             user_name=obj.user_name,
             content=obj.content,
-            index=obj.index,
             lesson_id=obj.lesson_id
         )

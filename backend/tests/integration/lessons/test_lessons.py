@@ -29,12 +29,12 @@ async def test_add_some_test_lessons(clear_db):
 
         for i in range(random.randint(10, 20)):
             lesson_dto = LessonCreateDTO(duration=random.randint(1, 1), type=random.choice(types))
-            response = await client.post("/api/lessons/", json=lesson_dto.model_dump(mode="json"))
+            response = await client.post("/lessons/", json=lesson_dto.model_dump(mode="json"))
             lesson = Lesson(**response.json())
 
             for i in range(random.randint(10, 20)):
                 create_card = CardCreateDTO(title=random.choice(cards), text=random.choice(texts), lesson_id=lesson.id)
-                response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
+                response2 = await client.post("/cards/", json=create_card.model_dump(mode="json"))
 
                 card = Card(**response2.json())
 
@@ -43,27 +43,24 @@ async def test_add_some_test_lessons(clear_db):
 
             for i in range(10):
                 create_dialog = DialogCreateDTO(user_name=random.choice(cards), content=random.choice(texts), lesson_id=lesson.id)
-                response2 = await client.post("/api/dialogs/", json=create_dialog.model_dump(mode="json"))
+                response2 = await client.post("/dialogs/", json=create_dialog.model_dump(mode="json"))
 
                 dialog = Dialog(**response2.json())
 
                 assert dialog.user_name == create_dialog.user_name
 
-
         return lesson
-
-
 
 
 @pytest.mark.asyncio
 async def test_add_lesson(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         lesson_dto = LessonCreateDTO(duration=25, type=LessonTypes.r)
-        response = await client.post("/api/lessons/", json=lesson_dto.model_dump(mode="json"))
+        response = await client.post("/lessons/", json=lesson_dto.model_dump(mode="json"))
         lesson = Lesson(**response.json())
 
         create_card = CardCreateDTO(title="Слоги", text="ра-ра-ра ро-ро-ро ре-ре-ре", lesson_id=lesson.id)
-        response2 = await client.post("/api/cards/", json=create_card.model_dump(mode="json"))
+        response2 = await client.post("/cards/", json=create_card.model_dump(mode="json"))
 
         card = Card(**response2.json())
 
@@ -80,14 +77,14 @@ async def test_get_lessons_with_type(clear_db):
         lessons_dto2 = LessonCreateDTO(duration=20, type=LessonTypes.sh)
         lessons_dto3 = LessonCreateDTO(duration=5, type=LessonTypes.r)
 
-        resp1 = await client.post("/api/lessons/", json=lessons_dto1.model_dump())
-        resp2 = await client.post("/api/lessons/", json=lessons_dto2.model_dump())
-        resp3 = await client.post("/api/lessons/", json=lessons_dto3.model_dump())
+        resp1 = await client.post("/lessons/", json=lessons_dto1.model_dump())
+        resp2 = await client.post("/lessons/", json=lessons_dto2.model_dump())
+        resp3 = await client.post("/lessons/", json=lessons_dto3.model_dump())
 
         l1 = Lesson(**resp1.json())
         l3 = Lesson(**resp3.json())
 
-        resp4 = await client.get(f"/api/lessons/types/{LessonTypes.r}")
+        resp4 = await client.get(f"/lessons/types/{LessonTypes.r}")
         data = resp4.json()
 
         assert data[0]["id"] == l1.id
@@ -99,7 +96,7 @@ async def test_delete_lesson(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         lesson = await test_add_lesson(clear_db)
 
-        response = await client.delete(f"/api/lessons/{lesson.id}")
+        response = await client.delete(f"/lessons/{lesson.id}")
 
         assert response.status_code == 200
         assert response.json() is None
@@ -111,7 +108,7 @@ async def test_update_lesson(clear_db):
         lesson = await test_add_lesson(clear_db)
 
         lesson_data = LessonUpdateDTO(duration=21, type=LessonTypes.sh)
-        response = await client.patch(f"/api/lessons/{lesson.id}", json=lesson_data.model_dump())
+        response = await client.patch(f"/lessons/{lesson.id}", json=lesson_data.model_dump())
         lesson_updated = Lesson(**response.json())
 
         assert lesson_updated.id == lesson.id
@@ -124,7 +121,7 @@ async def test_update_series_start(clear_db, new_user):
 
         await new_user(client)
 
-        response = await client.options(f"/api/lessons/series")
+        response = await client.options(f"/lessons/series")
         user = User(**response.json())
 
         assert user.series_days == 1
@@ -137,11 +134,11 @@ async def test_update_series_start(clear_db, new_user):
 
         await new_user(client)
 
-        response = await client.post(f"/api/lessons/series")
+        response = await client.post(f"/lessons/series")
         user = UserMe(**response.json())
         assert user.series_days == 1
 
-        response = await client.post(f"/api/lessons/series")
+        response = await client.post(f"/lessons/series")
         user = UserMe(**response.json())
         assert user.series_days == 1
 
@@ -153,12 +150,12 @@ async def test_update_series_finish_to_start(clear_db):
                                   password=generate_random_alphanum(),
                                   updated_at=datetime.datetime(day=10, month=4, year=2024),
                                   series_days=8)
-        response = await client.post("/api/users/", json=user_data.model_dump(mode="json"))
+        response = await client.post("/users/", json=user_data.model_dump(mode="json"))
         user = User(**response.json())
 
         assert user.email == user_data.email
 
-        response2 = await client.post("/api/auth/login", json=AuthUserDTO(email=user_data.email, password=user_data.password).model_dump())
+        response2 = await client.post("/auth/login", json=AuthUserDTO(email=user_data.email, password=user_data.password).model_dump())
 
         assert response2.status_code == 200
         assert response2.json() == {"msg": "Login successful"}
@@ -167,12 +164,12 @@ async def test_update_series_finish_to_start(clear_db):
         client.cookies.set("access_token", response2.cookies.get("access_token"))
         client.cookies.set("refresh_token", response2.cookies.get("refresh_token"))
 
-        response3 = await client.post("/api/lessons/series")
+        response3 = await client.post("/lessons/series")
         user_updated = UserMe(**response3.json())
 
         assert user_updated.series_days == 1
 
-        response3 = await client.get("/api/users/me")
+        response3 = await client.get("/users/me")
         user_me = UserMe(**response3.json())
 
         assert user_me.series_days == 1
@@ -186,12 +183,12 @@ async def test_update_series_started_today(clear_db):
                                   password=generate_random_alphanum(),
                                   updated_at=datetime.datetime.now(),  # today
                                   series_days=SERIES_DAYS)
-        response = await client.post("/api/users/", json=user_data.model_dump(mode="json"))
+        response = await client.post("/users/", json=user_data.model_dump(mode="json"))
         user = User(**response.json())
 
         assert user.email == user_data.email
 
-        response2 = await client.post("/api/auth/login", json=AuthUserDTO(email=user_data.email, password=user_data.password).model_dump())
+        response2 = await client.post("/auth/login", json=AuthUserDTO(email=user_data.email, password=user_data.password).model_dump())
 
         assert response2.status_code == 200
         assert response2.json() == {"msg": "Login successful"}
@@ -200,12 +197,12 @@ async def test_update_series_started_today(clear_db):
         client.cookies.set("access_token", response2.cookies.get("access_token"))
         client.cookies.set("refresh_token", response2.cookies.get("refresh_token"))
 
-        response3 = await client.post("/api/lessons/series")
+        response3 = await client.post("/lessons/series")
         user_updated = UserMe(**response3.json())
 
         assert user_updated.series_days == SERIES_DAYS
 
-        response3 = await client.get("/api/users/me")
+        response3 = await client.get("/users/me")
         user_me = UserMe(**response3.json())
 
         assert user_me.series_days == SERIES_DAYS

@@ -6,12 +6,14 @@ from starlette.requests import Request
 
 from src.auth.domain.entities import AnonymousUser
 from src.core.domain.exceptions import PermissionDenied, AuthRequired
+from src.users.domain.entities import Roles
 
 
 class access_control:
 
-    def __init__(self, role: list[Any] | Any = None):
-        self.role = role
+    def __init__(self, roles: list[int] | int):
+        self.roles = roles
+
         self.current_user = None
 
         self.request: Request | None = None
@@ -44,12 +46,10 @@ class access_control:
         if not self.current_user or not self.current_user.role:
             raise AuthRequired()
 
-        if isinstance(self.role, list) and self.current_user.role not in self.role:
+        if isinstance(self.roles, list) and self.current_user.role not in self.roles:
             raise PermissionDenied()
 
-        if isinstance(self.role, int) and self.role > self.current_user.role:
+        if isinstance(self.roles, int) and self.roles > self.current_user.role:
             raise PermissionDenied()
-
-
 
         return True

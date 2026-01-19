@@ -32,14 +32,14 @@ async def test_some_real_dialogs(clear_db):
             "Скороговорки": load_lines("./files/r_skorogovorki.txt"),
             "Слоги": load_lines("./files/r_slogi.txt"),
             "Предложения": load_lines("./files/r_predlojenie.txt"),
-            "Диалоги": load_lines("./files/r_dialogi.txt")
+            "Диалоги": load_lines("./files/r_dialog_1.txt")
         }
 
         content_sh = {
             "Скороговорки": load_lines("./files/sh_skorogovorki.txt"),
             "Слоги": load_lines("./files/sh_slogi.txt"),
             "Предложения": load_lines("./files/sh_predlojenie.txt"),
-            "Диалоги": load_lines("./files/sh_dialogi.txt")
+            "Диалоги": load_lines("./files/sh_dialogi_1.txt")
         }
 
         lessons = []
@@ -49,7 +49,7 @@ async def test_some_real_dialogs(clear_db):
                 duration=random.randint(10, 20),
                 type=lesson_type,
             )
-            r = await client.post("/api/lessons/", json=dto.model_dump(mode="json"))
+            r = await client.post("/lessons/", json=dto.model_dump(mode="json"))
             assert r.status_code == 200
             lessons.append(Lesson(**r.json()))
 
@@ -75,7 +75,7 @@ async def test_some_real_dialogs(clear_db):
                     lesson_id=lesson.id,
                 )
                 r = await client.post(
-                    "/api/cards/",
+                    "/cards/",
                     json=card_dto.model_dump(mode="json"),
                 )
                 assert r.status_code == 200
@@ -93,7 +93,7 @@ async def test_some_real_dialogs(clear_db):
                     lesson_id=lesson.id
                 )
                 r = await client.post(
-                    "/api/dialogs/",
+                    "/dialogs/",
                     json=dialog_dto.model_dump(mode="json"),
                 )
 

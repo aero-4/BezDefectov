@@ -8,7 +8,7 @@ from dotenv import find_dotenv, load_dotenv
 from pydantic import AnyHttpUrl, EmailStr, PostgresDsn, field_validator, ValidationInfo, AnyUrl, ConfigDict
 from pydantic_settings import BaseSettings
 
-env_file = find_dotenv()
+env_file = find_dotenv(".env.dev")
 load_dotenv(env_file)
 
 
@@ -16,10 +16,6 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = os.environ.get("PROJECT_NAME", "UNNAMED PROJECT")
     SECRET_KEY: str = secrets.token_urlsafe(32)
     DOMAIN: str | None = os.environ.get("DOMAIN")
-
-    # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
-    # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
-    # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
 
     @field_validator("BACKEND_CORS_ORIGINS")

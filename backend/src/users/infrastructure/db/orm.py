@@ -6,6 +6,7 @@ from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.base import Base
+from src.users.domain.entities import Roles
 from src.utils.datetimes import get_timezone_now
 
 
@@ -20,3 +21,4 @@ class UsersOrm(Base):
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     series_days: Mapped[int] = mapped_column(default=0)
+    role: Mapped[int] = mapped_column(default=Roles.USER)

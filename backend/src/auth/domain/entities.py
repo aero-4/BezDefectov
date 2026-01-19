@@ -25,3 +25,4 @@ class AnonymousUser(CustomModel):
     email: str | None = None
     hashed_password: str | None = None
     series_days: int | None = None
+    role: int | None = None

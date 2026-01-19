@@ -10,8 +10,8 @@ from src.auth.presentation.dtos import RegisterUserDTO
 from src.db.engine import engine
 from src.utils.strings import generate_random_alphanum
 
-base_url = "http://backend:8000"
-TABLES_TO_TRUNCATE = ["cards", "lessons", "users"]
+base_url = "http://127.0.0.1:8000"
+TABLES_TO_TRUNCATE = ["cards", "lessons", "users", "dialogs"]
 
 
 @pytest_asyncio.fixture(loop_scope="session")
@@ -30,7 +30,7 @@ def new_user():
     async def registrate(client):
         register_dto = RegisterUserDTO(email=f"{generate_random_alphanum(16)}@gmail.com",
                                        password=f"{generate_random_alphanum(16)}")
-        response = await client.post("/api/auth/register", json=register_dto.model_dump())
+        response = await client.post("/auth/register", json=register_dto.model_dump())
 
         client.cookies.set("access_token", response.cookies.get("access_token"))
         client.cookies.set("refresh_token", response.cookies.get("refresh_token"))
@@ -38,7 +38,7 @@ def new_user():
         assert response.status_code == 200
         assert response.json() == {"msg": "Register successful"}
 
-        response2 = await client.get("/api/users/me")
+        response2 = await client.get("/users/me")
         user = response2.json()
 
         assert user["email"] == register_dto.email

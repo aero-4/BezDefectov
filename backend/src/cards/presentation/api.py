@@ -1,11 +1,13 @@
 from fastapi import APIRouter
 
+from src.auth.presentation.permissions import access_control
 from src.cards.application.collect_cards import collect_cards_by_id
 from src.cards.application.create_card import create_card
 from src.cards.application.delete_card import delete_card
 from src.cards.application.update_card import update_card
 from src.cards.presentation.dependencies import CardUowDep
 from src.cards.presentation.dtos import CardCreateDTO, CardUpdateDTO
+from src.users.domain.entities import Roles
 
 cards_api_router = APIRouter()
 
