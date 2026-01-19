@@ -1,3 +1,3 @@
-FRONTEND-часть bezdefectov.ru
+FRONTEND-часть
 
 Stack: React-TypeScript, Vite, TailwindCSS, React Router DOM.
