@@ -11,3 +11,8 @@ class LessonCreateDTO(BaseModel):
 class LessonUpdateDTO(BaseModel):
     duration: int | None = None
     type: LessonTypes | None = None
+
+
+class GenerateLessonCreateDTO(BaseModel):
+    duration: int
+    type: LessonTypes

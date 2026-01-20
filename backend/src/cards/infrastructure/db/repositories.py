@@ -26,6 +26,17 @@ class PGCardRepository(ICardRepository):
 
         return self._to_domain(obj)
 
+    async def add_all(self, cards: List[CardCreate]) -> List[Card]:
+        objs = [CardsOrm(**i.model_dump()) for i in cards]
+        self.session.add_all(objs)
+
+        try:
+            await self.session.flush()
+        except IntegrityError as e:
+            raise AlreadyExists()
+
+        return [self._to_domain(i) for i in objs]
+
     async def get_by_id(self, lesson_id: int) -> List[Card]:
         stmt = select(CardsOrm).where(CardsOrm.lesson_id == lesson_id)
         result = await self.session.execute(stmt)

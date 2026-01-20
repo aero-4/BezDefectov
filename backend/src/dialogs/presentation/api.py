@@ -27,6 +27,7 @@ async def update(id: int, dialog_data: DialogUpdateDTO, uow: DialogUoWDep):
     return await update_dialog(id, dialog_data, uow)
 
 
+
 @dialogs_api_router.delete("/{id}")
 async def delete(id: int, uow: DialogUoWDep):
     return await delete_dialog(id, uow)

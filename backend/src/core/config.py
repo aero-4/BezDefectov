@@ -93,7 +93,7 @@ class Settings(BaseSettings):
     S3_BUCKET_NAME: str | None = None
 
     OPENAI_API_KEY: str | None = None
+    GPT_UNNEL_API_KEY: str | None = None
 
 
 settings = Settings()
-

@@ -10,7 +10,7 @@ from src.cards.domain.entities import Card
 from src.cards.presentation.dtos import CardCreateDTO
 from src.lessons.domain.entities import Lesson
 from src.lessons.infrastructure.db.orm import LessonTypes
-from src.lessons.presentation.dtos import LessonCreateDTO, LessonUpdateDTO
+from src.lessons.presentation.dtos import LessonCreateDTO, LessonUpdateDTO, GenerateLessonCreateDTO
 from src.users.domain.entities import User, UserMe
 from src.users.presentation.dtos import UserCreateDTO
 from src.utils.strings import generate_random_alphanum
@@ -206,3 +206,29 @@ async def test_update_series_started_today(clear_db):
         user_me = UserMe(**response3.json())
 
         assert user_me.series_days == SERIES_DAYS
+
+
+@pytest.mark.asyncio
+async def test_generate_lessons(clear_db):
+    async with AsyncClient(base_url=base_url) as client:
+        lesson_data1 = GenerateLessonCreateDTO(duration=25, type=LessonTypes.r)
+
+        response1 = await client.post("/lessons/generate", json=lesson_data1.model_dump())
+        lesson = Lesson(**response1.json())
+
+        assert response1.status_code == 200
+        assert lesson.duration == lesson_data1.duration
+
+        response2 = await client.get(f"/cards/{lesson.id}")
+        cards = [Card(**i) for i in response2.json()]
+
+        print(cards)
+
+
+        # lesson_data2 = GenerateLessonCreateDTO(duration=20, type=LessonTypes.sh)
+        #
+        # response2 = await client.post("/lessons/generate", json=lesson_data2.model_dump())
+        # lesson2 = Lesson(**response2.json())
+        #
+        # assert response1.status_code == 200
+        # assert lesson2.duration == lesson_data2.duration

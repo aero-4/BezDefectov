@@ -39,5 +39,6 @@ dependencies = [
     "pydantic-settings",
     "sounddevice>=0.5.3",
     "openai-agents[voice]>=0.6.5",
+    "g4f[all]>=6.9.3",
 ]
 

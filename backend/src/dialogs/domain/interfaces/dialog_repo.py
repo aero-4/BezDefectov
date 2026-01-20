@@ -11,6 +11,10 @@ class IDialogRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    async def add_all(self, dialogs: List[DialogCreate]) -> List[Dialog]:
+        pass
+
+    @abc.abstractmethod
     async def update(self, dialog: DialogUpdate) -> Dialog:
         pass
 

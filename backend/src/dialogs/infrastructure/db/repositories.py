@@ -21,11 +21,22 @@ class PGDialogsRepository(IDialogRepository):
 
         try:
             await self.session.flush()
-        except Exception as e:
-            print(e)
+        except IntegrityError as e:
             raise AlreadyExists()
 
         return self._to_entity(obj)
+
+    async def add_all(self, dialogs: List[DialogCreate]) -> List[Dialog]:
+        objs = [DialogsOrm(**i.model_dump()) for i in dialogs]
+
+        self.session.add_all(objs)
+
+        try:
+            await self.session.flush()
+        except IntegrityError as e:
+            raise AlreadyExists()
+
+        return [self._to_entity(i) for i in objs]
 
     async def get_all(self, lesson_id: int) -> List[Dialog]:
         obj = select(DialogsOrm).where(DialogsOrm.lesson_id == lesson_id)

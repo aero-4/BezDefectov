@@ -11,6 +11,10 @@ class ICardRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    async def add_all(self, cards: List[CardCreate]) -> List[Card]:
+        pass
+
+    @abc.abstractmethod
     async def update(self, card: CardUpdate) -> Card:
         pass
 

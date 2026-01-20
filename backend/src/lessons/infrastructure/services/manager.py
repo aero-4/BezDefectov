@@ -10,7 +10,6 @@ from starlette.types import Message
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from src.lessons.domain.entities import Dialog
-from src.lessons.domain.interfaces.lesson_provider import InterfaceAIProvider
 from src.lessons.domain.interfaces.websocket_manager import IWebsocketManager
 
 
