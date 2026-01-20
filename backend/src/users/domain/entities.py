@@ -11,7 +11,7 @@ class Roles(enum.IntEnum):
     ADMIN = 2
 
 
-class User(CustomModel):
+class User(BaseModel):
     id: int
     created_at: datetime.datetime
     updated_at: datetime.datetime | None = None

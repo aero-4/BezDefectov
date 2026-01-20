@@ -1,6 +1,7 @@
 import {useEffect, useState, FormEvent} from 'react';
 import {API_URL} from "../../config.tsx";
 import React from 'react';
+import Loader from "../loaders/Loader.tsx";
 
 type LessonType = 'sh' | 'r';
 
@@ -34,7 +35,25 @@ interface UserForm {
     series_days: string;
 }
 
+interface User {
+    id: number;
+    email: string;
+    series_days: number;
+    created_at: string;
+    updated_at: string;
+    user_name: string;
+    hashed_password: string;
+    role: number;
+}
+
 interface DialogForm {
+    user_name: string;
+    content: string;
+    lesson_id: number;
+}
+
+interface Dialog {
+    id: number;
     user_name: string;
     content: string;
     lesson_id: number;
@@ -44,10 +63,9 @@ export default function Admin(): JSX.Element {
     const [active, setActive] = useState<'lessons' | 'cards' | 'users' | 'dialogs'>('lessons');
 
     return (
-        <div className="font-sans min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-3 md:p-6">
-            <div className="max-w-7xl mx-auto">
+        <div className="font-sans min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-3 md:p-6 text-[12px]">
+            <div className="mx-auto">
                 <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
-                    {/* Sidebar */}
                     <div className="lg:w-64 bg-white rounded-2xl shadow-lg p-4 lg:sticky lg:top-6 lg:h-fit">
                         <h1 className="text-2xl font-bold text-gray-800 mb-6 px-2">Admin Panel</h1>
                         <nav className="space-y-1">
@@ -72,7 +90,6 @@ export default function Admin(): JSX.Element {
                         </nav>
                     </div>
 
-                    {/* Main Content */}
                     <main className="flex-1 min-w-0">
                         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                             <div className="p-5 md:p-6">
@@ -89,7 +106,6 @@ export default function Admin(): JSX.Element {
     );
 }
 
-// Modal Component
 function Modal({isOpen, onClose, title, children}: {
     isOpen: boolean;
     onClose: () => void;
@@ -104,7 +120,8 @@ function Modal({isOpen, onClose, title, children}: {
                 <div
                     className="fixed inset-0 bg-black/40 transition-opacity"
                 >
-                    <div className="inline-block align-bottom bg-white rounded-2xl shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div
+                        className="inline-block align-bottom bg-white rounded-2xl shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                         <div className="px-6 pt-5 pb-4 sm:p-6 sm:pb-4 border-b">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
@@ -134,6 +151,7 @@ function LessonsPanel(): JSX.Element {
     const [form, setForm] = useState<LessonForm>({duration: '', type: 'sh'});
     const [editing, setEditing] = useState<Lesson | null>(null);
     const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         fetchLessons();
@@ -174,12 +192,34 @@ function LessonsPanel(): JSX.Element {
         setEditing(null);
     }
 
+    async function requestGenerateLesson() {
+        const payload = {duration: Number(form.duration), type: form.type};
+        const url = `${API_URL}/lessons/generate`;
+        const method = 'POST';
+        setLoading(true)
+
+        await fetch(url, {
+            method,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+
+        await fetchLessons();
+        setShowModal(false);
+        setLoading(false)
+
+        setForm({duration: '', type: 'sh'});
+    }
+
     async function remove(id: number) {
         if (window.confirm('Are you sure you want to delete this lesson?')) {
             await fetch(`${API_URL}/lessons/${id}`, {method: 'DELETE'});
             setLessons(prev => prev.filter(l => l.id !== id));
         }
     }
+
+
+    if (loading) return <Loader/>
 
     return (
         <>
@@ -196,7 +236,6 @@ function LessonsPanel(): JSX.Element {
                 </button>
             </div>
 
-            {/* Lessons Table */}
             <div className="overflow-x-auto rounded-xl border border-gray-200">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -225,9 +264,10 @@ function LessonsPanel(): JSX.Element {
                                 {lesson.duration} min
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${lesson.type === 'sh' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
-                    {lesson.type}
-                  </span>
+                              <span
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${lesson.type === 'sh' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
+                                {lesson.type}
+                              </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div className="flex gap-2">
@@ -251,7 +291,6 @@ function LessonsPanel(): JSX.Element {
                 </table>
             </div>
 
-            {/* Modal for Create/Edit */}
             <Modal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
@@ -285,6 +324,12 @@ function LessonsPanel(): JSX.Element {
                             <option value="r">r</option>
                         </select>
                     </div>
+
+                    <button type="button"
+                            onClick={() => requestGenerateLesson()}
+                            className="flex-1 text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
+                        Generate lesson AI
+                    </button>
 
                     <div className="flex gap-3 pt-4">
                         <button
@@ -384,7 +429,6 @@ function CardsPanel(): JSX.Element {
                 </button>
             </div>
 
-            {/* Lesson Selector */}
             <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                     Select Lesson
@@ -403,7 +447,6 @@ function CardsPanel(): JSX.Element {
                 </select>
             </div>
 
-            {/* Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {cards.map(card => (
                     <div
@@ -413,15 +456,14 @@ function CardsPanel(): JSX.Element {
                         <div className="flex justify-between items-start mb-3">
                             <h3 className="font-semibold text-gray-900 truncate">{card.title || 'No Title'}</h3>
                             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                ID: {card.id}
-              </span>
+                                ID: {card.id}
+                             </span>
                         </div>
                         <p className="text-gray-600 text-sm line-clamp-3">{card.text}</p>
                     </div>
                 ))}
             </div>
 
-            {/* Empty State */}
             {cards.length === 0 && selectedLesson && (
                 <div className="text-center py-12">
                     <div className="text-gray-400 mb-4">
@@ -435,7 +477,6 @@ function CardsPanel(): JSX.Element {
                 </div>
             )}
 
-            {/* Create Card Modal */}
             <Modal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
@@ -519,6 +560,12 @@ function CardsPanel(): JSX.Element {
 function UsersPanel(): JSX.Element {
     const [showModal, setShowModal] = useState(false);
     const [form, setForm] = useState<UserForm>({email: '', password: '', series_days: ''});
+    const [users, setUsers] = useState<User[]>([]);
+
+    useEffect(() => {
+        fetch(`${API_URL}/users/`).then(r => r.json()).then(setUsers)
+    }, []);
+
 
     function handleCreate() {
         setForm({email: '', password: '', series_days: ''});
@@ -560,7 +607,8 @@ function UsersPanel(): JSX.Element {
                 <div className="flex items-center gap-4">
                     <div className="bg-blue-100 p-3 rounded-full">
                         <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                         </svg>
                     </div>
                     <div>
@@ -568,6 +616,63 @@ function UsersPanel(): JSX.Element {
                         <p className="text-gray-600 text-sm">Add users to the system with their access credentials</p>
                     </div>
                 </div>
+            </div>
+
+            <div className="my-6">
+                {users.map(user => (
+                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div className="flex flex-col">
+                                <span>ID</span>
+                                <span>{user.id}</span>
+                            </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div className="flex flex-col">
+                                <span>Email</span>
+                                <span>{user.email}</span>
+                            </div>
+                            {user.user_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div className="flex flex-col">
+                                <span>Username</span>
+                                <span>{user.user_name}</span>
+                            </div>
+
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div className="flex flex-col">
+                                <span>Series Days</span>
+                                <span>{user.series_days}</span>
+                            </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div className="flex flex-col">
+                                <span>Created At</span>
+                                <span>{user.created_at}</span>
+                            </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div className="flex flex-col">
+                                <span>Updated At</span>
+                                <span>{user.updated_at}</span>
+                            </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div className="flex flex-col">
+                                <span>Hashed Password</span>
+                                <span>{user.hashed_password}</span>
+                            </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div className="flex flex-col">
+                                <span>Role</span>
+                                <span>{user.role}</span>
+                            </div>
+                        </td>
+                    </tr>
+                ))}
             </div>
 
             <Modal
@@ -640,10 +745,15 @@ function UsersPanel(): JSX.Element {
 
 function DialogsPanel(): JSX.Element {
     const [lessons, setLessons] = useState<Lesson[]>([]);
+    const [dialogs, setDialogs] = useState<Dialog[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [form, setForm] = useState<DialogForm>({user_name: '', content: '', lesson_id: 0});
     const [useFile, setUseFile] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+
+    useEffect(() => {
+        fetch(`${API_URL}/dialogs/`).then(r => r.json()).then(setDialogs);
+    }, []);
 
     useEffect(() => {
         fetch(`${API_URL}/lessons/`).then(r => r.json()).then(setLessons);
@@ -719,10 +829,39 @@ function DialogsPanel(): JSX.Element {
                         <h3 className="font-semibold text-gray-900">Manage Dialogs</h3>
                         <p className="text-gray-600 text-sm">Create individual dialog entries or bulk upload from file</p>
                     </div>
+
+
                 </div>
+
+
             </div>
 
-            {/* Create Dialog Modal */}
+            <div className="my-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {dialogs.map(dialog => (
+                    <div
+                        key={dialog.id}
+                        className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow"
+                    >
+                        <div className="flex justify-between items-start mb-3">
+                            <h3 className="font-semibold text-gray-900 truncate">{dialog.user_name || 'No Name'}</h3>
+
+
+                        </div>
+
+                        <p className="text-gray-600 text-sm line-clamp-3">{dialog.content}</p>
+
+                        <div className="flex flex-row gap-1 mt-2">
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                ID: {dialog.id}
+                            </span>
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                Lesson ID: {dialog.lesson_id}
+                            </span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
             <Modal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}

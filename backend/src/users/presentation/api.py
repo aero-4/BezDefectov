@@ -5,6 +5,7 @@ from src.auth.presentation.dependencies import PasswordHasherDep
 from src.auth.presentation.permissions import access_control
 from src.users.application.use_cases.add_user import add_user
 from src.users.application.use_cases.change_username import change_username
+from src.users.application.use_cases.get_all_users import get_all_users
 from src.users.domain.entities import Roles, UserMe
 from src.users.presentation.dependencies import UserUoWDep
 from src.users.presentation.dtos import UserCreateDTO, UserUpdateDTO
@@ -20,6 +21,11 @@ async def me(request: Request):
         email=request.state.user.email,
         series_days=request.state.user.series_days,
     )
+
+
+@users_api_router.get("/")
+async def get_all(uow: UserUoWDep):
+    return await get_all_users(uow)
 
 
 @users_api_router.patch("/username")

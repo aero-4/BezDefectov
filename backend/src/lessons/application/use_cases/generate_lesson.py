@@ -26,8 +26,6 @@ async def generate_lesson(lesson_data: GenerateLessonCreateDTO,
     cards_response = result
     dialogs_response = result2
 
-    print(cards_response, dialogs_response)
-
     async with uow_lessons:
         lesson = await uow_lessons.lessons.add(lesson)
         await uow_lessons.commit()

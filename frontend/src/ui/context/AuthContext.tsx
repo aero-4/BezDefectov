@@ -50,8 +50,6 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
 
             }
 
-            console.log(json)
-
         } catch (err) {
             console.error("fetchCurrentUser error", err);
             setUser(null);

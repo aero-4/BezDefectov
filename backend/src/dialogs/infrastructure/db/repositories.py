@@ -38,9 +38,15 @@ class PGDialogsRepository(IDialogRepository):
 
         return [self._to_entity(i) for i in objs]
 
-    async def get_all(self, lesson_id: int) -> List[Dialog]:
-        obj = select(DialogsOrm).where(DialogsOrm.lesson_id == lesson_id)
-        result = await self.session.execute(obj)
+    async def get(self, lesson_id: int) -> List[Dialog]:
+        stmt = select(DialogsOrm).where(DialogsOrm.lesson_id == lesson_id)
+        result = await self.session.execute(stmt)
+        objs = [self._to_entity(i) for i in result.scalars().all()]
+        return objs
+
+    async def get_all(self) -> List[Dialog]:
+        stmt = select(DialogsOrm)
+        result = await self.session.execute(stmt)
         objs = [self._to_entity(i) for i in result.scalars().all()]
         return objs
 

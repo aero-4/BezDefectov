@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from src.auth.presentation.permissions import access_control
-from src.dialogs.application.use_cases.collect_dialogs import collect_dialogs
+from src.dialogs.application.use_cases.collect_dialogs import collect_dialogs, get_all_dialogs
 from src.dialogs.application.use_cases.create_dialog import create_dialog
 from src.dialogs.application.use_cases.delete_dialog import delete_dialog
 from src.dialogs.application.use_cases.update_dialog import update_dialog
@@ -22,10 +22,14 @@ async def get(lesson_id: int, uow: DialogUoWDep):
     return await collect_dialogs(lesson_id, uow)
 
 
+@dialogs_api_router.get("/")
+async def get_all(uow: DialogUoWDep):
+    return await get_all_dialogs(uow)
+
+
 @dialogs_api_router.patch("/{id}")
 async def update(id: int, dialog_data: DialogUpdateDTO, uow: DialogUoWDep):
     return await update_dialog(id, dialog_data, uow)
-
 
 
 @dialogs_api_router.delete("/{id}")

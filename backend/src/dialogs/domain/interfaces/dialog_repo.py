@@ -15,6 +15,10 @@ class IDialogRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    async def get_all(self) -> List[Dialog]:
+        pass
+
+    @abc.abstractmethod
     async def update(self, dialog: DialogUpdate) -> Dialog:
         pass
 
@@ -23,5 +27,5 @@ class IDialogRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_all(self, lesson_id: int) -> List[Dialog]:
+    async def get(self, lesson_id: int) -> List[Dialog]:
         pass
