@@ -3,13 +3,15 @@ import enum
 
 from pydantic import BaseModel
 
+from src.core.domain.entities import CustomModel
+
 
 class Roles(enum.IntEnum):
     USER = 1
     ADMIN = 2
 
 
-class User(BaseModel):
+class User(CustomModel):
     id: int
     created_at: datetime.datetime
     updated_at: datetime.datetime | None = None
@@ -20,14 +22,14 @@ class User(BaseModel):
     role: int
 
 
-class UserMe(BaseModel):
+class UserMe(CustomModel):
     created_at: datetime.datetime
     user_name: str | None
     email: str
     series_days: int
 
 
-class UserCreate(BaseModel):
+class UserCreate(CustomModel):
     email: str
     hashed_password: str
     updated_at: datetime.datetime | None = None

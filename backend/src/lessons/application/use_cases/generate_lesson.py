@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import List
 
 from src.cards.domain.entities import CardCreate
@@ -34,8 +35,11 @@ async def generate_lesson(lesson_data: GenerateLessonCreateDTO,
     async with uow_cards:
         cards_data = []
         for c in cards_response.split(Prompts.SEPARATOR_RESULT):
-            title, text = c.split(Prompts.SEPARATOR_LINE)
-            cards_data.append(CardCreate(title=title, text=text, lesson_id=lesson.id))
+            try:
+                title, text = c.split(Prompts.SEPARATOR_LINE)
+                cards_data.append(CardCreate(title=title, text=text, lesson_id=lesson.id))
+            except Exception as e:
+                logging.exception("Error spliting", exc_info=True)
 
         cards = await uow_cards.cards.add_all(cards_data)
         await uow_cards.commit()
@@ -43,8 +47,11 @@ async def generate_lesson(lesson_data: GenerateLessonCreateDTO,
     async with uow_dialogs:
         dialogs_data = []
         for d in dialogs_response.split(Prompts.SEPARATOR_RESULT):
-            user_name, content = d.split(Prompts.SEPARATOR_LINE)
-            cards_data.append(DialogCreate(user_name=user_name, content=content, lesson_id=lesson.id))
+            try:
+                user_name, content = d.split(Prompts.SEPARATOR_LINE)
+                cards_data.append(DialogCreate(user_name=user_name, content=content, lesson_id=lesson.id))
+            except Exception as e:
+                logging.exception("Error spliting", exc_info=True)
 
         dialogs = await uow_dialogs.dialogs.add_all(dialogs_data)
         await uow_dialogs.commit()

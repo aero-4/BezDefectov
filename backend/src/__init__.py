@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -43,6 +44,20 @@ async def app_exception_handler(request: Request, exc: AppException):
         }
     )
 
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    try:
+        app.openapi_schema = get_openapi(title=..., version=..., routes=app.routes)
+    except Exception:
+        import traceback;
+        traceback.print_exc()
+        raise
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
 
 app.add_middleware(
     CORSMiddleware,

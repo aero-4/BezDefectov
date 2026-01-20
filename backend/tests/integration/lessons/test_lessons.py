@@ -209,8 +209,8 @@ async def test_update_series_started_today(clear_db):
 
 
 @pytest.mark.asyncio
-async def test_generate_lessons(clear_db):
-    async with AsyncClient(base_url=base_url) as client:
+async def test_generate_lessons():
+    async with AsyncClient(base_url=base_url, timeout=25) as client:
         lesson_data1 = GenerateLessonCreateDTO(duration=25, type=LessonTypes.r)
 
         response1 = await client.post("/lessons/generate", json=lesson_data1.model_dump())
@@ -224,11 +224,3 @@ async def test_generate_lessons(clear_db):
 
         print(cards)
 
-
-        # lesson_data2 = GenerateLessonCreateDTO(duration=20, type=LessonTypes.sh)
-        #
-        # response2 = await client.post("/lessons/generate", json=lesson_data2.model_dump())
-        # lesson2 = Lesson(**response2.json())
-        #
-        # assert response1.status_code == 200
-        # assert lesson2.duration == lesson_data2.duration

@@ -1,6 +1,6 @@
 import httpx
 from httpx import AsyncClient
-
+from aiohttp.client import ClientSession
 from src import settings
 from src.lessons.domain.interfaces.ai_provider import IAIProvider
 
@@ -20,12 +20,9 @@ class GptUnnelProvider(IAIProvider):
         }
         headers = {"Authorization": settings.GPT_UNNEL_API_KEY,
                    "Content-Type": "application/json"}
-        timeout = httpx.Timeout(10.0, read=None)
-        async with AsyncClient(base_url="https://gptunnel.ru/v1/",
-                               headers=headers,
-                               timeout=timeout,
-                               verify=False) as client:
-            response = await client.post("/chat/completions", json=data)
+        async with ClientSession(headers=headers) as client:
+            response = await client.post("https://gptunnel.ru/v1/chat/completions", json=data)
             response.raise_for_status()
-            content_result = response.json().get("choices")[0].get("message").get("content")
+            data = await response.json()
+            content_result = data.get("choices")[0].get("message").get("content")
         return content_result
