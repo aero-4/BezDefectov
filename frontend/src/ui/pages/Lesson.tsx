@@ -42,7 +42,7 @@ function Lesson() {
     const [dialogs, setDialogs] = useState<Dialog[] | null>([]);
 
     const [cards, setCards] = useState<Card[]>([]);
-    const [stage, setStage] = useState<Stage>('intro');
+    const [stage, setStage] = useState<Stage>(localStorage.getItem("lesson") ?? "intro");
 
     const [isUseMicrofone, setUseMicrofone] = useState(false);
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
@@ -53,8 +53,13 @@ function Lesson() {
     const pcRef = useRef<RTCPeerConnection | null>(null);
     const [series, setSeries] = useState<any>(null)
     const navigator = useNavigate();
-
     const wsRef = useRef<WebSocket | null>(null);
+
+
+    const handleUpdateStage = (newStage: string) => {
+        setStage(newStage)
+        localStorage.setItem("lesson", newStage)
+    }
 
     useEffect(() => {
         let mounted = true;
@@ -74,7 +79,7 @@ function Lesson() {
         return () => {
             mounted = false;
         };
-    }, [id]);
+    }, []);
 
     useEffect(() => {
         let mounted = true;
@@ -94,7 +99,7 @@ function Lesson() {
         return () => {
             mounted = false;
         };
-    }, [id]);
+    }, []);
 
     useEffect(() => {
         let mounted = true;
@@ -114,7 +119,7 @@ function Lesson() {
         return () => {
             mounted = false;
         };
-    }, [id]);
+    }, []);
 
     if (loading || !lesson) return <Loader/>;
 
@@ -254,8 +259,8 @@ function Lesson() {
                         showControls={false}
                     />
 
-                    <button
-                        onClick={() => setStage('cards')}
+                    <button type="button"
+                        onClick={() => handleUpdateStage('cards')}
                         className="action_btn w-full mt-20"
                     >
                         Начать урок
@@ -275,7 +280,7 @@ function Lesson() {
                                 size={120}
                                 strokeWidth={3}
                                 showControls
-                                finish_callback={() => setStage('dialog')}
+                                finish_callback={() => handleUpdateStage('dialog')}
                             />
                         </div>
                     </div>
@@ -283,7 +288,7 @@ function Lesson() {
                     <div className="flex flex-col gap-6">
                         {Object.entries(groupedCards).map(([title, group]) => (
                             <div key={title}>
-                                <h2 className="font-semibold my-3">{title}</h2>
+                                <h2 className="font-semibold my-4 text-xl">{title}</h2>
 
                                 <div className="flex flex-col gap-3 md:grid md:grid-cols-2">
                                     {group.map((card) => (
@@ -305,12 +310,13 @@ function Lesson() {
                 <div>
                     <div className="flex flex-row gap-3">
                         <h1 className="title">Диалог</h1>
+
                         <Tooltip children={
                             <button className="my-auto text-sm text-center justify-center">
                                 зачем?
                             </button>
                         }
-                                 content="Очень важно чтобы вы могли выработать автоматизацию при разговоре, говоря звуки даже не задумываясь."/>
+                                 content="Очень важно чтобы вы могли выработать автоматизацию при разговоре, произнося нужные звуки даже не задумываясь."/>
                     </div>
 
                     <div className="my-6 flex flex-col gap-6">
@@ -329,7 +335,7 @@ function Lesson() {
                             ))}
                         </div>
 
-                        <button
+                        <button type="button"
                             onClick={() => setStage('finish')}
                             className="action_btn w-full items-center my-auto justify-center max-w-xl mx-auto"
                         >
@@ -362,7 +368,7 @@ function Lesson() {
 
                     <h1 className="title">Завершение</h1>
 
-                    <button className="action_btn w-full items-center my-auto justify-center max-w-xl mx-auto"
+                    <button type="button" className="action_btn w-full items-center my-auto justify-center max-w-xl mx-auto"
                             onClick={handleSubmitSeries}>
                         Закончить урок
                     </button>

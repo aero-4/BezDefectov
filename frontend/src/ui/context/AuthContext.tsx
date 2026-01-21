@@ -29,7 +29,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
             const res = await fetch(API_URL + "/users/me", {
                 method: "GET",
                 credentials: "include",
-                headers: {Accept: "application/json"},
+                redirect: "manual"
             });
 
             const json = await res.json().catch(() => null);
@@ -47,7 +47,6 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
                 } else {
                     handleNotAuthenticated();
                 }
-
             }
 
         } catch (err) {
@@ -57,7 +56,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         } finally {
             setLoading(false);
         }
-    }, [handleNotAuthenticated]);
+    }, []);
 
     const refreshToken = useCallback(async () => {
         try {
@@ -65,7 +64,13 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 credentials: "include",
+                redirect: "manual"
             });
+
+            if (res.redirected) {
+                console.warn('refresh redirected to', res.url);
+                return;
+            }
 
             const json = await res.json().catch(() => null);
 
@@ -95,7 +100,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         if (isAuthenticated) {
             refreshIntervalRef.current = window.setInterval(() => {
                 refreshToken();
-            }, 15 * 60 * 1000);
+            }, 1 * 60 * 1000);
         } else {
             if (refreshIntervalRef.current) {
                 clearInterval(refreshIntervalRef.current);

@@ -222,5 +222,4 @@ async def test_generate_lessons():
         response2 = await client.get(f"/cards/{lesson.id}")
         cards = [Card(**i) for i in response2.json()]
 
-        print(cards)
 

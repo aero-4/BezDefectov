@@ -7,8 +7,7 @@ from src.lessons.domain.interfaces.ai_provider import IAIProvider
 
 class GptUnnelProvider(IAIProvider):
 
-    async def response(self, prompt: str) -> str:
-        model = "gpt-4o-mini"
+    async def response(self, prompt: str, model: str = settings.GPT_UNNEL_MODEL, api_key: str = settings.GPT_UNNEL_API_KEY) -> str:
         data = {
             "model": model,
             "messages": [
@@ -18,7 +17,7 @@ class GptUnnelProvider(IAIProvider):
                 },
             ]
         }
-        headers = {"Authorization": settings.GPT_UNNEL_API_KEY,
+        headers = {"Authorization": api_key,
                    "Content-Type": "application/json"}
         async with ClientSession(headers=headers) as client:
             response = await client.post("https://gptunnel.ru/v1/chat/completions", json=data)

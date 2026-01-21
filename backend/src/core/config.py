@@ -94,6 +94,7 @@ class Settings(BaseSettings):
 
     OPENAI_API_KEY: str | None = None
     GPT_UNNEL_API_KEY: str | None = None
+    GPT_UNNEL_MODEL: str | None = None
 
 
 settings = Settings()
