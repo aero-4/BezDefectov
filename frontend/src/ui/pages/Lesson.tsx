@@ -42,7 +42,7 @@ function Lesson() {
     const [dialogs, setDialogs] = useState<Dialog[] | null>([]);
 
     const [cards, setCards] = useState<Card[]>([]);
-    const [stage, setStage] = useState<Stage>(localStorage.getItem("lesson") ?? "intro");
+    const [stage, setStage] = useState<Stage>("intro");
 
     const [isUseMicrofone, setUseMicrofone] = useState(false);
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
@@ -58,7 +58,6 @@ function Lesson() {
 
     const handleUpdateStage = (newStage: string) => {
         setStage(newStage)
-        localStorage.setItem("lesson", newStage)
     }
 
     useEffect(() => {
