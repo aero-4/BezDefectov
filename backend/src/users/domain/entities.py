@@ -23,8 +23,8 @@ class User(BaseModel):
 
 
 class UserMe(CustomModel):
+    updated_at: datetime.datetime | None = None
     created_at: datetime.datetime | None
-    user_name: str | None
     email: str | None
     series_days: int | None
 

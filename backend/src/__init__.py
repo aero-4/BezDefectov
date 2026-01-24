@@ -24,7 +24,7 @@ from src.users.presentation.api import users_api_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await redis_ping_connection()
-    # await recreate_schema()
+    await recreate_schema()
     yield
 
 
@@ -45,19 +45,7 @@ async def app_exception_handler(request: Request, exc: AppException):
     )
 
 
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    try:
-        app.openapi_schema = get_openapi(title=..., version=..., routes=app.routes)
-    except Exception:
-        import traceback;
-        traceback.print_exc()
-        raise
-    return app.openapi_schema
 
-
-app.openapi = custom_openapi
 
 app.add_middleware(
     CORSMiddleware,
