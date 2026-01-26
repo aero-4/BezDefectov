@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import List
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -7,7 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.domain.exceptions import AlreadyExists, NotFound
 from src.users.domain.entities import User, UserCreate, UserUpdate
 from src.users.domain.interfaces.user_repo import IUserRepository
-from src.users.infrastructure.db.orm import UsersOrm
+from src.users.infrastructure.db.orm import UsersOrm, SeriesOrm
+from src.utils.datetimes import get_timezone_now
 
 
 class PGUserRepository(IUserRepository):
@@ -66,7 +68,7 @@ class PGUserRepository(IUserRepository):
     async def update(self, user_data: UserUpdate) -> User:
         stmt = select(UsersOrm).where(UsersOrm.id == user_data.id)
         result = await self.session.execute(stmt)
-        obj: UsersOrm = result.scalar_one_or_none()
+        obj: UsersOrm | None = result.scalar_one_or_none()
 
         if not obj:
             raise NotFound(detail=f"User with id {user_data.id} not found")

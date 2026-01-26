@@ -6,9 +6,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.cards.domain.entities import Card
 from src.core.domain.exceptions import AlreadyExists, NotFound
-from src.lessons.domain.entities import Lesson, LessonCreate, LessonUpdate, Dialog
+from src.lessons.domain.entities import Lesson, LessonCreate, LessonUpdate, Dialog, SeriesLesson
 from src.lessons.domain.interfaces.lesson_repo import ILessonRepository
 from src.lessons.infrastructure.db.orm import LessonsOrm
+from src.users.domain.entities import User
+from src.users.infrastructure.db.orm import SeriesOrm
+from src.utils.datetimes import get_timezone_now
 
 
 class LessonRepository(ILessonRepository):
@@ -81,6 +84,28 @@ class LessonRepository(ILessonRepository):
         await self.session.flush()
 
         return None
+
+    async def add_series(self, user: User) -> SeriesLesson:
+        stmt = select(SeriesOrm).where(SeriesOrm.user_id == user.id,
+                                       SeriesOrm.created_at == get_timezone_now())
+        result = await self.session.execute(stmt)
+        obj: SeriesOrm | None = result.scalar_one_or_none()
+
+        if obj:
+            raise AlreadyExists(detail="Series already exists today")
+
+        new_obj: SeriesOrm = SeriesOrm(user_id=user.id)
+        self.session.add(new_obj)
+
+        await self.session.flush()
+
+        return new_obj.to_entity()
+
+    async def get_series(self, user: User, max_count: int = 7) -> List[SeriesLesson]:
+        stmt = select(SeriesOrm).where(SeriesOrm.user_id == user.id)
+        result = await self.session.execute(stmt)
+        result: List[SeriesLesson] = [i.to_entity() for i in result.scalars().all()][:max_count]
+        return result
 
     @staticmethod
     def _to_domain(lesson: LessonsOrm) -> Lesson:

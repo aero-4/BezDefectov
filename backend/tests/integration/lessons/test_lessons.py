@@ -180,7 +180,8 @@ async def test_update_series_continue2(clear_db):
     async with AsyncClient(base_url=base_url) as client:
         user_data = UserCreateDTO(email=generate_random_alphanum() + "@email.com",
                                   password=generate_random_alphanum(),
-                                  updated_at=datetime.datetime(day=23, month=1, year=2026, hour=8),
+                                  updated_at=datetime.datetime(day=25, month=1, year=2026, hour=8),
+                                  created_at=datetime.datetime(day=25, month=1, year=2026, hour=8),
                                   series_days=365)
         response = await client.post("/users/", json=user_data.model_dump(mode="json"))
         user = User(**response.json())
@@ -205,6 +206,60 @@ async def test_update_series_continue2(clear_db):
         user_me = UserMe(**response3.json())
 
         assert user_me.series_days == 366
+
+        response4 = await client.post("/lessons/series")
+        user_updated2 = UserMe(**response3.json())
+
+        assert user_updated2.series_days == 366
+
+
+@pytest.mark.asyncio
+async def test_update_series_continue3(clear_db):
+    async with AsyncClient(base_url=base_url) as client:
+        print()
+        user_data = UserCreateDTO(email=generate_random_alphanum() + "@email.com",
+                                  password=generate_random_alphanum(),
+                                  updated_at=datetime.datetime(day=25, month=1, year=2026, hour=8),
+                                  created_at=datetime.datetime(day=24, month=1, year=2026, hour=8),
+                                  series_days=365)
+        response = await client.post("/users/", json=user_data.model_dump(mode="json"))
+        user = User(**response.json())
+
+        assert user.email == user_data.email
+
+        response2 = await client.post("/auth/login", json=AuthUserDTO(email=user_data.email, password=user_data.password).model_dump())
+
+        assert response2.status_code == 200
+        assert response2.json() == {"msg": "Login successful"}
+
+        client.cookies.clear()
+        client.cookies.set("access_token", response2.cookies.get("access_token"))
+        client.cookies.set("refresh_token", response2.cookies.get("refresh_token"))
+
+        response3 = await client.post("/lessons/series")
+        user_updated = UserMe(**response3.json())
+
+        assert user_updated.series_days == 366
+
+        response4 = await client.get("/users/me")
+        user_me = UserMe(**response4.json())
+
+        print(user_me)
+
+        assert user_me.series_days == 366
+
+        user_data.updated_at = datetime.datetime(day=25, month=1, year=2026, hour=8)
+        response5 = await client.patch("/users/", json=user_data.model_dump(mode="json"))
+        user2 = User(**response5.json())
+
+        print(user2)
+
+        response6 = await client.post("/lessons/series")
+        user_series2 = UserMe(**response6.json())
+
+        print(user_series2)
+
+        assert user_series2.series_days == 367
 
 
 @pytest.mark.asyncio
@@ -285,5 +340,3 @@ async def test_generate_lessons():
 
         response2 = await client.get(f"/cards/{lesson.id}")
         cards = [Card(**i) for i in response2.json()]
-
-

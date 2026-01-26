@@ -86,3 +86,8 @@ class Prompts(enum.StrEnum):
 class GenerateLessonCreate(BaseModel):
     duration: int
     type: LessonTypes
+
+
+class SeriesLesson(BaseModel):
+    user_id: int
+    created_at: datetime.datetime

@@ -7,7 +7,7 @@ from src.cards.presentation.dependencies import CardUowDep
 from src.dialogs.presentation.dependencies import DialogUoWDep
 from src.lessons.application.use_cases.add_lesson import add_lesson
 from src.lessons.application.use_cases.collect_lessons import collect_lesson, collect_with_type_lessons, collect_lessons
-from src.lessons.application.use_cases.confirm_lesson import update_series
+from src.lessons.application.use_cases.update_series import update_series
 from src.lessons.application.use_cases.delete_lesson import delete_lesson
 from src.lessons.application.use_cases.generate_lesson import generate_lesson
 from src.lessons.application.use_cases.update_lesson import update_lesson
@@ -49,8 +49,8 @@ async def update(id: int, lesson_data: LessonUpdateDTO, uow: LessonUoWDep):
 
 
 @lessons_api_router.post("/series")
-async def series(request: Request, user_uow: UserUoWDep):
-    return await update_series(user_uow, request.state.user)
+async def series(request: Request, user_uow: UserUoWDep, lesson_uow: LessonUoWDep):
+    return await update_series(user_uow, lesson_uow, request.state.user)
 
 
 @lessons_api_router.post("/generate")

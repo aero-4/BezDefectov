@@ -12,7 +12,7 @@ def get_timezone_now():
     return datetime.datetime.now().astimezone(tz)
 
 
-def is_yesterday_two_dates(date1: datetime.date, date2: datetime.date = datetime.date.today()):
+def is_yesterday(date1: datetime.date, date2: datetime.date = datetime.date.today()):
     return date2 - date1 == datetime.timedelta(days=1)
 
 

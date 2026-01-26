@@ -4,6 +4,7 @@ from starlette.requests import Request
 from src.auth.presentation.dependencies import PasswordHasherDep
 from src.auth.presentation.permissions import access_control
 from src.users.application.use_cases.add_user import add_user
+from src.users.application.use_cases.change_user import change_user
 from src.users.application.use_cases.change_username import change_username
 from src.users.application.use_cases.get_all_users import get_all_users
 from src.users.domain.entities import Roles, UserMe
@@ -36,3 +37,8 @@ async def username(request: Request, dto: UserUpdateDTO, uow: UserUoWDep):
 @users_api_router.post("/")
 async def new_user(user: UserCreateDTO, uow: UserUoWDep, pwd_hashed: PasswordHasherDep):
     return await add_user(user, uow, pwd_hashed)
+
+
+@users_api_router.patch("/")
+async def update_user(request: Request, user_data: UserUpdateDTO, uow: UserUoWDep):
+    return await change_user(user_data, uow, request.state.user)

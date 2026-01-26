@@ -1,9 +1,11 @@
 import datetime
 import enum
+from typing import List
 
 from pydantic import BaseModel
 
 from src.core.domain.entities import CustomModel
+from src.lessons.domain.entities import SeriesLesson
 
 
 class Roles(enum.IntEnum):
@@ -27,6 +29,7 @@ class UserMe(CustomModel):
     created_at: datetime.datetime | None
     email: str | None
     series_days: int | None
+    series_last: List[SeriesLesson] | List | None = None
 
 
 class UserCreate(CustomModel):
@@ -40,3 +43,5 @@ class UserUpdate(BaseModel):
     id: int
     series_days: int | None = None
     user_name: str | None = None
+    updated_at: datetime.datetime | None = None
+    created_at: datetime.datetime | None = None

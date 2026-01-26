@@ -1,7 +1,8 @@
 import abc
 from typing import List
 
-from src.lessons.domain.entities import LessonCreate, Lesson, LessonUpdate, Dialog
+from src.lessons.domain.entities import LessonCreate, Lesson, LessonUpdate, Dialog, SeriesLesson
+from src.users.domain.entities import User
 
 
 class ILessonRepository(abc.ABC):
@@ -23,9 +24,17 @@ class ILessonRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_all_by_type(self, type: str) -> list[Lesson]:
+    async def get_all_by_type(self, type: str) -> List[Lesson]:
         pass
 
     @abc.abstractmethod
     async def get_all(self) -> List[Lesson]:
+        pass
+
+    @abc.abstractmethod
+    async def get_series(self, user: User) -> List[SeriesLesson]:
+        pass
+
+    @abc.abstractmethod
+    async def add_series(self, user: User) -> SeriesLesson:
         pass
