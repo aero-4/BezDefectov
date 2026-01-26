@@ -14,6 +14,7 @@ class UserCreateDTO(CustomModel):
 
 
 class UserUpdateDTO(BaseModel):
+    id: int | None = None
     user_name: str | None = None
     updated_at: datetime.datetime | None = None
     created_at: datetime.datetime | None = None

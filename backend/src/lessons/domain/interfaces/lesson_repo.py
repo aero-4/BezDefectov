@@ -31,10 +31,3 @@ class ILessonRepository(abc.ABC):
     async def get_all(self) -> List[Lesson]:
         pass
 
-    @abc.abstractmethod
-    async def get_series(self, user: User) -> List[SeriesLesson]:
-        pass
-
-    @abc.abstractmethod
-    async def add_series(self, user: User) -> SeriesLesson:
-        pass

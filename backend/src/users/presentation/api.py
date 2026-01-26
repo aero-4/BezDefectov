@@ -40,5 +40,5 @@ async def new_user(user: UserCreateDTO, uow: UserUoWDep, pwd_hashed: PasswordHas
 
 
 @users_api_router.patch("/")
-async def update_user(request: Request, user_data: UserUpdateDTO, uow: UserUoWDep):
-    return await change_user(user_data, uow, request.state.user)
+async def update_user(user_data: UserUpdateDTO, uow: UserUoWDep):
+    return await change_user(user_data, uow)
