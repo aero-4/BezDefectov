@@ -7,9 +7,6 @@ function ProtectedRouter() {
     const {isAuthenticated, user, loading} = useAuth();
     const navigate = useNavigate();
 
-    // if (loading) {
-    //     return <Loader/>;
-    // }
 
     if (isAuthenticated && user.email) {
         return <Outlet/>;

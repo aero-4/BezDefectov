@@ -559,189 +559,314 @@ function CardsPanel(): JSX.Element {
 
 function UsersPanel(): JSX.Element {
     const [showModal, setShowModal] = useState(false);
-    const [form, setForm] = useState<UserForm>({email: '', password: '', series_days: ''});
+    const [createForm, setCreateForm] = useState<UserForm>({email: '', password: '', series_days: ''});
     const [users, setUsers] = useState<User[]>([]);
+    const [loadingUsers, setLoadingUsers] = useState(false);
+
+    // Для редактирования
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [editForm, setEditForm] = useState<{ id: number; user_name: string; series_days: string }>({
+        id: 0,
+        user_name: '',
+        series_days: ''
+    });
+    const [editLoading, setEditLoading] = useState(false);
 
     useEffect(() => {
-        fetch(`${API_URL}/users/`).then(r => r.json()).then(setUsers)
+        fetchUsers();
     }, []);
 
+    async function fetchUsers() {
+        setLoadingUsers(true);
+        try {
+            const res = await fetch(`${API_URL}/users/`);
+            const data = await res.json();
+            setUsers(data);
+        } catch (err) {
+            console.error("fetch users error", err);
+            alert("Ошибка при загрузке пользователей");
+        } finally {
+            setLoadingUsers(false);
+        }
+    }
 
     function handleCreate() {
-        setForm({email: '', password: '', series_days: ''});
+        setCreateForm({email: '', password: '', series_days: ''});
         setShowModal(true);
     }
 
-    async function submit(e: FormEvent) {
+    async function submitCreate(e: FormEvent) {
         e.preventDefault();
-        const payload: any = {email: form.email, password: form.password};
-        if (form.series_days) payload.series_days = Number(form.series_days);
+        const payload: any = {email: createForm.email, password: createForm.password};
+        if (createForm.series_days) payload.series_days = Number(createForm.series_days);
 
-        await fetch(`${API_URL}/users/`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
+        try {
+            await fetch(`${API_URL}/users/`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            setShowModal(false);
+            setCreateForm({email: '', password: '', series_days: ''});
+            await fetchUsers();
+            alert('User created successfully!');
+        } catch (err) {
+            console.error("create user error", err);
+            alert('Ошибка при создании пользователя');
+        }
+    }
+
+    // Начать редактирование
+    function handleEditUser(user: User) {
+        setEditingUser(user);
+        setEditForm({
+            id: user.id,
+            user_name: user.user_name ?? '',
+            series_days: user.series_days?.toString() ?? ''
         });
+        setShowModal(true); // используем тот же модал, но различаем по editingUser
+    }
 
-        setShowModal(false);
-        setForm({email: '', password: '', series_days: ''});
-        alert('User created successfully!');
+    // Отправка PATCH (используем /users/ как вы просили — тело содержит id и поля для обновления)
+    async function submitEdit(e: FormEvent) {
+        e.preventDefault();
+        if (!editingUser) return;
+
+        const payload: any = { id: editForm.id };
+        // Поддерживаем возможность оставить поле пустым (будет null) или отправлять только заданные поля
+        if (editForm.user_name !== undefined) payload.user_name = editForm.user_name || null;
+        if (editForm.series_days !== undefined && editForm.series_days !== '') {
+            payload.series_days = Number(editForm.series_days);
+        } else {
+            payload.series_days = null;
+        }
+
+        setEditLoading(true);
+        try {
+            const res = await fetch(`${API_URL}/users/`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+                const json = await res.json().catch(() => null);
+                const msg = (json && (json.detail || json.error || json.message)) || `Ошибка: ${res.status}`;
+                throw new Error(msg);
+            }
+
+            // Если сервер возвращает обновлённого пользователя — используем его, иначе обновим список
+            const updatedUser = await res.json().catch(() => null);
+            if (updatedUser && updatedUser.id) {
+                setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+            } else {
+                await fetchUsers();
+            }
+
+            setEditingUser(null);
+            setShowModal(false);
+            alert('User updated successfully!');
+        } catch (err: any) {
+            console.error("patch user error", err);
+            alert('Ошибка при обновлении пользователя: ' + (err?.message || ''));
+        } finally {
+            setEditLoading(false);
+        }
+    }
+
+    // Удаление (оставил как пример)
+    async function removeUser(id: number) {
+        if (!window.confirm('Are you sure you want to delete this user?')) return;
+        try {
+            await fetch(`${API_URL}/users/${id}`, { method: 'DELETE' });
+            setUsers(prev => prev.filter(u => u.id !== id));
+        } catch (err) {
+            console.error("delete user error", err);
+            alert('Ошибка при удалении пользователя');
+        }
     }
 
     return (
         <>
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Users Management</h2>
-                <button
-                    onClick={handleCreate}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/>
-                    </svg>
-                    Add User
-                </button>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-                <div className="flex items-center gap-4">
-                    <div className="bg-blue-100 p-3 rounded-full">
-                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleCreate}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/>
                         </svg>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-gray-900">Create New User</h3>
-                        <p className="text-gray-600 text-sm">Add users to the system with their access credentials</p>
-                    </div>
+                        Add User
+                    </button>
+                    <button
+                        onClick={fetchUsers}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-colors"
+                        disabled={loadingUsers}
+                    >
+                        Refresh
+                    </button>
                 </div>
             </div>
 
-            <div className="my-6">
-                {users.map(user => (
-                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                            <div className="flex flex-col">
-                                <span>ID</span>
-                                <span>{user.id}</span>
-                            </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                            <div className="flex flex-col">
-                                <span>Email</span>
-                                <span>{user.email}</span>
-                            </div>
-                            {user.user_name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                            <div className="flex flex-col">
-                                <span>Username</span>
-                                <span>{user.user_name}</span>
-                            </div>
-
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                            <div className="flex flex-col">
-                                <span>Series Days</span>
-                                <span>{user.series_days}</span>
-                            </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                            <div className="flex flex-col">
-                                <span>Created At</span>
-                                <span>{user.created_at}</span>
-                            </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                            <div className="flex flex-col">
-                                <span>Updated At</span>
-                                <span>{user.updated_at}</span>
-                            </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                            <div className="flex flex-col">
-                                <span>Hashed Password</span>
-                                <span>{user.hashed_password}</span>
-                            </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                            <div className="flex flex-col">
-                                <span>Role</span>
-                                <span>{user.role}</span>
-                            </div>
-                        </td>
+            <div className="overflow-x-auto rounded-xl border border-gray-200">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                    <tr>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Username</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Series Days</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created At</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Updated At</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                     </tr>
-                ))}
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                    {users.map(user => (
+                        <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.id}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.email}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.user_name || '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.series_days ?? '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.created_at}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.updated_at}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleEditUser(user)}
+                                        className="text-indigo-600 hover:text-indigo-900 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => removeUser(user.id)}
+                                        className="text-red-600 hover:text-red-900 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
             </div>
 
+            {/* Modal (used for both create and edit) */}
             <Modal
                 isOpen={showModal}
-                onClose={() => setShowModal(false)}
-                title="Create New User"
+                onClose={() => {
+                    setShowModal(false);
+                    setEditingUser(null);
+                }}
+                title={editingUser ? 'Edit User' : 'Create New User'}
             >
-                <form onSubmit={submit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Email Address
-                        </label>
-                        <input
-                            type="email"
-                            value={form.email}
-                            onChange={e => setForm({...form, email: e.target.value})}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            placeholder="user@example.com"
-                            required
-                        />
-                    </div>
+                {editingUser ? (
+                    <form onSubmit={submitEdit} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                            <input
+                                type="text"
+                                value={editForm.user_name}
+                                onChange={e => setEditForm({...editForm, user_name: e.target.value})}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                placeholder="Username"
+                            />
+                        </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            value={form.password}
-                            onChange={e => setForm({...form, password: e.target.value})}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            placeholder="Enter password"
-                            required
-                        />
-                    </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Series Days</label>
+                            <input
+                                type="number"
+                                value={editForm.series_days}
+                                onChange={e => setEditForm({...editForm, series_days: e.target.value})}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                placeholder="e.g. 30"
+                            />
+                        </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Series Days (Optional)
-                        </label>
-                        <input
-                            type="number"
-                            value={form.series_days}
-                            onChange={e => setForm({...form, series_days: e.target.value})}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            placeholder="e.g., 30"
-                        />
-                    </div>
+                        <div className="flex gap-3 pt-4">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setShowModal(false);
+                                    setEditingUser(null);
+                                }}
+                                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                                disabled={editLoading}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors"
+                                disabled={editLoading}
+                            >
+                                {editLoading ? 'Saving...' : 'Save'}
+                            </button>
+                        </div>
+                    </form>
+                ) : (
+                    <form onSubmit={submitCreate} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <input
+                                type="email"
+                                value={createForm.email}
+                                onChange={e => setCreateForm({...createForm, email: e.target.value})}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                placeholder="user@example.com"
+                                required
+                            />
+                        </div>
 
-                    <div className="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={() => setShowModal(false)}
-                            className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors"
-                        >
-                            Create User
-                        </button>
-                    </div>
-                </form>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <input
+                                type="password"
+                                value={createForm.password}
+                                onChange={e => setCreateForm({...createForm, password: e.target.value})}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                placeholder="Enter password"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Series Days (Optional)</label>
+                            <input
+                                type="number"
+                                value={createForm.series_days}
+                                onChange={e => setCreateForm({...createForm, series_days: e.target.value})}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                placeholder="e.g., 30"
+                            />
+                        </div>
+
+                        <div className="flex gap-3 pt-4">
+                            <button
+                                type="button"
+                                onClick={() => setShowModal(false)}
+                                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors"
+                            >
+                                Create User
+                            </button>
+                        </div>
+                    </form>
+                )}
             </Modal>
         </>
     );
 }
+
 
 function DialogsPanel(): JSX.Element {
     const [lessons, setLessons] = useState<Lesson[]>([]);

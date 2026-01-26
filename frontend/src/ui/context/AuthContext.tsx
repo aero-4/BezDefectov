@@ -29,36 +29,30 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
             const res = await fetch(API_URL + "/users/me", {
                 method: "GET",
                 credentials: "include",
-                redirect: "manual"
+                redirect: "manual",
             });
 
             const json = await res.json().catch(() => null);
 
             if (!res.ok) {
-                if (json && (json.detail === "Not authenticated" || res.status === 401)) {
-                    handleNotAuthenticated();
-                } else {
-                    handleNotAuthenticated();
-                }
+                handleNotAuthenticated();
             } else {
-                if (json.email) {
+                if (json && json.email) {
                     setUser(json);
                     setIsAuthenticated(true);
                 } else {
                     handleNotAuthenticated();
                 }
             }
-
         } catch (err) {
             console.error("fetchCurrentUser error", err);
-            setUser(null);
-            setIsAuthenticated(false);
+            handleNotAuthenticated();
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [handleNotAuthenticated]);
 
-    const refreshToken = useCallback(async () => {
+    const refreshToken = useCallback(async (): Promise<boolean> => {
         try {
             const res = await fetch(API_URL + "/auth/refresh", {
                 method: "POST",
@@ -69,7 +63,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
 
             if (res.redirected) {
                 console.warn('refresh redirected to', res.url);
-                return;
+                return false;
             }
 
             const json = await res.json().catch(() => null);
@@ -77,36 +71,44 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
             if (!res.ok) {
                 if (json && (json.detail === "Not authenticated" || res.status === 401)) {
                     handleNotAuthenticated();
-                } else {
-                    setUser(null);
-                    setIsAuthenticated(false);
                 }
-                return;
+                return false;
             }
 
             await fetchCurrentUser();
+            return true;
         } catch (err) {
             console.error("refreshToken error", err);
-            setUser(null);
-            setIsAuthenticated(false);
+            handleNotAuthenticated();
+            return false;
         }
     }, [fetchCurrentUser, handleNotAuthenticated]);
 
     useEffect(() => {
-        fetchCurrentUser();
-    }, [fetchCurrentUser]);
+        let mounted = true;
+        (async () => {
+            const refreshed = await refreshToken();
+            if (!refreshed && mounted) {
+                await fetchCurrentUser();
+            }
+        })();
+
+        return () => {
+            mounted = false;
+        };
+    }, [refreshToken, fetchCurrentUser]);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            refreshIntervalRef.current = window.setInterval(() => {
-                refreshToken();
-            }, 1 * 60 * 1000);
-        } else {
-            if (refreshIntervalRef.current) {
-                clearInterval(refreshIntervalRef.current);
-                refreshIntervalRef.current = null;
-            }
+        if (refreshIntervalRef.current) {
+            clearInterval(refreshIntervalRef.current);
+            refreshIntervalRef.current = null;
         }
+
+        refreshIntervalRef.current = window.setInterval(() => {
+            refreshToken().catch(err => {
+                console.warn("periodic refreshToken failed", err);
+            });
+        }, 1 * 60 * 1000);
 
         return () => {
             if (refreshIntervalRef.current) {
@@ -114,7 +116,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
                 refreshIntervalRef.current = null;
             }
         };
-    }, [isAuthenticated, refreshToken]);
+    }, [refreshToken]);
 
     const login = useCallback(
         async ({email, password}: { email: string; password: string }) => {
@@ -173,30 +175,33 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     );
 
     const logout = useCallback(async () => {
-            try {
-                const res = await fetch(API_URL + "/auth/logout", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    credentials: "include",
-                });
+        try {
+            const res = await fetch(API_URL + "/auth/logout", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                credentials: "include",
+            });
 
-                const json = await res.json()
+            // безопасно разбираем тело
+            const json = await res.json().catch(() => null);
 
-                if (!res.ok) {
-                    const msg =
-                        (json && (json.detail || json.error || json.message)) ||
-                        `Ошибка: ${res.status}`;
-                    return {ok: false, message: msg};
-                }
-
-                await fetchCurrentUser();
-                return {ok: true}
-            } catch (e) {
-                console.warn("logout error", e);
+            if (!res.ok) {
+                const msg =
+                    (json && (json.detail || json.error || json.message)) ||
+                    `Ошибка: ${res.status}`;
+                return {ok: false, message: msg};
             }
 
-        }, [fetchCurrentUser]
-    );
+            // После логаута обновляем состояние пользователя
+            await fetchCurrentUser();
+            return {ok: true};
+        } catch (e) {
+            console.warn("logout error", e);
+            // даже если возникает ошибка сети — сбросим локальное состояние
+            handleNotAuthenticated();
+            return {ok: false, message: "Ошибка при выходе"};
+        }
+    }, [fetchCurrentUser, handleNotAuthenticated]);
 
     const value = useMemo(
         () => ({

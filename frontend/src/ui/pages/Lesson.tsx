@@ -362,7 +362,7 @@ function Lesson() {
             {stage === 'finish' && (
                 <div className="flex flex-col h-full min-h-screen">
                     {series && series.series_days !== user.series_days && (
-                        <Series series_day={series.series_days}/>
+                        <Series series_day={series.series_days} series_last={series.series_last}/>
                     )}
 
                     <h1 className="title">Завершение</h1>

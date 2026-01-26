@@ -32,9 +32,8 @@ function App(): JSX.Element {
                     <Route path="profile" element={<Profile/>}/>
                     <Route path="logout" element={<Logout/>}/>
                 </Route>
-                <Route element={<ProtectedRouter/>}>
-                    <Route path="admin" element={<Admin/>}/>
-                </Route>
+                <Route path="admin" element={<Admin/>}/>
+
             </Routes>
         </Suspense>
     )
