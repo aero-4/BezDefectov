@@ -16,7 +16,7 @@ class UsersOrm(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), default=get_timezone_now)
-    updated_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), onupdate=get_timezone_now, nullable=True)
+    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), onupdate=get_timezone_now, default=get_timezone_now)
 
     user_name: Mapped[str] = mapped_column(nullable=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)

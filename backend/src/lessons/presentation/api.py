@@ -49,8 +49,8 @@ async def update(id: int, lesson_data: LessonUpdateDTO, uow: LessonUoWDep):
 
 
 @lessons_api_router.post("/series")
-async def series(request: Request, user_uow: UserUoWDep, lesson_uow: LessonUoWDep):
-    return await update_series(user_uow, lesson_uow, request.state.user)
+async def series(request: Request, user_uow: UserUoWDep):
+    return await update_series(user_uow, request.state.user)
 
 
 @lessons_api_router.post("/generate")

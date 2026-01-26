@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.domain.exceptions import AlreadyExists, NotFound
+from src.lessons.domain.entities import SeriesLesson
 from src.users.domain.entities import User, UserCreate, UserUpdate
 from src.users.domain.interfaces.user_repo import IUserRepository
 from src.users.infrastructure.db.orm import UsersOrm, SeriesOrm
@@ -79,6 +80,28 @@ class PGUserRepository(IUserRepository):
         await self.session.flush()
 
         return self._to_domain(obj)
+
+    async def add_series(self, user: User) -> SeriesLesson:
+        stmt = select(SeriesOrm).where(SeriesOrm.user_id == user.id,
+                                       SeriesOrm.created_at == get_timezone_now())
+        result = await self.session.execute(stmt)
+        obj: SeriesOrm | None = result.scalar_one_or_none()
+
+        if obj:
+            raise AlreadyExists(detail="Series already exists today")
+
+        new_obj: SeriesOrm = SeriesOrm(user_id=user.id)
+        self.session.add(new_obj)
+
+        await self.session.flush()
+
+        return new_obj.to_entity()
+
+    async def get_series(self, user: User, max_count: int = 7) -> List[SeriesLesson]:
+        stmt = select(SeriesOrm).where(SeriesOrm.user_id == user.id)
+        result = await self.session.execute(stmt)
+        result: List[SeriesLesson] = [i.to_entity() for i in result.scalars().all()][:max_count]
+        return result
 
     @staticmethod
     def _to_domain(obj: UsersOrm) -> User:

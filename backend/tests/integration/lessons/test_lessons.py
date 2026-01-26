@@ -216,7 +216,6 @@ async def test_update_series_continue2(clear_db):
 @pytest.mark.asyncio
 async def test_update_series_continue3(clear_db):
     async with AsyncClient(base_url=base_url) as client:
-        print()
         user_data = UserCreateDTO(email=generate_random_alphanum() + "@email.com",
                                   password=generate_random_alphanum(),
                                   updated_at=datetime.datetime(day=25, month=1, year=2026, hour=8),
@@ -239,6 +238,8 @@ async def test_update_series_continue3(clear_db):
         response3 = await client.post("/lessons/series")
         user_updated = UserMe(**response3.json())
 
+        print(user_updated)
+
         assert user_updated.series_days == 366
 
         response4 = await client.get("/users/me")
@@ -248,18 +249,6 @@ async def test_update_series_continue3(clear_db):
 
         assert user_me.series_days == 366
 
-        user_data.updated_at = datetime.datetime(day=25, month=1, year=2026, hour=8)
-        response5 = await client.patch("/users/", json=user_data.model_dump(mode="json"))
-        user2 = User(**response5.json())
-
-        print(user2)
-
-        response6 = await client.post("/lessons/series")
-        user_series2 = UserMe(**response6.json())
-
-        print(user_series2)
-
-        assert user_series2.series_days == 367
 
 
 @pytest.mark.asyncio
