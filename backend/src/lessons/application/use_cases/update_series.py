@@ -13,9 +13,10 @@ async def update_series(uow: UserUoWDep, user: User) -> dict[str, Any] | Any:
         last_series = all_series[-1] if len(all_series) > 0 else None
 
         if last_series and last_series.created_at:
-            if is_yesterday(last_series.created_at, datetime.datetime.today()):
+            if is_yesterday(last_series.created_at):
                 series = user.series_days + 1
-            elif is_today(last_series.created_at, datetime.datetime.today()):
+
+            elif is_today(last_series.created_at):
                 series = user.series_days
         else:
             if user.series_days > 0:

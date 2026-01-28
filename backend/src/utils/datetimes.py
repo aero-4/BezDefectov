@@ -12,10 +12,11 @@ def get_timezone_now():
     return datetime.datetime.now().astimezone(tz)
 
 
-def is_yesterday(date1: datetime.date, date2: datetime.date = datetime.date.today()):
-    return date2 - date1 == datetime.timedelta(days=1)
+def is_today(dt: datetime) -> bool:
+    now = datetime.datetime.now(tz=dt.tzinfo)
+    return dt.date() == now.date()
 
 
-
-def is_today(date1: datetime.date, date2: datetime.date = datetime.date.today()):
-    return date1 == date2
+def is_yesterday(dt: datetime) -> bool:
+    now = datetime.datetime.now(tz=dt.tzinfo)
+    return now.date() - dt.date() == datetime.timedelta(days=1)
