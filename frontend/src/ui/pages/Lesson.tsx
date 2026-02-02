@@ -246,8 +246,12 @@ function Lesson() {
 
     if (!lesson || !lesson.duration) return <h1>Урок не найден</h1>
 
+
     return (
         <div className="min-h-screen flex flex-col">
+            {series && series.series_days !== user.series_days && (
+                <Series series_day={series.series_days} series_last={series.series_last}/>
+            )}
 
             {stage === 'intro' && (
                 <div className="flex flex-col gap-8 my-20 max-w-md mx-auto items-center">
@@ -336,7 +340,7 @@ function Lesson() {
 
                         <button type="button"
                             onClick={() => setStage('finish')}
-                            className="action_btn w-full items-center my-auto justify-center max-w-xl mx-auto"
+                            className="action_btn w-full items-center justify-center max-w-xl mx-auto"
                         >
                             Продолжить
                         </button>
@@ -361,13 +365,11 @@ function Lesson() {
 
             {stage === 'finish' && (
                 <div className="flex flex-col h-full min-h-screen">
-                    {series && series.series_days !== user.series_days && (
-                        <Series series_day={series.series_days} series_last={series.series_last}/>
-                    )}
+
 
                     <h1 className="title">Завершение</h1>
 
-                    <button type="button" className="action_btn w-full items-center my-auto justify-center max-w-xl mx-auto"
+                    <button type="button" className="action_btn w-full items-center justify-center max-w-xl mx-auto"
                             onClick={handleSubmitSeries}>
                         Закончить урок
                     </button>

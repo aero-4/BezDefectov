@@ -54,12 +54,12 @@ function Series({series_day, series_last = []}) {
     }, [series_last]);
 
     return (
-        <div className="fixed flex z-100 top-0 bottom-0 left-0 right-0 w-full h-full gap-3 bg-yellow-400 my-auto">
-            <div className="flex flex-col gap-12 items-center my-auto justify-center mx-auto">
+        <div className="fixed flex z-100 top-0 bottom-0 left-0 right-0 w-full h-full gap-3 bg-yellow-400">
+            <div className="flex flex-col gap-10 items-center my-auto justify-center mx-auto text-sm">
 
                 <div
                     className={
-                        `flex w-32 h-32 items-center justify-center rounded-full text-6xl font-semibold
+                        `flex w-32 h-32 items-center justify-center rounded-full text-5xl font-semibold
 transition-all duration-500 ease-out
 ${show
                             ? 'opacity-100 scale-100 translate-y-0 bg-orange-500 text-white shadow-lg'
@@ -67,31 +67,37 @@ ${show
 ${pulse ? 'ring-4 ring-orange-400 ring-offset-2 scale-110' : ''}`
                     }
                 >
-                    {show ? series_day : series_day - 1}
+                    {series_day}
                 </div>
 
                 <div className="flex flex-row items-center text-gray-100 text-xl text-center">
-                    <img src={firePng} alt="fire" className="w-8"/>
-                    <span className="ml-2">Поздравляем c новой серией!</span>
+                    <img src={fireActivePng} alt="fire" className="w-8"/>
+                    <span className="text-black">Ваша новая серия обновлена!</span>
                 </div>
 
-                <div className="flex flex-row gap-3 bg-gray-200 p-3">
-                    {processedSeries.map((series) => (
-                        <div
-                            key={series.id || series.created_at}
-                            className="flex flex-col gap-3 p-5 bg-gray-100 items-center"
-                        >
-                            <p className="text-xl">{series.dateObj.getDay()}</p>
+                <div className="flex flex-row gap-2 bg-gray-200 p-2 rounded-3xl w-full ">
+                    {processedSeries.map((series) => {
+                        const day = series.dateObj.getDate().toString();
+                        const formattedDate = `${day}`;
 
-                            <p>{weekdays[series.dateObj.getDay()]}</p>
+                        return (
+                            <div
+                                key={series.id || series.created_at}
+                                className="flex flex-col p-4 md:p-6 bg-gray-100 items-center rounded-xl w-full"
+                            >
+                                <p className="text-2xl">{formattedDate}</p>
 
-                            {series.hasFire ? (
-                                <img src={fireActivePng} alt="fireActive" className="w-4"/>
-                            ) : (
-                                <img src={fireInactivePng} alt="fireInactive" className="w-4"/>
-                            )}
-                        </div>
-                    ))}
+                                <p>{weekdays[series.dateObj.getDay()]}</p>
+
+
+                                {series.hasFire ? (
+                                    <img src={fireActivePng} alt="fireActive" className="w-7"/>
+                                ) : (
+                                    <img src={fireInactivePng} alt="fireInactive" className="w-7"/>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

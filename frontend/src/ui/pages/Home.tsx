@@ -3,6 +3,7 @@ import arrowPng from "../../assets/arrow.png";
 import React from 'react';
 import {useAuth} from "../context/AuthContext.tsx";
 import Loader from "../loaders/Loader.tsx";
+import Series from "../components/Series.tsx";
 
 function Home() {
     const {isAuthenticated, loading} = useAuth();
@@ -10,6 +11,16 @@ function Home() {
     if (loading) {
         return <Loader/>;
     }
+
+
+    return <Series series_day={10} series_last={[{"created_at": "2025-02-02"},
+        {"created_at": "2025-02-03"},
+        {"created_at": "2025-02-04"},
+        {"created_at": "2025-02-05"},
+        {"created_at": "2025-02-06"},
+        {"created_at": "2025-02-07"},
+        {"created_at": "2025-02-08"}]
+    }/>
 
     return (
         <div className="flex flex-col gap-18">
