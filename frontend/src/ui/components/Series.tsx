@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import fireActivePng from "../../assets/fire-active.png.png";
+import fireActivePng from "../../assets/fire-active.png";
 import fireInactivePng from "../../assets/fire-disabled.png";
 
 function Series({series_day, series_last = []}) {
