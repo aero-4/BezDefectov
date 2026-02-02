@@ -8,6 +8,8 @@ from src.utils.datetimes import is_yesterday, is_today
 
 
 async def update_series(uow: UserUoWDep, user: User) -> dict[str, Any] | Any:
+    series: int = 1
+
     async with uow:
         all_series = await uow.users.get_series(user)
         last_series = all_series[-1] if len(all_series) > 0 else None
@@ -18,6 +20,9 @@ async def update_series(uow: UserUoWDep, user: User) -> dict[str, Any] | Any:
 
             elif is_today(last_series.created_at):
                 series = user.series_days
+
+            else:
+                series = 1
         else:
             if user.series_days > 0:
                 series = user.series_days + 1

@@ -1,5 +1,6 @@
 import {useEffect, useMemo, useState} from 'react';
-import firePng from "../../assets/fire.png";
+import fireActivePng from "../../assets/fire-active.png.png";
+import fireInactivePng from "../../assets/fire-disabled.png";
 
 function Series({series_day, series_last = []}) {
     const [show, setShow] = useState(false);
@@ -80,11 +81,14 @@ ${pulse ? 'ring-4 ring-orange-400 ring-offset-2 scale-110' : ''}`
                             key={series.id || series.created_at}
                             className="flex flex-col gap-3 p-5 bg-gray-100 items-center"
                         >
+                            <p className="text-xl">{series.dateObj.getDay()}</p>
+
                             <p>{weekdays[series.dateObj.getDay()]}</p>
+
                             {series.hasFire ? (
-                                <img src={firePng} alt="fire" className="w-4"/>
+                                <img src={fireActivePng} alt="fireActive" className="w-4"/>
                             ) : (
-                                <div style={{width: 16, height: 16}} aria-hidden/>
+                                <img src={fireInactivePng} alt="fireInactive" className="w-4"/>
                             )}
                         </div>
                     ))}
