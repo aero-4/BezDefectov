@@ -13,15 +13,6 @@ function Home() {
     }
 
 
-    return <Series series_day={10} series_last={[{"created_at": "2025-02-02"},
-        {"created_at": "2025-02-03"},
-        {"created_at": "2025-02-04"},
-        {"created_at": "2025-02-05"},
-        {"created_at": "2025-02-06"},
-        {"created_at": "2025-02-07"},
-        {"created_at": "2025-02-08"}]
-    }/>
-
     return (
         <div className="flex flex-col gap-18">
             <div className="flex flex-col md:flex-row gap-5 my-18">
