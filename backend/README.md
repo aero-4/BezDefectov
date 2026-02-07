@@ -1,3 +1,14 @@
-# Backend-часть
+# Backend-часть приложения
 
-Stack: FastAPI, SqlAlchemy, Pydantic, Redis
+## Stack: FastAPI, SqlAlchemy, Pydantic, Redis, JWT
+
+### Сервисы:
+- /lessons - CRUD для создания уроков
+  - /lessons/series - добавление серии для пользователя, проверка прохождения уроков **каждый** день
+- /dialogs - CRUD для создания диалогов между разными пользователями
+- /cards - CRUD для создания карточек для уроков 
+- /users - CRUD для пользователей, о себе, изменение пароля.
+- /auth - **JWT** аунтефикация, регистрация пользователей, создание, сохранение токенов в Cookies, Headers пользователя Access, Refresh tokens
+
+### Тесты:
+- Тесты находятся в папке tests и запускаются через tests

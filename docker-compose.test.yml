@@ -29,7 +29,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: pytest -v tests/integration/lessons/test_lessons.py::test_add_some_test_lessons
+    command: pytest -v tests
     env_file:
       - .env.test
     volumes:

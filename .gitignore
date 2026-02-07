@@ -6,4 +6,6 @@
 .env.prod
 .env.test
 /logs
+.vite
+
 

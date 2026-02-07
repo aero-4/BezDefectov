@@ -36,7 +36,6 @@ class Settings(BaseSettings):
     ALEMBIC_DATABASE_URI: str | None = None
 
     REDIS_URL: str | None = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
-    ELASTICSEARCH_HOSTS: str | None = os.environ.get("ELASTICSEARCH_HOSTS")
 
     @staticmethod
     def _build_dsn(scheme: str, values: dict) -> str:
@@ -79,12 +78,6 @@ class Settings(BaseSettings):
             return cls._build_dsn("postgresql+psycopg", info.data)
         raise ValueError("Unsupported DB_TYPE for alembic")
 
-    SMTP_TLS: bool = True
-    SMTP_PORT: int | None = None
-    SMTP_HOST: str | None = None
-    SMTP_USER: str | None = None
-    SMTP_PASSWORD: str | None = None
-    EMAIL_FROM: EmailStr | None = None
 
     S3_ACCESS_KEY: str | None = None
     S3_SECRET_KEY: str | None = None
