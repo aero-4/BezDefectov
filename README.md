@@ -1,8 +1,8 @@
 # BezDefectov
 
-## Цель: сделать приложение через которое люди могут тренировать свои дефекты речи, сохраняется их прогресс и работают таймеры на уроках
+### Цель: сделать приложение через которое люди могут тренировать свои дефекты речи, сохраняется их прогресс и работают таймеры на уроках
 
-[Backend](https://github.com/aero-4/BezDefectov/tree/main/backend) | [Frontend](https://github.com/aero-4/BezDefectov/tree/main/frontend)
+#### [Backend часть](https://github.com/aero-4/BezDefectov/tree/main/backend) | #### [Frontend часть](https://github.com/aero-4/BezDefectov/tree/main/frontend)
 
 ### Запуск:
 1. git clone https://github.com/aero-4/BezDefectov
