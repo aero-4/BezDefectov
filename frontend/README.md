@@ -1,3 +1,14 @@
-FRONTEND-часть
+# Frontend-часть приложения
 
-Stack: React-TypeScript, Vite, TailwindCSS, React Router DOM.
+## Stack: React-TypeScript, Vite, TailwindCSS, React Router DOM.
+
+### Страницы:
+- / - Ознакомительная страница с приложением
+- /register - Регистрация пользователя
+- /login - Вход пользователя
+- /faq - Информация о проекте
+- /types - Типы дефектов
+- /lessons/{type} - Открыть уроки по типу дефекта
+- /lesson/{id} - Урок, отображения диалога, карточек с текстом, таймера, прибавление в серии уроков
+- /profile - Профиль пользователя с отображением его серии
+- /logout - Выход из аккаунта
