@@ -1,6 +1,6 @@
 # Frontend-часть приложения
 
-## Stack: React-TypeScript, Vite, TailwindCSS, React Router DOM.
+## Stack: React-TypeScript, Vite, TailwindCSS v4
 
 ### Страницы:
 - / - Ознакомительная страница с приложением
